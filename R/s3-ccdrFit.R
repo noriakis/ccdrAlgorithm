@@ -12,7 +12,7 @@
 
 #
 # ccdrFit S3 class skeleton
-# 
+#
 # Data
 # * SparseBlockMatrixR sbm  // adjacency matrix as SparseBlockMatrix
 # * numeric lambda          // regularization parameter
@@ -20,12 +20,12 @@
 # * integer pp              // number of nodes
 # * integer nn              // number of observations
 # * numeric time            // time to run CCDr algorithm
-# 
+#
 # Methods
 # * as.graphCompare
 # * get.adjacency.matrix
 # * get.sigmas
-# 
+#
 
 # Delegation
 ccdrFit <- function(x) UseMethod("ccdrFit", x)
@@ -39,10 +39,7 @@ is.ccdrFit <- function(cf){
 
 # Constructor
 ccdrFit.list <- function(li){
-    ### DEBUG ###
-    if(R_DEBUG_ON) cat("Calling ccdrFit.list...\n")
-    #############
-    
+
     if( !is.list(li)){
         stop("Input must be a list!")
     } else if( length(li) != 6 || !setequal(names(li), c("sbm", "lambda", "nedge", "pp", "nn", "time"))){
@@ -50,15 +47,12 @@ ccdrFit.list <- function(li){
     } else if( !is.SparseBlockMatrixR(li$sbm)){
         stop("'sbm' component must be a valid SparseBlockMatrixR object!")
     }
-    
+
     structure(li, class = "ccdrFit")
 }
 
 as.list.ccdrFit <- function(cf){
-    ### DEBUG ###
-    if(R_DEBUG_ON) cat("Calling as.list.ccdrFit...\n")
-    #############
-    
+
     list(sbm = cf$sbm, lambda = cf$lambda, nedge = cf$nedge, pp = cf$pp, nn = cf$nn, time = cf$time)
 }
 
@@ -76,10 +70,10 @@ get.times <- function(li){
     if(!check.class){
         stop("Some component is not of type ccdrFit -- this function only works on lists of ccdrFit objects.")
     }
-    
+
     times <- unlist(lapply(li, function(x){ x$time}))
     names(times) <- NULL
-    
+
     times
 }
 
@@ -89,10 +83,10 @@ get.lambdas <- function(li){
     if(!check.class){
         stop("Some component is not of type ccdrFit -- this function only works on lists of ccdrFit objects.")
     }
-    
+
     times <- unlist(lapply(li, function(x){ x$lambda}))
     names(times) <- NULL
-    
+
     times
 }
 
@@ -102,10 +96,10 @@ print.ccdrFit <- function(cf){
         cf$nn, " observations\n",
         "lambda = ", cf$lambda, "\n",
         sep = "")
-    
+
     cat("\nPhi: \n")
     print(cf$sbm)
-    
+
     cat("\nRho: \n")
     print(cf$sbm$sigmas)
 }

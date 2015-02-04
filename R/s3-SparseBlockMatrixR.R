@@ -23,9 +23,9 @@
 #   3) blocks - a list of integer vectors
 #   4) sigmas - a numeric vector
 #
-# There is also a fifth component which identifies whether the indexing in the object begins at 0 or 1. 
+# There is also a fifth component which identifies whether the indexing in the object begins at 0 or 1.
 #   This is needed for bookkeeping and ensuring coherent translation between R and C++.
-#   5) start - 0 or 1 
+#   5) start - 0 or 1
 #
 # These components all exactly reflect their purpose in SparseBlockMatrix.h; see that file for more details.
 #
@@ -56,7 +56,7 @@ reIndexC.SparseBlockMatrixR <- function(sbm){
     #
     sbm$rows <- lapply(sbm$rows, function(x){ x - 1L})
     if(length(sbm$blocks) > 0) sbm$blocks <- lapply(sbm$blocks, function(x){ x - 1L})
-    
+
 # OLD CODE
 #     if(length(sbm$blocks) > 0){
 #         for(j in 1:length(sbm$rows)){
@@ -68,9 +68,9 @@ reIndexC.SparseBlockMatrixR <- function(sbm){
 #             if(length(sbm$rows[[j]]) > 0) sbm$rows[[j]] <- sbm$rows[[j]] - 1
 #         }
 #     }
-    
+
     sbm$start <- 0
-    
+
     sbm
 }
 
@@ -87,7 +87,7 @@ reIndexR.SparseBlockMatrixR <- function(sbm){
     #
     sbm$rows <- lapply(sbm$rows, function(x){ x + 1L})
     if(length(sbm$blocks) > 0) sbm$blocks <- lapply(sbm$blocks, function(x){ x + 1L})
-    
+
 # OLD CODE
 #     if(length(sbm$blocks) > 0){
 #         for(j in 1:length(sbm$rows)){
@@ -99,18 +99,15 @@ reIndexR.SparseBlockMatrixR <- function(sbm){
 #             if(length(sbm$rows[[j]]) > 0) sbm$rows[[j]] <- sbm$rows[[j]] + 1
 #         }
 #     }
-#     
+#
     sbm$start <- 1
-    
+
     sbm
 }
 
 # List constructor
 SparseBlockMatrixR.list <- function(li){
-    ### DEBUG ###
-    if(R_DEBUG_ON) cat("Calling SparseBlockMatrixR.list...\n")
-    #############
-    
+
     if( !is.list(li)){
         stop("Input must be a list!")
     } else if( length(li) != 5 || !setequal(names(li), c("rows", "vals", "blocks", "sigmas", "start"))){
@@ -123,30 +120,27 @@ SparseBlockMatrixR.list <- function(li){
         #
         stop("rows and vals have different sizes; should all have the same length (pp)!!")
     }
-    
+
     structure(li, class = "SparseBlockMatrixR")
 }
 
 # sparse object constructor
 SparseBlockMatrixR.sparse <- function(sp){
-    ### DEBUG ###
-    if(R_DEBUG_ON) cat("Calling SparseBlockMatrixR.sparse...\n")
-    #############
-    
+
     if( !is.sparse(sp)){
         stop("Input must be a sparse object!")
     } else if(sp$dim[1] != sp$dim[2]){
         stop("Input must be square!")
     }
-    
+
     pp <- sp$dim[1]
     if(sp$start == 0) sp <- reIndexR(sp) # re-index rows and cols to start at 1 if necessary
-    
+
     sbm.rows <- vector("list", length = pp)
     sbm.vals <- vector("list", length = pp)
     sbm.blocks <- vector("list", length = pp)
     sbm.sigmas <- rep(0, pp)
-    
+
     # how to vectorize this???
     for(j in 1:pp){
         # Clear out the jth entry in the lists to be an empty vector
@@ -154,29 +148,29 @@ SparseBlockMatrixR.sparse <- function(sp){
         sbm.vals[[j]] <- numeric(0)
         sbm.blocks[[j]] <- integer(0)
     }
-    
+
     for(j in 1:pp){
-        
+
         thisColIdx <- which(sp$cols == j)
         rows <- as.integer(sp$rows[thisColIdx])
         for(k in seq_along(rows)){
             row <- rows[k]
-            
+
             sbm.rows[[j]] <- c(sbm.rows[[j]], row)
-            sbm.rows[[row]] <- c(sbm.rows[[row]], j) 
-            
+            sbm.rows[[row]] <- c(sbm.rows[[row]], j)
+
             sbm.vals[[j]] <- c(sbm.vals[[j]], sp$vals[thisColIdx[k]])
             sbm.vals[[row]] <- c(sbm.vals[[row]], 0)
-            
+
             # vals[rows[j][k]][block[j][k]] = beta_ji
             sbm.blocks[[j]] <- c(sbm.blocks[[j]], length(sbm.rows[[row]]))
             sbm.blocks[[row]] <- c(sbm.blocks[[row]], length(sbm.rows[[j]]))
         }
-        
+
     }
-    
+
     names(sbm.rows) <- names(sbm.vals) <- names(sbm.blocks) <- as.character(1:pp)
-    
+
     #
     # NOTE: We use R-indexing by default. This can be changed by using reIndexC if necessary.
     #
@@ -185,76 +179,53 @@ SparseBlockMatrixR.sparse <- function(sp){
 
 # matrix constructor
 SparseBlockMatrixR.matrix <- function(m){
-    ### DEBUG ###
-    if(R_DEBUG_ON) cat("Calling SparseBlockMatrixR.matrix...\n")
-    #############
-    
+
     if(nrow(m) != ncol(m)) stop("Input matrix must be square!")
-    
+
     sp <- as.sparse(m)
-    
+
     SparseBlockMatrixR.sparse(sp)
 }
 
 # Convert FROM list TO SparseBlockMatrixR
 as.SparseBlockMatrixR.list <- function(li){
-    ### DEBUG ###
-    cat("Calling as.SparseBlockMatrixR.list...\n")
-    #############
-    
     SparseBlockMatrixR.list(li)
 }
 
 # Convert FROM sparse TO SparseBlockMatrixR
 as.SparseBlockMatrixR.sparse <- function(sp){
-    ### DEBUG ###
-    if(R_DEBUG_ON) cat("Calling as.SparseBlockMatrixR.sparse...\n")
-    #############
-    
     SparseBlockMatrixR.sparse(sp)
 }
 
 # Convert FROM matrix TO SparseBlockMatrixR
 as.SparseBlockMatrixR.matrix <- function(m){
-    ### DEBUG ###
-    if(R_DEBUG_ON) cat("Calling as.SparseBlockMatrixR.matrix...\n")
-    #############
-    
     SparseBlockMatrixR.matrix(m)
 }
 
 # Convert FROM SparseBlockMatrixR TO list
 #
-#  Even though internally the SBM object is a list, we must still manually define this function 
+#  Even though internally the SBM object is a list, we must still manually define this function
 #
 as.list.SparseBlockMatrixR <- function(sbm){
-    ### DEBUG ###
-    if(R_DEBUG_ON) cat("Calling as.list.SparseBlockMatrixR...\n")
-    #############
-    
     list(rows = sbm$rows, vals = sbm$vals, blocks = sbm$blocks, sigmas = sbm$sigmas, start = sbm$start)
 }
 
 # Convert FROM SparseBlockMatrixR TO matrix
 as.matrix.SparseBlockMatrixR <- function(sbm){
-    ### DEBUG ###
-    if(R_DEBUG_ON) cat("Calling as.matrix.SparseBlockMatrixR...\n")
-    #############
-    
     pp <- length(sbm$rows)
     m <- diag(rep(0, pp))
-    
+
     if(sbm$start == 0) sbm <- reIndexR(sbm)
-    
+
     for(j in 1:pp){
         m[sbm$rows[[j]], j] <- sbm$vals[[j]]
     }
-    
+
     attributes(m)$dim <- c(pp, pp)
     attributes(m)$dimnames <- list()
     attributes(m)$dimnames[[1]] <- as.character(1:nrow(m))
     attributes(m)$dimnames[[2]] <- as.character(1:ncol(m))
-    
+
     m
 }
 
@@ -270,5 +241,5 @@ print.SparseBlockMatrixR <- function(sbm, pretty = TRUE){
     } else{
         print(as.list(sbm))
     }
-    
+
 }
