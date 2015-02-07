@@ -63,13 +63,21 @@ sparse.list <- function(li){
 
     if( !is.list(li)){
         stop("Input must be a list!")
-    } else if( length(li) != 5 || names(li) != c("rows", "cols", "vals", "dim", "start") || is.null(names(li))){
+    }
+
+    if( length(li) != 5 || names(li) != c("rows", "cols", "vals", "dim", "start") || is.null(names(li))){
         stop("Input is not coercable to an object of type sparse, check list for the following (named) elements: rows, cols, vals, dim, start")
-    } else if( length(unique(lapply(li[1:3], length))) > 1){
+    }
+
+    if( length(unique(lapply(li[1:3], length))) > 1){
         stop("rows / cols / vals elements have different sizes; should all have the same length (pp)!!")
-    } else if(length(li$dim) != 2){
+    }
+
+    if(length(li$dim) != 2){
         stop("dim attribute must have length 2!")
-    } else if(li$start != 0 && li$start != 1){
+    }
+
+    if(li$start != 0 && li$start != 1){
         stop("start attribute must be 0 (C-style) or 1 (R-style)!")
     }
 
