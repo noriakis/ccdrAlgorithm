@@ -1,1 +1,0 @@
-.MACHINE_EPS <- .Machine$double.eps ^ 0.5 # approximately 1.5e-08, used to be 1e-12
