@@ -56,13 +56,15 @@ private:
 // Explicit constructor
 PenaltyFunction::PenaltyFunction(double g){
     if(g >= 0){
-        OUTPUT << "Using MCP!\n";
+        // TESTING ONLY
+        // OUTPUT << "Using MCP!\n";
         
         gamma = g;
         pPtr = &MCPPenalty;
         thresholdPtr = &MCPThreshold;
     } else{
-        OUTPUT << "Using Lasso!\n";
+        // TESTING ONLY
+        // OUTPUT << "Using Lasso!\n";
         
         gamma = g;
         pPtr = &LassoPenalty;
