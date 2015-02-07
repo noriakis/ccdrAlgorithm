@@ -1,9 +1,9 @@
 #
 #  s3-sparse.R
-#  ccdrpkg
+#  ccdr
 #
-#  Created by Bryon Aragam (local) on 4/24/14.
-#  Copyright (c) 2014 Bryon Aragam (local). All rights reserved.
+#  Created by Bryon Aragam (local) on 2/4/15.
+#  Copyright (c) 2014-2015 Bryon Aragam (local). All rights reserved.
 #
 
 #------------------------------------------------------------------------------#
@@ -26,13 +26,9 @@
 #
 #
 
-# Delegation
-sparse <- function(x) UseMethod("sparse", x)
-as.sparse <- function(x) UseMethod("as.sparse", x)
-
 is.sparse <- function(sp){
     inherits(sp, "sparse")
-}
+} # END IS.SPARSE
 
 # Re-indexing TO C for sparse objects
 reIndexC.sparse <- function(sp){
@@ -46,7 +42,7 @@ reIndexC.sparse <- function(sp){
     sp$start <- 0
 
     sp
-}
+} # END REINDEXC.SPARSE
 
 # Re-indexing TO R for sparse objects
 reIndexR.sparse <- function(sp){
@@ -60,7 +56,7 @@ reIndexR.sparse <- function(sp){
     sp$start <- 1
 
     sp
-}
+} # END REINDEXR.SPARSE
 
 # List constructor
 sparse.list <- function(li){
@@ -78,14 +74,14 @@ sparse.list <- function(li){
     }
 
     structure(li, class = "sparse")
-}
+} # END SPARSE.LIST
 
 #
 # Convert FROM list TO sparse
 #
 as.sparse.list <- function(li){
     sparse.list(li)
-}
+} # END AS.SPARSE.LIST
 
 # Convert FROM matrix TO sparse
 #
@@ -118,11 +114,7 @@ as.sparse.matrix <- function(m, index = "R"){
     } else{
         sp
     }
-}
-
-as.sparse.Matrix <- function(m, index = "R"){
-    as.sparse.matrix(as.matrix(m), index = index)
-}
+} # END AS.SPARSE.MATRIX
 
 # Convert FROM SparseBlockMatrixR TO sparse
 #
@@ -163,7 +155,7 @@ as.sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
         sp$start <- 0
         reIndexC(sp)
     }
-}
+} # END AS.SPARSE.SPARSEBLOCKMATRIXR
 
 # Convert FROM sparse TO matrix
 as.matrix.sparse <- function(sp){
@@ -187,13 +179,13 @@ as.matrix.sparse <- function(sp){
     attributes(m)$dimnames[[2]] <- as.character(1:ncol(m))
 
     m
-}
+} # END AS.MATRIX.SPARSE
 
 # Convert FROM sparse TO list
 as.list.sparse <- function(sp){
 
     list(rows = sp$rows, cols = sp$cols, vals = sp$cols, dim = sp$dim, start = sp$start)
-}
+} # END AS.LIST.SPARSE
 
 #
 # Print function for sparse objects
@@ -209,74 +201,4 @@ print.sparse <- function(sp, pretty = TRUE){
         print(as.list(sp))
     }
 
-}
-
-#
-# Read/write from file functionality for sparse class
-#
-#  In order to avoid conflicts with base R I/O methods, these methods are NOT delegated using S3 dispatch.
-#
-read.sparse <- function(file.name,
-                        pp){
-
-    if(missing(file.name)){
-        warning("Using default local directory; REMOVE THIS BEFORE RELEASING")
-        file.name <- "~/Dropbox/PhD Research/Programming Projects/ccdr_test/TEST_DAG.csv"
-    }
-
-    #
-    # Read in the first line, which should be a comment describing the dimensions of the matrix
-    #  If there an issue reading this data, then the method will default to the user-supplied data
-    #  In case of conflict, the file data is favoured over user input (for now)
-    #
-    first.line <- readLines(file.name, n = 1)
-    first.line <- strsplit(first.line, " ", fixed = TRUE)[[1]]
-
-    this.dim <- c(NA, NA) # initialize the dimensions
-    if(first.line[1] != "#"){
-        warning("First line does not represent a comment: There may be an issue with the formatting of the file.")
-
-        if( !missing(pp)){
-            # Use user input if supplied
-            this.dim <- c(pp, pp)
-        } else{
-            stop("Dimensions not explicitly supplied by 'pp' argument and there was an error reading in the first line. Please check your data!")
-        }
-    } else{
-        # If we did read in a comment character first, grab the next two strings and coerce to integers
-        this.dim <- as.integer(first.line[c(2, 3)])
-
-        if( !missing(pp) && any(pp != this.dim)){
-            warning("Supplied argument 'pp' does not match the data inside the file: Ignoring user input as default.")
-        }
-    }
-
-    dat <- read.csv(file.name, header = TRUE, comment.char = "#")
-    # c("rows", "cols", "vals", "dim", "start")
-    li <- list(rows = dat[,2], cols = dat[,1], vals = dat[,3], dim = this.dim, start = 1)
-    sp <- sparse.list(li)
-    sp <- reIndexR(sp)
-    sp
-
-}
-
-write.sparse <- function(sp, file.name){
-    if(!is.sparse(sp)) stop("Input object is not of type sparse!")
-
-    # We output cols first since by default the indices are ordered by column (makes it easier to read but doesn't really make a big difference)
-    out <- cbind(sp$cols, sp$rows, sp$vals)
-    colnames(out) <- c("cols", "rows", "vals")
-
-    #
-    # Open a connection so that we can write a comment to the file before writing the table
-    #
-    con <- file(file.name, open = "wt")
-    writeLines(paste0("# ", sp$dim[1], " ", sp$dim[2], "\n#index start = ", sp$start), con) # Add a comment to include metadata for dimension of matrix
-    write.table(out,
-                file = con,
-                sep=",",
-                col.names = TRUE,
-                row.names = FALSE,
-                append = FALSE)
-    close(con)
-}
+} # END PRINT.SPARSE

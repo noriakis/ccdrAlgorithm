@@ -1,9 +1,9 @@
 #
 #  s3-SparseBlockMatrixR.R
-#  ccdrpkg
+#  ccdr
 #
-#  Created by Bryon Aragam (local) on 4/24/14.
-#  Copyright (c) 2014 Bryon Aragam (local). All rights reserved.
+#  Created by Bryon Aragam (local) on 2/4/15.
+#  Copyright (c) 2014-2015 Bryon Aragam (local). All rights reserved.
 #
 
 #------------------------------------------------------------------------------#
@@ -35,13 +35,9 @@
 #
 #
 
-# Delegation
-SparseBlockMatrixR <- function(x) UseMethod("SparseBlockMatrixR", x)
-as.SparseBlockMatrixR <- function(x) UseMethod("as.SparseBlockMatrixR", x)
-
 is.SparseBlockMatrixR <- function(sbm){
     inherits(sbm, "SparseBlockMatrixR")
-}
+} # END IS.SPARSEBLOCKMATRIXR
 
 # Re-indexing TO C for SparseBlockMatrixR objects
 reIndexC.SparseBlockMatrixR <- function(sbm){
@@ -72,7 +68,7 @@ reIndexC.SparseBlockMatrixR <- function(sbm){
     sbm$start <- 0
 
     sbm
-}
+} # END REINDEXC.SPARSEBLOCKMATRIXR
 
 # Re-indexing TO R for SparseBlockMatrixR objects
 reIndexR.SparseBlockMatrixR <- function(sbm){
@@ -103,7 +99,7 @@ reIndexR.SparseBlockMatrixR <- function(sbm){
     sbm$start <- 1
 
     sbm
-}
+} # END REINDEXR.SPARSEBLOCKMATRIXR
 
 # List constructor
 SparseBlockMatrixR.list <- function(li){
@@ -122,7 +118,7 @@ SparseBlockMatrixR.list <- function(li){
     }
 
     structure(li, class = "SparseBlockMatrixR")
-}
+} # END SPARSEBLOCKMATRIXR.LIST
 
 # sparse object constructor
 SparseBlockMatrixR.sparse <- function(sp){
@@ -175,7 +171,7 @@ SparseBlockMatrixR.sparse <- function(sp){
     # NOTE: We use R-indexing by default. This can be changed by using reIndexC if necessary.
     #
     SparseBlockMatrixR.list(list(rows = sbm.rows, vals = sbm.vals, blocks = sbm.blocks, sigmas = sbm.sigmas, start = 1))
-}
+} # END SPARSEBLOCKMATRIXR.SPARSE
 
 # matrix constructor
 SparseBlockMatrixR.matrix <- function(m){
@@ -185,22 +181,22 @@ SparseBlockMatrixR.matrix <- function(m){
     sp <- as.sparse(m)
 
     SparseBlockMatrixR.sparse(sp)
-}
+} # END SPARSEBLOCKMATRIXR.MATRIX
 
 # Convert FROM list TO SparseBlockMatrixR
 as.SparseBlockMatrixR.list <- function(li){
     SparseBlockMatrixR.list(li)
-}
+} # END AS.SPARSEBLOCKMATRIXR.LIST
 
 # Convert FROM sparse TO SparseBlockMatrixR
 as.SparseBlockMatrixR.sparse <- function(sp){
     SparseBlockMatrixR.sparse(sp)
-}
+} # END AS.SPARSEBLOCKMATRIXR.SPARSE
 
 # Convert FROM matrix TO SparseBlockMatrixR
 as.SparseBlockMatrixR.matrix <- function(m){
     SparseBlockMatrixR.matrix(m)
-}
+} # END AS.SPARSEBLOCKMATRIXR.MATRIX
 
 # Convert FROM SparseBlockMatrixR TO list
 #
@@ -208,7 +204,7 @@ as.SparseBlockMatrixR.matrix <- function(m){
 #
 as.list.SparseBlockMatrixR <- function(sbm){
     list(rows = sbm$rows, vals = sbm$vals, blocks = sbm$blocks, sigmas = sbm$sigmas, start = sbm$start)
-}
+} # END AS.LIST.SPARSEBLOCKMATRIXR
 
 # Convert FROM SparseBlockMatrixR TO matrix
 as.matrix.SparseBlockMatrixR <- function(sbm){
@@ -227,19 +223,4 @@ as.matrix.SparseBlockMatrixR <- function(sbm){
     attributes(m)$dimnames[[2]] <- as.character(1:ncol(m))
 
     m
-}
-
-#
-# Print function for SparseBlockMatrixR
-#
-#  By default, coerce the object to a Matrix object (from the Matrix package) and print it using the default
-#    print.Matrix method. Optionally, set pretty = FALSE to print the SBM object as a list.
-#
-print.SparseBlockMatrixR <- function(sbm, pretty = TRUE){
-    if(pretty){
-        print(Matrix::Matrix(as.matrix(sbm)))
-    } else{
-        print(as.list(sbm))
-    }
-
-}
+} # END AS.MATRIX.SPARSEBLOCKMATRIXR

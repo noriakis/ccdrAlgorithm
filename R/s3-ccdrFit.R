@@ -1,9 +1,9 @@
 #
 #  s3-ccdrFit.R
-#  ccdrpkg
+#  ccdr
 #
-#  Created by Bryon Aragam (local) on 5/8/14.
-#  Copyright (c) 2014 Bryon Aragam (local). All rights reserved.
+#  Created by Bryon Aragam (local) on 2/4/15.
+#  Copyright (c) 2014-2015 Bryon Aragam (local). All rights reserved.
 #
 
 #------------------------------------------------------------------------------#
@@ -27,15 +27,9 @@
 # * get.sigmas
 #
 
-# Delegation
-ccdrFit <- function(x) UseMethod("ccdrFit", x)
-as.ccdrFit <- function(x) UseMethod("as.ccdrFit", x)
-get.adjacency.matrix <- function(x) UseMethod("get.adjacency.matrix", x)
-get.sigmas <- function(x) UseMethod("get.sigmas", x)
-
 is.ccdrFit <- function(cf){
     inherits(cf, "ccdrFit")
-}
+} # END IS.CCDRFIT
 
 # Constructor
 ccdrFit.list <- function(li){
@@ -49,20 +43,19 @@ ccdrFit.list <- function(li){
     }
 
     structure(li, class = "ccdrFit")
-}
+} # END CCDRFIT.LIST
 
 as.list.ccdrFit <- function(cf){
-
     list(sbm = cf$sbm, lambda = cf$lambda, nedge = cf$nedge, pp = cf$pp, nn = cf$nn, time = cf$time)
-}
+} # END AS.LIST.CCDRFIT
 
 get.adjacency.matrix.ccdrFit <- function(cf){
     as.matrix(cf$sbm)
-}
+} # END GET.ADJACENCY.MATRIX.CCDRFIT
 
 get.sigmas.ccdrFit <- function(cf){
     cf$sbm$sigmas
-}
+} # END GET.SIGMAS.CCDRFIT
 
 # Operates on a list of ccdrFit objects
 get.times <- function(li){
@@ -75,7 +68,7 @@ get.times <- function(li){
     names(times) <- NULL
 
     times
-}
+} # END GET.TIMES
 
 # Also operates on a list of ccdrFit objects
 get.lambdas <- function(li){
@@ -88,7 +81,7 @@ get.lambdas <- function(li){
     names(times) <- NULL
 
     times
-}
+} # END GET.LAMBDAS
 
 print.ccdrFit <- function(cf){
     cat("CCDr estimate\n",
@@ -102,4 +95,4 @@ print.ccdrFit <- function(cf){
 
     cat("\nRho: \n")
     print(cf$sbm$sigmas)
-}
+} # END PRINT.CCDRFIT
