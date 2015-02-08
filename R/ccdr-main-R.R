@@ -10,34 +10,32 @@
 # PACKAGE CCDR: Functions
 #
 #   CONTENTS:
-#     ccdr.gridR
-#     ccdr.singleR
+#     ccdr.run
+#     .ccdr.gridR
+#     .ccdr.singleR
 #
+
+#' ccdr.run
+#'
+#' Placeholder for what will eventually be the main function exported from this package
+ccdr.run <- function(...){
+    ### This is just a wrapper for the internal implementation given by .ccdr.gridR
+    .ccdr.gridR(...)
+}
 
 #' ccdr.gridR
 #'
-#' @param X data matrix
-#' @param betas OPTIONAL beta matrix / DEFAULT = zeroes
-#' @param lambdas OPTIONAL lambda grid / DEFAULT = derived from data
-#' @param nlam OPTIONAL number of lambdas / DEFAULT = 50
-#' @param gamma OPTIONAL gamma parameter for MCP / DEFAULT = 2.0
-#' @param eps OPTIONAL error threshold / DEFAULT = 1e-4
-#' @param rlam OPTIONAL ratio between min.lam : max.lam / DEFAULT = 1e-4
-#' @param maxIters OPTIONAL maximum number of iterations / DEFAULT = 2 * max(10, sqrt(pp))
-#' @param alpha OPTIONAL stopping criterion / DEFAULT = 2.0
-#' @param verbose OPTIONAL flag for printing out progress / DEFAULT = FALSE
-#' @param as.mat OPTIONAL convert results to R Matrix class or not?
-ccdr.gridR <- function(X,
-                       betas,
-                       lambdas,
-                       nlam = 50,
-                       gamma = 2.0,
-                       eps = 1e-4,
-                       rlam = 1e-4,
-                       maxIters,
-                       alpha = 2.0,
-                       verbose = FALSE,
-                       as.mat = TRUE
+.ccdr.gridR <- function(X,
+                        betas,
+                        lambdas,
+                        nlam = 50,
+                        gamma = 2.0,
+                        eps = 1e-4,
+                        rlam = 1e-4,
+                        maxIters,
+                        alpha = 2.0,
+                        verbose = FALSE,
+                        as.mat = TRUE # 2-8-15: deprecated?
 ){
     # get the dimensions of the data matrix
     nn <- dim(X)[1] # this number corresponds to the total number of samples collected
@@ -71,7 +69,7 @@ ccdr.gridR <- function(X,
     }
 
     # this parameter can be set by the user, but in order to prevent the algorithm from taking too long to run
-    # it is a good idea to keep the threshold used by default which is O(sprt(pp))
+    # it is a good idea to keep the threshold used by default which is O(sqrt(pp))
     if(missing(maxIters)){
         maxIters <- 2 * max(10, sqrt(pp))
     }
@@ -86,7 +84,7 @@ ccdr.gridR <- function(X,
         if(verbose) cat("Working on lambda = ", lambdas[i], " [", i, "/", nlam, "]\n", sep = "")
 
         t1.ccdr <- proc.time()[3]
-        ccdr.out[[i]] <- ccdr.singleR(cors,
+        ccdr.out[[i]] <- .ccdr.singleR(cors,
                                       pp, nn,
                                       betas,
                                       lambdas[i],
@@ -108,33 +106,23 @@ ccdr.gridR <- function(X,
 
     # The internal code for computing the run time does not include the time to compute correlations (t2.cor - t1.cor above),
     #   but as with our implementation of the PC algorithm, we do not include it in the timing anyway. For small models
-    #  with p <= 500, this time is negligible anyway.
+    #   with p <= 500, this time is negligible anyway.
 
     ccdr.out[1:(i-1)] # only return up to i - 1 since the last (ith) model would not have finished running anyway
 } # END CCDR.GRIDR
 
 #' ccdr.singleR
 #'
-#' @param c correlation vector
-#' @param pp
-#' @param nn
-#' @param betas OPTIONAL beta matrix / DEFAULT = zeroes
-#' @param gamma OPTIONAL gamma parameter for MCP / DEFAULT = 2.0
-#' @param eps OPTIONAL error threshold / DEFAULT = 1e-4
-#' @param rlam OPTIONAL ratio between min.lam : max.lam / DEFAULT = 1e-4
-#' @param maxIters OPTIONAL maximum number of iterations / DEFAULT = 2 * max(10, sqrt(pp))
-#' @param alpha OPTIONAL stopping criterion / DEFAULT = 2.0
-#' @param verbose OPTIONAL flag for printing out progress / DEFAULT = FALSE
-ccdr.singleR <- function(c,
-                         pp, nn,
-                         betas,
-                         lambda,
-                         gamma = 2.0,
-                         eps = 1e-4,
-                         rlam = 1e-4,
-                         maxIters,
-                         alpha = 2.0,
-                         verbose = FALSE
+.ccdr.singleR <- function(c, # 2-8-15: need to rename cors
+                          pp, nn,
+                          betas,
+                          lambda,
+                          gamma = 2.0,
+                          eps = 1e-4,
+                          rlam = 1e-4, # 2-8-15: unnecessary in this method
+                          maxIters,
+                          alpha = 2.0,
+                          verbose = FALSE
 ){
     # get the dimensions of the data matrix
     #     nn <- dim(X)[1] # this number corresponds to the total number of samples collected
@@ -200,4 +188,4 @@ ccdr.singleR <- function(c,
     ccdr.out$sbm <- reIndexR(ccdr.out$sbm)
 
     ccdrFit(ccdr.out)
-} # END CCDR.SINGLER
+} # END .CCDR.SINGLER
