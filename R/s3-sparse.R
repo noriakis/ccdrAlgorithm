@@ -97,7 +97,7 @@ as.sparse.list <- function(li){
 #   index = "C".
 as.sparse.matrix <- function(m, index = "R"){
 
-    if( nrow(m) != ncol(m)) stop("Input matrix must be square!")
+    if( nrow(m) != ncol(m)) stop("Input matrix must be square!") # 2-7-15: Why does it need to be square?
 
     if(index != "R" && index != "C") stop("Invalid entry for index parameter: Must be either 'R' or 'C'!")
 
