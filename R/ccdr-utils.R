@@ -13,7 +13,7 @@
 # Special function to check if an object is EITHER matrix or Matrix object
 .check_if_matrix <- function(m){
     is.matrix(m) || inherits(m, "Matrix")
-}
+} # END .CHECK_IF_MATRIX
 
 # Convenience wrapper for checking if an object is a graphNEL object
 # .check_if_graph <- function(g){
@@ -40,7 +40,7 @@
     cors <- cors[upper.tri(cors, diag = TRUE)]
 
     cors
-}
+} # END .COR_VECTOR
 
 .col_classes <- function(X){
     if( !is.data.frame(X) && !is.matrix(X)){
@@ -48,7 +48,7 @@
     }
 
     apply(X, 2, class)
-}
+} # END .COL_CLASSES
 
 # .generate_key <- function(len = 15){
 #     chars <- c(1:10, LETTERS)
