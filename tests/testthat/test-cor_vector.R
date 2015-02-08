@@ -14,6 +14,11 @@ test_that("check case when all cors = 1", {
 })
 
 test_that(".cor_vector organizes values as expected", {
-    m <- matrix(runif(12), ncol = 3)
+    m <- matrix(runif(12), ncol = 3) # random input here OK or no?
     expect_equal(.cor_vector(m)[4:6], cor(m)[3,])
+})
+
+test_that(".cor_vector has at least ncol ones", {
+    m <- matrix(runif(80), ncol = 10) # random input here OK or no?
+    expect_true(sum(.cor_vector(m) == 1) >= 10)
 })
