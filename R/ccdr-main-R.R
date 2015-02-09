@@ -7,14 +7,15 @@
 #
 
 #
-# PACKAGE CCDR: Functions
+# PACKAGE CCDR: Main CCDr methods
 #
 #   CONTENTS:
 #     ccdr.run
-#     .ccdr.gridR
-#     .ccdr.singleR
+#     .ccdr_gridR
+#     .ccdr_singleR
 #
 
+###--- These two lines are necessary to import the auto-generated Rcpp methods in RcppExports.R---###
 #' @useDynLib ccdr
 #' @importFrom Rcpp sourceCpp
 NULL
@@ -24,14 +25,14 @@ NULL
 #' Placeholder for what will eventually be the main function exported from this package
 #' @export
 ccdr.run <- function(...){
-    ### This is just a wrapper for the internal implementation given by .ccdr.gridR
-    .ccdr.gridR(...)
+    ### This is just a wrapper for the internal implementation given by .ccdr_gridR
+    .ccdr_gridR(...)
 }
 
-#' .ccdr.gridR
+#' .ccdr_gridR
 #'
 #' @export
-.ccdr.gridR <- function(X,
+.ccdr_gridR <- function(X,
                         betas,
                         lambdas,
                         nlam = 50,
@@ -90,7 +91,7 @@ ccdr.run <- function(...){
         if(verbose) cat("Working on lambda = ", lambdas[i], " [", i, "/", nlam, "]\n", sep = "")
 
         t1.ccdr <- proc.time()[3]
-        ccdr.out[[i]] <- .ccdr.singleR(cors,
+        ccdr.out[[i]] <- .ccdr_singleR(cors,
                                       pp, nn,
                                       betas,
                                       lambdas[i],
@@ -115,12 +116,12 @@ ccdr.run <- function(...){
     #   with p <= 500, this time is negligible anyway.
 
     ccdr.out[1:(i-1)] # only return up to i - 1 since the last (ith) model would not have finished running anyway
-} # END CCDR.GRIDR
+} # END CCDR_GRIDR
 
-#' .ccdr.singleR
+#' .ccdr_singleR
 #'
 #' @export
-.ccdr.singleR <- function(cors, # 2-8-15: renamed from 'c' to 'cors'
+.ccdr_singleR <- function(cors, # 2-8-15: renamed from 'c' to 'cors'
                           pp, nn,
                           betas,
                           lambda,
@@ -195,4 +196,4 @@ ccdr.run <- function(...){
     ccdr.out$sbm <- reIndexR(ccdr.out$sbm)
 
     ccdrFit(ccdr.out)
-} # END .CCDR.SINGLER
+} # END .CCDR_SINGLER
