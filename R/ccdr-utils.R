@@ -5,9 +5,16 @@
 #  Created by Bryon Aragam (local) on 5/28/14.
 #  Copyright (c) 2014-2015 Bryon Aragam (local). All rights reserved.
 #
+
+#
+# PACKAGE CCDR: Utils
+#
+#   CONTENTS:
 #     .check_if_matrix
-#     .cor_vector
+#     .list_classes
+#     .check_list_class
 #     .col_classes
+#     .cor_vector
 #
 
 # Special function to check if an object is EITHER matrix or Matrix object
@@ -15,10 +22,37 @@
     is.matrix(m) || inherits(m, "Matrix")
 } # END .CHECK_IF_MATRIX
 
-# Convenience wrapper for checking if an object is a graphNEL object
-# .check_if_graph <- function(g){
-#     inherits(g, "graphNEL")
-# }
+.check_if_data_matrix <- function(df){
+    is.data.frame(df) || is.matrix(df)
+}
+
+# Count missing values in a matrix or data.frame
+.count_na <- function(df){
+    if( !.check_if_data_matrix(X)){
+        stop("Input must be a data.frame or a matrix!")
+    }
+
+    sum(is.na(df))
+}
+
+# Special function to check types for each element in a list
+.list_classes <- function(li){
+    unlist(lapply(li, class))
+}
+
+# Return TRUE if every element of li inherits check.class, FALSE otherwise
+.check_list_class <- function(li, check.class){
+    all(unlist(lapply(li, function(x) inherits(x, check.class))))
+}
+
+# Output the class of each column in X, return as a character vector
+.col_classes <- function(X){
+    if( !.check_if_data_matrix(X)){
+        stop("Input must be a data.frame or a matrix!")
+    }
+
+    apply(X, 2, class)
+} # END .COL_CLASSES
 
 .cor_vector <- function(X){
 # This is now implicitly checked via .col_classes
@@ -41,14 +75,6 @@
 
     cors
 } # END .COR_VECTOR
-
-.col_classes <- function(X){
-    if( !is.data.frame(X) && !is.matrix(X)){
-        stop("Input must be a data.frame or a matrix!")
-    }
-
-    apply(X, 2, class)
-} # END .COL_CLASSES
 
 # .generate_key <- function(len = 15){
 #     chars <- c(1:10, LETTERS)
