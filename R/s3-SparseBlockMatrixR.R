@@ -224,3 +224,10 @@ as.matrix.SparseBlockMatrixR <- function(sbm){
 
     m
 } # END AS.MATRIX.SPARSEBLOCKMATRIXR
+
+# Check to see if an SBM object represents the zero matrix / null graph
+is.zero.SparseBlockMatrixR <- function(x){
+    check_if_zero <- (length(unlist(x$sbm$rows)) == 0)
+
+    check_if_zero
+} # END IS.ZERO.SPARSEBLOCKMATRIXR

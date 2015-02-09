@@ -210,3 +210,10 @@ print.sparse <- function(sp, pretty = TRUE){
     }
 
 } # END PRINT.SPARSE
+
+# Check to see if a sparse object represents the zero matrix
+is.zero.sparse <- function(x){
+    check_if_zero <- (length(x$rows) == 0)
+
+    check_if_zero
+} # END IS.ZERO.SPARSE

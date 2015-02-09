@@ -29,3 +29,5 @@ reIndexC <- function(x) UseMethod("reIndexC", x)
 reIndexR <- function(x) UseMethod("reIndexR", x)
 get.adjacency.matrix <- function(x) UseMethod("get.adjacency.matrix", x)
 get.sigmas <- function(x) UseMethod("get.sigmas", x)
+is.zero <- function(x) UseMethod("is.zero", x)
+
