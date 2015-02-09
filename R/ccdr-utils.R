@@ -27,8 +27,8 @@
 }
 
 # Count missing values in a matrix or data.frame
-.count_na <- function(df){
-    if( !.check_if_data_matrix(X)){
+.count_nas <- function(df){
+    if( !.check_if_data_matrix(df)){
         stop("Input must be a data.frame or a matrix!")
     }
 
