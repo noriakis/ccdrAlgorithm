@@ -4,7 +4,9 @@
 \alias{ccdr.run}
 \title{ccdr.run}
 \usage{
-ccdr.run(...)
+ccdr.run(data, betas, lambdas, lambdas.length = 20, gamma = 2,
+  error.tol = 1e-04, lambda.ratio = 0.01, max.iters, alpha = 10,
+  verbose = FALSE)
 }
 \description{
 Placeholder for what will eventually be the main function exported from this package
