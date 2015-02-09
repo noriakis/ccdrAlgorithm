@@ -1,7 +1,7 @@
 # Export everything during testing; use roxygen2 NAMESPACE in post-prod
 
 exportPattern("^[[:alpha:]]+")
-export(.ccdr.singleR)
-export(.ccdr.gridR)
+export(.ccdr_singleR)
+export(.ccdr_gridR)
 importFrom(Rcpp,sourceCpp)
 useDynLib(ccdr)
