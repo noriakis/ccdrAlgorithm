@@ -15,16 +15,22 @@
 #     .ccdr.singleR
 #
 
+#' @useDynLib ccdr
+#' @importFrom Rcpp sourceCpp
+NULL
+
 #' ccdr.run
 #'
 #' Placeholder for what will eventually be the main function exported from this package
+#' @export
 ccdr.run <- function(...){
     ### This is just a wrapper for the internal implementation given by .ccdr.gridR
     .ccdr.gridR(...)
 }
 
-#' ccdr.gridR
+#' .ccdr.gridR
 #'
+#' @export
 .ccdr.gridR <- function(X,
                         betas,
                         lambdas,
@@ -111,9 +117,10 @@ ccdr.run <- function(...){
     ccdr.out[1:(i-1)] # only return up to i - 1 since the last (ith) model would not have finished running anyway
 } # END CCDR.GRIDR
 
-#' ccdr.singleR
+#' .ccdr.singleR
 #'
-.ccdr.singleR <- function(c, # 2-8-15: need to rename cors
+#' @export
+.ccdr.singleR <- function(cors, # 2-8-15: renamed from 'c' to 'cors'
                           pp, nn,
                           betas,
                           lambda,
@@ -161,7 +168,7 @@ ccdr.run <- function(...){
 
     if(verbose) cat("Opening C++ connection...")
     t1.ccdr <- proc.time()[3]
-    ccdr.out <- singleCCDr(c,
+    ccdr.out <- singleCCDr(cors,
                            betas,
                            nn,
                            lambda,
