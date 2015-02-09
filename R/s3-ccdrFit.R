@@ -91,7 +91,7 @@ print.ccdrFit <- function(cf){
         sep = "")
 
     cat("\nPhi: \n")
-    print(cf$sbm)
+    print(as.matrix(cf$sbm))
 
     cat("\nRho: \n")
     print(cf$sbm$sigmas)
