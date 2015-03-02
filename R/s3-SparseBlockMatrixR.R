@@ -209,7 +209,10 @@ as.list.SparseBlockMatrixR <- function(sbm){
 # Convert FROM SparseBlockMatrixR TO matrix
 as.matrix.SparseBlockMatrixR <- function(sbm){
     pp <- length(sbm$rows)
-    m <- diag(rep(0, pp))
+    m <- matrix(0, nrow = pp, ncol = pp)
+
+    ### 2015-03-02: Why was I using diag to construct this matrix?
+    # m <- diag(rep(0, pp))
 
     if(sbm$start == 0) sbm <- reIndexR(sbm)
 
@@ -217,10 +220,11 @@ as.matrix.SparseBlockMatrixR <- function(sbm){
         m[sbm$rows[[j]], j] <- sbm$vals[[j]]
     }
 
-    attributes(m)$dim <- c(pp, pp)
-    attributes(m)$dimnames <- list()
-    attributes(m)$dimnames[[1]] <- as.character(1:nrow(m))
-    attributes(m)$dimnames[[2]] <- as.character(1:ncol(m))
+    ### 2015-03-02: Do not need to set dim attribute of matrix! (Already set by default constructor)
+    # attributes(m)$dim <- c(pp, pp)
+    # attributes(m)$dimnames <- list()
+    rownames(m) <- as.character(1:nrow(m))
+    colnames(m) <- as.character(1:ncol(m))
 
     m
 } # END AS.MATRIX.SPARSEBLOCKMATRIXR

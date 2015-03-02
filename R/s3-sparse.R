@@ -163,7 +163,7 @@ as.sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
         }
     }
 
-    sp <- sparse.list(list(rows = sp.rows, cols = sp.cols, vals = sp.vals, dim = c(pp, pp), start = 1))
+    sp <- sparse.list(list(rows = as.integer(sp.rows), cols = as.integer(sp.cols), vals = sp.vals, dim = c(pp, pp), start = 1))
 
     if(index == "R"){
         sp
@@ -190,7 +190,7 @@ as.matrix.sparse <- function(sp){
     }
 
     attributes(m)$dim <- sp$dim
-    attributes(m)$dimnames <- list()
+    # attributes(m)$dimnames <- list()
     rownames(m) <- as.character(1:nrow(m))
     colnames(m) <- as.character(1:ncol(m))
 
