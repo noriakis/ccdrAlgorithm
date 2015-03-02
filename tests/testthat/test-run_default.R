@@ -18,7 +18,7 @@ ss <- 2
 
 g <- generate_ordered_dag(pp, ss)
 d <- generate_data(g, nn)
-final <- ccdr.run(data = d$dat, lambdas.length = 20, lambda.ratio =  0.1, alpha = 3, verbose = FALSE)
+final <- ccdr.run(data = d$dat, lambdas.length = 20, lambdas.ratio =  0.1, alpha = 3, verbose = FALSE)
 
 test_that("Testing default behaviour of ccdr.gridR", {
     expect_is(final, "list")

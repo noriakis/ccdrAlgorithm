@@ -68,7 +68,7 @@ test_that("checks types for rows / cols / vals", {
     expect_error(sparse.list(li))
 
     ### Throws error if vals is not numeric
-    li <- list(rows = c(0L), cols = c(0L), vals = c(0L), dim = c(1,1), start = 0)
+    li <- list(rows = c(0L), cols = c(0L), vals = c("a"), dim = c(1,1), start = 0)
     expect_error(sparse.list(li))
 })
 
