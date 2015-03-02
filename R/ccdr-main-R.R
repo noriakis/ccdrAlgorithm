@@ -31,7 +31,7 @@ ccdr.run <- function(data,
                      lambdas.length = 20,
                      gamma = 2.0,
                      error.tol = 1e-4,
-                     lambda.ratio = 1e-2,
+                     lambdas.ratio = 1e-2,
                      max.iters,
                      alpha = 10,
                      verbose = FALSE
@@ -43,11 +43,11 @@ ccdr.run <- function(data,
                nlam = lambdas.length,
                gamma = gamma,
                eps = error.tol,
-               rlam = lambda.ratio,
+               rlam = lambdas.ratio,
                maxIters = max.iters,
                alpha = alpha,
                verbose = verbose)
-}
+} # END CCDR.RUN
 
 # .ccdr_call
 #
@@ -94,7 +94,10 @@ ccdr.run <- function(data,
 
         # If no grid of lambdas is passed, then use the standard log-scale that starts at
         #  max.lam = sqrt(nn) and descends to min.lam = rlam * max.lam
-        lambdas <- gen.lambdas(nn, rlam = rlam, nlam = as.integer(nlam))
+        lambdas <- generate.lambdas(nn,
+                                    lambdas.ratio = rlam,
+                                    lambdas.length = as.integer(nlam),
+                                    scale = "log")
     }
 
     ### Check lambdas
@@ -137,7 +140,7 @@ ccdr.run <- function(data,
                 as.integer(maxIters),
                 as.numeric(alpha),
                 verbose)
-}
+} # END .CCDR_CALL
 
 # .ccdr_gridR
 #
@@ -180,13 +183,9 @@ ccdr.run <- function(data,
         betas <- ccdr.out[[i]]$sbm
         betas <- reIndexC(betas) # use C-friendly indexing
 
-        # 07/16/14: Added code below to check edge threshold via alpha parameter
+        # 7-16-14: Added code below to check edge threshold via alpha parameter
         if(ccdr.out[[i]]$nedge > alpha * pp) break
     }
-
-    # The internal code for computing the run time does not include the time to compute correlations (t2.cor - t1.cor above),
-    #   but as with our implementation of the PC algorithm, we do not include it in the timing anyway. For small models
-    #   with p <= 500, this time is negligible anyway.
 
     ccdr.out[1:(i-1)] # only return up to i - 1 since the last (ith) model would not have finished running anyway
 } # END CCDR_GRIDR
@@ -216,7 +215,7 @@ ccdr.run <- function(data,
 
     ### Check betas
     if(.check_if_matrix(betas)){ # if the input is a matrix, convert to SBM object
-        betas <- SparseBlockMatrixR(betas)
+        betas <- SparseBlockMatrixR(betas) # if betas is non-numeric, SparseBlockMatrixR constructor should throw error
         betas <- reIndexC(betas) # use C-friendly indexing
     } else if(!is.SparseBlockMatrixR(betas)){ # otherwise check that it is an object of class SparseBlockMatrixR
         stop("Incompatible data passed for betas parameter: Should be either matrix or list in SparseBlockMatrixR format.")

@@ -24,7 +24,7 @@
 
 .check_if_data_matrix <- function(df){
     is.data.frame(df) || is.matrix(df)
-}
+} # END .CHECK_IF_DATA_MATRIX
 
 # Count missing values in a matrix or data.frame
 .count_nas <- function(df){
@@ -33,17 +33,23 @@
     }
 
     sum(is.na(df))
-}
+} # END .COUNT_NAS
 
-# Special function to check types for each element in a list
+# Special function to return types for each element in a list
 .list_classes <- function(li){
     unlist(lapply(li, class))
-}
+} # END .LIST_CLASSES
 
 # Return TRUE if every element of li inherits check.class, FALSE otherwise
 .check_list_class <- function(li, check.class){
+    if(length(li) == 0){
+        warning("List contains no elements!")
+
+        TRUE # default to true if empty
+    }
+
     all(unlist(lapply(li, function(x) inherits(x, check.class))))
-}
+} # END .CHECK_LIST_CLASSES
 
 # Output the class of each column in X, return as a character vector
 .col_classes <- function(X){
