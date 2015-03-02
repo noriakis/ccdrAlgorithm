@@ -38,7 +38,7 @@ using namespace Rcpp;
 //   Variable Types
 //      std::vector<double>: NumericVector
 //      std::vector<int>: IntegerVector
-//   
+//
 //   Functions
 //      as<>: convert Rcpp object to C++ object
 //      wrap<>: convert C++ to Rcpp object (type handled automatically)
@@ -55,7 +55,7 @@ List gridCCDr(NumericVector cors,
               int verbose
               ){
     SparseBlockMatrix betas = SparseBlockMatrix(init_betas);
-    
+
     #ifdef _DEBUG_ON_
         //
         // log.h logging
@@ -63,10 +63,10 @@ List gridCCDr(NumericVector cors,
         FILE* pFile = fopen("/Users/Zigmund/Desktop/ccdr_proj_LOG_FILE.txt", "w");
         Output2FILE::Stream() = pFile;
         FILELog::ReportingLevel() = logDEBUG1;
-        
+
         FILE_LOG(logINFO) << "Log file opened.";
     #endif
-    
+
     std::vector<SparseBlockMatrix> grid_betas;
     grid_betas = gridCCDr(as< std::vector<double> >(cors),
                           betas,
@@ -74,14 +74,14 @@ List gridCCDr(NumericVector cors,
                           as< std::vector<double> >(lambdas),
                           as< std::vector<double> >(params),
                           verbose);
-    
+
     std::vector<List> return_betas;
     for(int i = 0; i < grid_betas.size(); ++i){
 //    while(grid_betas.size() > 0){
         return_betas.push_back(grid_betas[i].get_R(lambdas[i]));
 //        grid_betas.erase(grid_betas.begin()); // remove the data that has been written already
     }
-    
+
     return wrap(return_betas);
 }
 
@@ -95,7 +95,7 @@ List singleCCDr(NumericVector cors,
                 ){
 
     SparseBlockMatrix betas = SparseBlockMatrix(init_betas);
-    
+
     betas = singleCCDr(as< std::vector<double> >(cors),
                        betas,
                        nn,
@@ -107,8 +107,8 @@ List singleCCDr(NumericVector cors,
     //   as opposed to within gridCCDr, which automatically recomputes the active set size
     //
     betas.recomputeActiveSetSize(true);
-    
-    
+
+
     return betas.get_R(lambda);
 }
 
