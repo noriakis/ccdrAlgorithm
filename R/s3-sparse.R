@@ -81,6 +81,14 @@ sparse.list <- function(li){
         stop("start attribute must be 0 (C-style) or 1 (R-style)!")
     }
 
+    if(!is.integer(li$rows) || !is.integer(li$cols)){
+        stop("rows / cols must both be integers!")
+    }
+
+    if(!is.numeric(li$vals)){
+        stop("vals must be numeric!")
+    }
+
     structure(li, class = "sparse")
 } # END SPARSE.LIST
 
@@ -115,7 +123,7 @@ as.sparse.matrix <- function(m, index = "R"){
         cols[k] <- col
     }
 
-    sp <- sparse.list(list(rows = rows, cols = cols, vals = vals, dim = c(pp, pp), start = 0))
+    sp <- sparse.list(list(rows = as.integer(rows), cols = as.integer(cols), vals = as.numeric(vals), dim = c(pp, pp), start = 0))
 
     if(index == "R"){
         reIndexR(sp)
@@ -183,8 +191,8 @@ as.matrix.sparse <- function(sp){
 
     attributes(m)$dim <- sp$dim
     attributes(m)$dimnames <- list()
-    attributes(m)$dimnames[[1]] <- as.character(1:nrow(m))
-    attributes(m)$dimnames[[2]] <- as.character(1:ncol(m))
+    rownames(m) <- as.character(1:nrow(m))
+    colnames(m) <- as.character(1:ncol(m))
 
     m
 } # END AS.MATRIX.SPARSE
