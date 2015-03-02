@@ -26,11 +26,17 @@
 #
 #
 
+#------------------------------------------------------------------------------#
+# is.sparse
+#
 is.sparse <- function(sp){
     inherits(sp, "sparse")
 } # END IS.SPARSE
 
-# Re-indexing TO C for sparse objects
+#------------------------------------------------------------------------------#
+# reIndexC.sparse
+#  Re-indexing TO C for sparse objects
+#
 reIndexC.sparse <- function(sp){
     if(sp$start == 0){
         warning("This object already uses C-style indexing!")
@@ -44,7 +50,10 @@ reIndexC.sparse <- function(sp){
     sp
 } # END REINDEXC.SPARSE
 
-# Re-indexing TO R for sparse objects
+#------------------------------------------------------------------------------#
+# reIndexR.sparse
+#  Re-indexing TO R for sparse objects
+#
 reIndexR.sparse <- function(sp){
     if(sp$start == 1){
         warning("This object already uses R-style indexing!")
@@ -58,7 +67,10 @@ reIndexR.sparse <- function(sp){
     sp
 } # END REINDEXR.SPARSE
 
-# List constructor
+#------------------------------------------------------------------------------#
+# sparse.list
+#  List constructor
+#
 sparse.list <- function(li){
 
     if( !is.list(li)){
@@ -92,19 +104,10 @@ sparse.list <- function(li){
     structure(li, class = "sparse")
 } # END SPARSE.LIST
 
+#------------------------------------------------------------------------------#
+# sparse.matrix
 #
-# Convert FROM list TO sparse
-#
-as.sparse.list <- function(li){
-    sparse.list(li)
-} # END AS.SPARSE.LIST
-
-# Convert FROM matrix TO sparse
-#
-# By default, return the object using R indexing. If desired, the method can return C-style indexing by setting
-#   index = "C".
-as.sparse.matrix <- function(m, index = "R"){
-
+sparse.matrix <- function(m, index = "R"){
     if( nrow(m) != ncol(m)) stop("Input matrix must be square!") # 2-7-15: Why does it need to be square?
 
     if(index != "R" && index != "C") stop("Invalid entry for index parameter: Must be either 'R' or 'C'!")
@@ -130,13 +133,12 @@ as.sparse.matrix <- function(m, index = "R"){
     } else{
         sp
     }
-} # END AS.SPARSE.MATRIX
+} # END SPARSE.MATRIX
 
-# Convert FROM SparseBlockMatrixR TO sparse
+#------------------------------------------------------------------------------#
+# sparse.SparseBlockMatrixR
 #
-# By default, return the object using R indexing. If desired, the method can return C-style indexing by setting
-#   index = "C".
-as.sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
+sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
 
     if(index != "R" && index != "C") stop("Invalid entry for index parameter: Must be either 'R' or 'C'!")
 
@@ -171,9 +173,38 @@ as.sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
         sp$start <- 0
         reIndexC(sp)
     }
+} # END SPARSE.SPARSEBLOCKMATRIXR
+
+#------------------------------------------------------------------------------#
+# as.sparse.list
+#  Convert FROM list TO sparse
+#
+as.sparse.list <- function(li){
+    sparse.list(li)
+} # END AS.SPARSE.LIST
+
+#------------------------------------------------------------------------------#
+# as.sparse.matrix
+#  Convert FROM matrix TO sparse
+#  By default, return the object using R indexing. If desired, the method can return C-style indexing by setting
+#    index = "C".
+as.sparse.matrix <- function(m, index = "R"){
+    sparse.matrix(m, index)
+} # END AS.SPARSE.MATRIX
+
+#------------------------------------------------------------------------------#
+# as.sparse.SparseBlockMatrixR
+#  Convert FROM SparseBlockMatrixR TO sparse
+#  By default, return the object using R indexing. If desired, the method can return C-style indexing by setting
+#    index = "C".
+as.sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
+    sparse.SparseBlockMatrixR(sbm, index)
 } # END AS.SPARSE.SPARSEBLOCKMATRIXR
 
-# Convert FROM sparse TO matrix
+#------------------------------------------------------------------------------#
+# as.matrix.sparse
+#  Convert FROM sparse TO matrix
+#
 as.matrix.sparse <- function(sp){
 
     if( !is.sparse(sp)){
@@ -197,17 +228,20 @@ as.matrix.sparse <- function(sp){
     m
 } # END AS.MATRIX.SPARSE
 
-# Convert FROM sparse TO list
+#------------------------------------------------------------------------------#
+# as.list.sparse
+#  Convert FROM sparse TO list
+#
 as.list.sparse <- function(sp){
 
     list(rows = sp$rows, cols = sp$cols, vals = sp$cols, dim = sp$dim, start = sp$start)
 } # END AS.LIST.SPARSE
 
-#
-# Print function for sparse objects
-#
-# By default, format the output as a three-column matrix [cols | rows | vals] ordered by increasing columns.
-#   Optionally, set pretty = FALSE to print the sparse object as a list.
+#------------------------------------------------------------------------------#
+# print.sparse
+#  Print function for sparse objects
+#  By default, format the output as a three-column matrix [cols | rows | vals] ordered by increasing columns.
+#    Optionally, set pretty = FALSE to print the sparse object as a list.
 print.sparse <- function(sp, pretty = TRUE){
     if(pretty){
         out <- cbind(sp$cols, sp$rows, sp$vals)
@@ -219,7 +253,10 @@ print.sparse <- function(sp, pretty = TRUE){
 
 } # END PRINT.SPARSE
 
-# Check to see if a sparse object represents the zero matrix
+#------------------------------------------------------------------------------#
+# is.zero.sparse
+#  Check to see if a sparse object represents the zero matrix
+#
 is.zero.sparse <- function(x){
     check_if_zero <- (length(x$rows) == 0)
 

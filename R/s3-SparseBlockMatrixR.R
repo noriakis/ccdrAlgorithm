@@ -35,11 +35,17 @@
 #
 #
 
+#------------------------------------------------------------------------------#
+# is.SparseBlockMatrixR
+#
 is.SparseBlockMatrixR <- function(sbm){
     inherits(sbm, "SparseBlockMatrixR")
 } # END IS.SPARSEBLOCKMATRIXR
 
-# Re-indexing TO C for SparseBlockMatrixR objects
+#------------------------------------------------------------------------------#
+# reIndexC.SparseBlockMatrixR
+#  Re-indexing TO C for SparseBlockMatrixR objects
+#
 reIndexC.SparseBlockMatrixR <- function(sbm){
     #
     # Using lapply does NOT work here: if one of the list elements is an empty vector, adding 1 will
@@ -53,24 +59,15 @@ reIndexC.SparseBlockMatrixR <- function(sbm){
     sbm$rows <- lapply(sbm$rows, function(x){ x - 1L})
     if(length(sbm$blocks) > 0) sbm$blocks <- lapply(sbm$blocks, function(x){ x - 1L})
 
-# OLD CODE
-#     if(length(sbm$blocks) > 0){
-#         for(j in 1:length(sbm$rows)){
-#             if(length(sbm$rows[[j]]) > 0) sbm$rows[[j]] <- sbm$rows[[j]] - 1
-#             if(length(sbm$blocks[[j]]) > 0) sbm$blocks[[j]] <- sbm$blocks[[j]] - 1
-#         }
-#     } else{
-#         for(j in 1:length(sbm$rows)){
-#             if(length(sbm$rows[[j]]) > 0) sbm$rows[[j]] <- sbm$rows[[j]] - 1
-#         }
-#     }
-
     sbm$start <- 0
 
     sbm
 } # END REINDEXC.SPARSEBLOCKMATRIXR
 
-# Re-indexing TO R for SparseBlockMatrixR objects
+#------------------------------------------------------------------------------#
+# reIndexR.SparseBlockMatrixR
+#  Re-indexing TO R for SparseBlockMatrixR objects
+#
 reIndexR.SparseBlockMatrixR <- function(sbm){
     #
     # Using lapply does NOT work here: if one of the list elements is an empty vector, adding 1 will
@@ -84,24 +81,15 @@ reIndexR.SparseBlockMatrixR <- function(sbm){
     sbm$rows <- lapply(sbm$rows, function(x){ x + 1L})
     if(length(sbm$blocks) > 0) sbm$blocks <- lapply(sbm$blocks, function(x){ x + 1L})
 
-# OLD CODE
-#     if(length(sbm$blocks) > 0){
-#         for(j in 1:length(sbm$rows)){
-#             if(length(sbm$rows[[j]]) > 0) sbm$rows[[j]] <- sbm$rows[[j]] + 1
-#             if(length(sbm$blocks[[j]]) > 0) sbm$blocks[[j]] <- sbm$blocks[[j]] + 1
-#         }
-#     } else{
-#         for(j in 1:length(sbm$rows)){
-#             if(length(sbm$rows[[j]]) > 0) sbm$rows[[j]] <- sbm$rows[[j]] + 1
-#         }
-#     }
-#
     sbm$start <- 1
 
     sbm
 } # END REINDEXR.SPARSEBLOCKMATRIXR
 
-# List constructor
+#------------------------------------------------------------------------------#
+# SparseBlockMatrixR.list
+#  List constructor
+#
 SparseBlockMatrixR.list <- function(li){
 
     if( !is.list(li)){
@@ -120,7 +108,10 @@ SparseBlockMatrixR.list <- function(li){
     structure(li, class = "SparseBlockMatrixR")
 } # END SPARSEBLOCKMATRIXR.LIST
 
-# sparse object constructor
+#------------------------------------------------------------------------------#
+# SparseBlockMatrixR.sparse
+#  sparse object constructor
+#
 SparseBlockMatrixR.sparse <- function(sp){
 
     if( !is.sparse(sp)){
@@ -173,7 +164,10 @@ SparseBlockMatrixR.sparse <- function(sp){
     SparseBlockMatrixR.list(list(rows = sbm.rows, vals = sbm.vals, blocks = sbm.blocks, sigmas = sbm.sigmas, start = 1))
 } # END SPARSEBLOCKMATRIXR.SPARSE
 
-# matrix constructor
+#------------------------------------------------------------------------------#
+# SparseBlockMatrixR.matrix
+#  matrix constructor
+#
 SparseBlockMatrixR.matrix <- function(m){
 
     if(nrow(m) != ncol(m)) stop("Input matrix must be square!")
@@ -183,30 +177,43 @@ SparseBlockMatrixR.matrix <- function(m){
     SparseBlockMatrixR.sparse(sp)
 } # END SPARSEBLOCKMATRIXR.MATRIX
 
-# Convert FROM list TO SparseBlockMatrixR
+#------------------------------------------------------------------------------#
+# as.SparseBlockMatrixR.list
+#  Convert FROM list TO SparseBlockMatrixR
+#
 as.SparseBlockMatrixR.list <- function(li){
     SparseBlockMatrixR.list(li)
 } # END AS.SPARSEBLOCKMATRIXR.LIST
 
-# Convert FROM sparse TO SparseBlockMatrixR
+#------------------------------------------------------------------------------#
+# as.SparseBlockMatrixR.sparse
+#  Convert FROM sparse TO SparseBlockMatrixR
+#
 as.SparseBlockMatrixR.sparse <- function(sp){
     SparseBlockMatrixR.sparse(sp)
 } # END AS.SPARSEBLOCKMATRIXR.SPARSE
 
-# Convert FROM matrix TO SparseBlockMatrixR
+#------------------------------------------------------------------------------#
+# as.SparseBlockMatrixR.matrix
+#  Convert FROM matrix TO SparseBlockMatrixR
+#
 as.SparseBlockMatrixR.matrix <- function(m){
     SparseBlockMatrixR.matrix(m)
 } # END AS.SPARSEBLOCKMATRIXR.MATRIX
 
-# Convert FROM SparseBlockMatrixR TO list
-#
+#------------------------------------------------------------------------------#
+# as.list.SparseBlockMatrixR
+#  Convert FROM SparseBlockMatrixR TO list
 #  Even though internally the SBM object is a list, we must still manually define this function
 #
 as.list.SparseBlockMatrixR <- function(sbm){
     list(rows = sbm$rows, vals = sbm$vals, blocks = sbm$blocks, sigmas = sbm$sigmas, start = sbm$start)
 } # END AS.LIST.SPARSEBLOCKMATRIXR
 
-# Convert FROM SparseBlockMatrixR TO matrix
+#------------------------------------------------------------------------------#
+# as.matrix.SparseBlockMatrixR
+#  Convert FROM SparseBlockMatrixR TO matrix
+#
 as.matrix.SparseBlockMatrixR <- function(sbm){
     pp <- length(sbm$rows)
     m <- matrix(0, nrow = pp, ncol = pp)
@@ -229,7 +236,10 @@ as.matrix.SparseBlockMatrixR <- function(sbm){
     m
 } # END AS.MATRIX.SPARSEBLOCKMATRIXR
 
+#------------------------------------------------------------------------------#
+# is.zero.SparseBlockMatrixR
 # Check to see if an SBM object represents the zero matrix / null graph
+#
 is.zero.SparseBlockMatrixR <- function(x){
     check_if_zero <- (length(unlist(x$sbm$rows)) == 0)
 
