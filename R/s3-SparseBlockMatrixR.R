@@ -94,9 +94,17 @@ SparseBlockMatrixR.list <- function(li){
 
     if( !is.list(li)){
         stop("Input must be a list!")
-    } else if( length(li) != 5 || !setequal(names(li), c("rows", "vals", "blocks", "sigmas", "start"))){
+    }
+
+    if( length(li) != 5 || !setequal(names(li), c("rows", "vals", "blocks", "sigmas", "start"))){
         stop("Input is not coercable to an object of type SparseBlockMatrixR, check list for the following elements: rows (list), vals (list), blocks (list), sigmas (numeric), start (integer)")
-    } else if( length(li$rows) != length(li$vals)){
+    }
+
+    if(!is.list(li$rows) || !is.list(li$vals)){
+        stop("rows and vals must both be lists of length pp!")
+    }
+
+    if( length(li$rows) != length(li$vals)){
         #
         # We enforce that rows and vals must have the same length, but relax this assumption for blocks and sigmas
         #  since they are mostly internal to the CCDr algorithm, and once the algorithm has run we may want to free

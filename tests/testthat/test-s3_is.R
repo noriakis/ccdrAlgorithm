@@ -13,7 +13,7 @@ test_that("is.sparse works as expected", {
 ### S3 SparseBlockMatrixR
 test_that("is.SparseBlockMatrixR works as expected", {
     # "rows", "vals", "blocks", "sigmas", "start"
-    li <- list(rows = integer(0), vals = numeric(0), blocks = integer(0), sigmas = numeric(0), start = 1)
+    li <- list(rows = list(integer(0)), vals = list(numeric(0)), blocks = list(integer(0)), sigmas = numeric(0), start = 1)
     sbm <- SparseBlockMatrixR(li)
     expect_is(sbm, "SparseBlockMatrixR")
 
