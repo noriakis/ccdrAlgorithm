@@ -32,7 +32,7 @@ ccdr.run <- function(data,
                      gamma = 2.0,
                      error.tol = 1e-4,
                      lambdas.ratio = 1e-2,
-                     max.iters,
+                     max.iters = NULL,
                      alpha = 10,
                      verbose = FALSE
 ){
@@ -120,7 +120,7 @@ ccdr.run <- function(data,
 
     # This parameter can be set by the user, but in order to prevent the algorithm from taking too long to run
     #  it is a good idea to keep the threshold used by default which is O(sqrt(pp))
-    if(missing(maxIters)){
+    if(is.null(maxIters)){
         maxIters <- 2 * max(10, sqrt(pp))
     }
 
