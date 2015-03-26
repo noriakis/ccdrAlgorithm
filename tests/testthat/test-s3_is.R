@@ -34,3 +34,14 @@ test_that("is.ccdrFit works as expected", {
     expect_true(is.ccdrFit(cf))
     expect_false(is.ccdrFit(list(0)))
 })
+
+test_that("is.ccdrFit checks correctness of nedge", {
+    m <- rbind(c(0,  0,  0),
+           c(1,  0,  0),
+           c(0, 2.1, 0))
+    sbm <- SparseBlockMatrixR(m)
+
+    # nedge = 2, but is set to 0 below: Should throw error!
+    li <- list(sbm = sbm, lambda = pi, nedge = 0, pp = 1, nn = 10, time = runif(1))
+    expect_error(ccdrFit(li))
+})
