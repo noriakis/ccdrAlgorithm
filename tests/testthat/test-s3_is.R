@@ -22,4 +22,15 @@ test_that("is.SparseBlockMatrixR works as expected", {
 })
 
 ### S3 ccdrFit
-# MISSING!
+test_that("is.ccdrFit works as expected", {
+    # "sbm", "lambda", "nedge", "pp", "nn", "time"
+    li <- list(rows = list(integer(0)), vals = list(numeric(0)), blocks = list(integer(0)), sigmas = numeric(0), start = 1)
+    sbm <- SparseBlockMatrixR(li)
+
+    li <- list(sbm = sbm, lambda = pi, nedge = 0, pp = 1, nn = 10, time = runif(1))
+    cf <- ccdrFit(li)
+    expect_is(cf, "ccdrFit")
+
+    expect_true(is.ccdrFit(cf))
+    expect_false(is.ccdrFit(list(0)))
+})
