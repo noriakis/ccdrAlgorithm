@@ -111,7 +111,8 @@ ccdr.run <- function(data,
     ### By default, set the initial guess for betas to be all zeroes
     if(missing(betas)){
         betas <- matrix(0, nrow = pp, ncol = pp)
-        betas <- SparseBlockMatrixR(betas)
+        # betas <- SparseBlockMatrixR(betas) # 2015-03-26: Deprecated and replaced with .init_sbm below
+        betas <- .init_sbm(betas, rep(0, pp))
 
         # If the initial matrix is the zero matrix, indexing does not matter so we don't need to use reIndexC here
         #   Still need to set start = 0, though.

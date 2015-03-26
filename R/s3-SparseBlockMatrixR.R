@@ -134,6 +134,8 @@ SparseBlockMatrixR.sparse <- function(sp){
     sbm.rows <- vector("list", length = pp)
     sbm.vals <- vector("list", length = pp)
     sbm.blocks <- vector("list", length = pp)
+
+    warning("Attempting to coerce sparse object to SparseBlockMatrixR with no data for sigmas: \n   Setting sigma_j = 0 by default.")
     sbm.sigmas <- rep(0, pp) ### 2015-03-25: check this default!
 
     # how to vectorize this???
@@ -253,3 +255,21 @@ is.zero.SparseBlockMatrixR <- function(x){
 
     check_if_zero
 } # END IS.ZERO.SPARSEBLOCKMATRIXR
+
+#------------------------------------------------------------------------------#
+# .init_sbm
+# Internal function for initializing a SparseBlockMatrixR object directly
+#  from a matrix AND a sigmas vector
+#
+.init_sbm <- function(init_matrix, init_sigmas){
+    stopifnot(.check_if_matrix(init_matrix))
+    stopifnot(nrow(init_matrix) == ncol(init_matrix))
+
+    stopifnot(is.numeric(init_sigmas))
+    stopifnot(length(init_sigmas) == nrow(init_matrix))
+
+    sbm <- suppressWarnings(SparseBlockMatrixR(init_matrix)) # suppress warnings since we are working in a controlled environment
+    sbm$sigmas <- init_sigmas
+
+    sbm
+} # END .INIT_SBM
