@@ -21,9 +21,55 @@
 #' @importFrom Rcpp sourceCpp
 NULL
 
-#' ccdr.run
+#' Main CCDr Algorithm
 #'
-#' Placeholder for what will eventually be the main function exported from this package
+#' Estimate a Bayesian network (directed acyclic graph) from observational data using the
+#' CCDr algorithm as described in \href{http://arxiv.org/abs/1401.0852}{Aragam and Zhou (2015), JMLR}.
+#'
+#' Instead of producing a single estimate, this algorithm computes a solution path of estimates based
+#' on the values supplied to \code{lambdas} or \code{lambdas.length}. The CCDr algorithm approximates
+#' the solution to a nonconvex optimization problem using coordinate descent. Instead of AIC or BIC,
+#' CCDr uses continuous regularization based on concave penalties such as the minimax concave penalty
+#' (MCP).
+#'
+#' This implementation includes two options for the penalty: (1) MCP, and (2) L1 (or Lasso). This option
+#' is controlled by the \code{gamma} argument.
+#'
+#' @param data Data matrix. Must be numeric and contain no missing values.
+#' @param betas Initial guess for the algorithm. Represents the weighted adjacency matrix
+#'              of a DAG where the algorithm will begin searching for an optimal structure.
+#' @param lambdas (optional) Numeric vector containing a grid of lambda values (i.e. regularization
+#'                parameters) to use in the solution path. If missing, a suitable value will be automatically
+#'                computed (see also \code{lambdas.ratio} and \code{lambdas.length} arguments).
+#' @param lambdas.length Integer number of values to include in the solution path. If \code{lambdas}
+#'                       has also been specified, this value must also match the length of \code{lambdas}.
+#'                       Note also that the final solution path may contain fewer estimates (see
+#'                       \code{alpha}).
+#' @param gamma Value of concavity parameter. If \code{gamma > 0}, then the MCP will be used
+#'              with \code{gamma} as the concavity parameter. If \code{gamma < 0}, then the L1 penalty
+#'              will be used and this value is otherwise ignored.
+#' @param error.tol Error tolerance for the algorithm, used to test for convergence.
+#' @param lambdas.ratio Ratio between the maximum lambda value and the minimum lambda value in the solution
+#'                      path. Note that by default, the maximum value is \code{sqrt(nrow(data))}.
+#' @param max.iters Maximum number of iterations for each internal sweep.
+#' @param alpha Threshold parameter used to terminate the algorithm whenever the number of edges in the
+#'              current estimation is \code{> alpha * ncol(data)}.
+#' @param verbose \code{TRUE / FALSE} whether or not to print out progress and summary reports.
+#'
+#' @examples
+#'
+#' ### Generate some random data
+#' dat <- matrix(rnorm(1000), nrow = 20)
+#'
+#' ### Run with default settings
+#' ccdr.run(data = dat)
+#'
+#' ### Optional: Adjust settings
+#' pp <- ncol(dat)
+#' init.betas <- matrix(0, nrow = pp)                         # initialize algorithm with a random initial value
+#' init.betas[1,2] <- init.betas[1,3] <- init.betas[4,2] <- 1 #
+#' ccdr.run(data = dat, betas = init.betas, lambdas.length = 10, lambdas.ratio = 0.1, alpha = 10, verbose = TRUE)
+#'
 #' @export
 ccdr.run <- function(data,
                      betas,
