@@ -49,7 +49,7 @@
     }
 
     all(unlist(lapply(li, function(x) inherits(x, check.class))))
-} # END .CHECK_LIST_CLASSES
+} # END .CHECK_LIST_CLASS
 
 # Output the class of each column in X, return as a character vector
 .col_classes <- function(X){

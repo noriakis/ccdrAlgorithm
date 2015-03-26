@@ -134,7 +134,7 @@ SparseBlockMatrixR.sparse <- function(sp){
     sbm.rows <- vector("list", length = pp)
     sbm.vals <- vector("list", length = pp)
     sbm.blocks <- vector("list", length = pp)
-    sbm.sigmas <- rep(0, pp)
+    sbm.sigmas <- rep(0, pp) ### 2015-03-25: check this default!
 
     # how to vectorize this???
     for(j in 1:pp){
