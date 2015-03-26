@@ -242,7 +242,7 @@ ccdr.run <- function(data,
 
     ### alpha check is in .ccdr_gridR
 
-    if(verbose) cat("Opening C++ connection...")
+    # if(verbose) cat("Opening C++ connection...")
     t1.ccdr <- proc.time()[3]
     ccdr.out <- singleCCDr(cors,
                            betas,
@@ -251,7 +251,7 @@ ccdr.run <- function(data,
                            c(gamma, eps, maxIters, alpha),
                            verbose = verbose)
     t2.ccdr <- proc.time()[3]
-    if(verbose) cat("C++ connection closed. Total time in C++: ", t2.ccdr-t1.ccdr, "\n")
+    # if(verbose) cat("C++ connection closed. Total time in C++: ", t2.ccdr-t1.ccdr, "\n")
 
     #
     # Convert output back to SBM format

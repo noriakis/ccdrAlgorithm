@@ -26,7 +26,7 @@ generate.lambdas <- function(nn,
                  lambdas.ratio = lambdas.ratio,
                  lambdas.length = lambdas.length,
                  scale = scale)
-} # END .GEN.LAMBDAS
+} # END GENERATE.LAMBDAS
 
 # .gen_lambdas
 #  Internal implementation of generate.lambdas
@@ -47,4 +47,4 @@ generate.lambdas <- function(nn,
     }
 
     lambdas
-} # END .GEN.LAMBDAS
+} # END .GEN_LAMBDAS
