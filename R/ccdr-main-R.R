@@ -166,7 +166,7 @@ ccdr.run <- function(data,
 
     ccdr.out <- list()
     for(i in 1:nlam){
-        if(verbose) cat("Working on lambda = ", lambdas[i], " [", i, "/", nlam, "]\n", sep = "")
+        if(verbose) message("Working on lambda = ", round(lambdas[i], 5), " [", i, "/", nlam, "]")
 
         t1.ccdr <- proc.time()[3]
         ccdr.out[[i]] <- .ccdr_singleR(cors,
@@ -184,8 +184,17 @@ ccdr.run <- function(data,
         betas <- ccdr.out[[i]]$sbm
         betas <- reIndexC(betas) # use C-friendly indexing
 
+        if(verbose){
+            test.nedge <- sum(as.matrix(betas) != 0)
+            message("  Estimated number of edges: ", ccdr.out[[i]]$nedge, " / test = ", test.nedge)
+            # message("  Estimated total variance: ", sum(1 / (betas$sigmas)^2))
+        }
+
         # 7-16-14: Added code below to check edge threshold via alpha parameter
-        if(ccdr.out[[i]]$nedge > alpha * pp) break
+        if(ccdr.out[[i]]$nedge > alpha * pp){
+            message("Edge threshold met, terminating algorithm with ", ccdr.out[[i-1]]$nedge, " edges.")
+            break
+        }
     }
 
     ccdr.out[1:(i-1)] # only return up to i - 1 since the last (ith) model would not have finished running anyway
@@ -195,7 +204,7 @@ ccdr.run <- function(data,
 #
 #   Internal subroutine for handling calls to singleCCDr: This is the only place where C++ is directly
 #    called. Type-checking is strongly enforced here.
-.ccdr_singleR <- function(cors,      # 2-8-15: renamed from 'c' to 'cors'
+.ccdr_singleR <- function(cors,
                           pp, nn,
                           betas,
                           lambda,
