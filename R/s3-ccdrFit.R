@@ -59,8 +59,8 @@ get.sigmas.ccdrFit <- function(cf){
 
 # Operates on a list of ccdrFit objects
 get.times <- function(li){
-    check.class <- all(unlist(lapply(li, function(x){ is.ccdrFit(x)})))
-    if(!check.class){
+    # check.class <- all(unlist(lapply(li, function(x){ is.ccdrFit(x)})))
+    if(.check_list_class(li, "ccdrFit")){
         stop("Some component is not of type ccdrFit -- this function only works on lists of ccdrFit objects.")
     }
 
@@ -72,8 +72,8 @@ get.times <- function(li){
 
 # Also operates on a list of ccdrFit objects
 get.lambdas <- function(li){
-    check.class <- all(unlist(lapply(li, function(x){ is.ccdrFit(x)})))
-    if(!check.class){
+    # check.class <- all(unlist(lapply(li, function(x){ is.ccdrFit(x)})))
+    if(.check_list_class(li, "ccdrFit")){
         stop("Some component is not of type ccdrFit -- this function only works on lists of ccdrFit objects.")
     }
 
