@@ -262,3 +262,16 @@ is.zero.sparse <- function(x){
 
     check_if_zero
 } # END IS.ZERO.SPARSE
+
+#------------------------------------------------------------------------------#
+# .num_edges.sparse
+# Internal function for returning the number of edges in a sparse object
+#
+.num_edges.sparse <- function(sp){
+    ### Testing only for now
+    if(length(which(abs(sp$vals) > .MACHINE_EPS)) != length(sp$rows)){
+        stop("Error in .num_edges.sparse! Please check source code.")
+    }
+
+    length(which(abs(sp$vals) > .MACHINE_EPS))
+} # END .NUM_EDGES.SPARSE

@@ -273,3 +273,12 @@ is.zero.SparseBlockMatrixR <- function(x){
 
     sbm
 } # END .INIT_SBM
+
+#------------------------------------------------------------------------------#
+# .num_edges.SparseBlockMatrixR
+# Internal function for returning the number of edges in a SparseBlockMatrixR
+#  object
+#
+.num_edges.SparseBlockMatrixR <- function(sbm){
+    length(unlist(lapply(sbm$vals, function(z) which(abs(z) > .MACHINE_EPS))))
+} # END .NUM_EDGES.SPARSEBLOCKMATRIXR

@@ -34,12 +34,22 @@ is.ccdrFit <- function(cf){
 # Constructor
 ccdrFit.list <- function(li){
 
+    #
+    # Need to be careful when using this constructor directly since it allows the nedge
+    #  component to be different from the actual number of edges stored in the SBM object.
+    #  This is allowed for efficiency reasons while running the main algorithm.
+    #
+    # UPDATE: An explicit check has been added for now.
+    #
+
     if( !is.list(li)){
         stop("Input must be a list!")
     } else if( length(li) != 6 || !setequal(names(li), c("sbm", "lambda", "nedge", "pp", "nn", "time"))){
         stop("Input is not coercable to an object of type ccdrFit, check list for the following elements: sbm (SparseBlockMatrixR), lambda (numeric), nedge (integer), pp (integer), nn (integer), time (numeric or NA)")
     } else if( !is.SparseBlockMatrixR(li$sbm)){
         stop("'sbm' component must be a valid SparseBlockMatrixR object!")
+    } else if(.num_edges(li$sbm) != li$nedge){
+        stop("Attempting to set nedge to an improper value: Must be equal to the number of nonzero values in sbm.")
     }
 
     structure(li, class = "ccdrFit")

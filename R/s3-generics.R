@@ -31,3 +31,6 @@ get.adjacency.matrix <- function(x) UseMethod("get.adjacency.matrix", x)
 get.sigmas <- function(x) UseMethod("get.sigmas", x)
 is.zero <- function(x) UseMethod("is.zero", x)
 
+# Internal generics
+.num_edges <- function(x) UseMethod(".num_edges", x)
+
