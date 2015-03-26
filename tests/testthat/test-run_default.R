@@ -22,7 +22,16 @@ final <- ccdr.run(data = d$dat, lambdas.length = 20, lambdas.ratio =  0.1, alpha
 
 test_that("Testing default behaviour of ccdr.gridR", {
     expect_is(final, "list")
+
+    ### Check output types
     for(i in seq_along(final)){
         expect_is(final[[i]], "ccdrFit")
+    }
+
+    ### Check consistency of nedge
+    for(i in seq_along(final)){
+        matrix.nedge <- sum(as.matrix(final[[i]]$sbm) != 0)
+        sbm.nedge <- .num_edges(final[[i]]$sbm)
+        expect_equal(final[[i]]$nedge, sbm.nedge, matrix.nedge)
     }
 })
