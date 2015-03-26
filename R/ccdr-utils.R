@@ -81,10 +81,3 @@
 
     cors
 } # END .COR_VECTOR
-
-# .generate_key <- function(len = 15){
-#     chars <- c(1:10, LETTERS)
-#     key <- paste(sample(chars, len), sep="", collapse="")
-#
-#     key
-# }
