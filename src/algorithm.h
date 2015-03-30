@@ -72,16 +72,17 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,   // array contain
 );
 
 // prototype for computeEdgeLoss
-void computeEdgeLoss(const double betaUpdate,
-                     const unsigned int a,
-                     const unsigned int b,
-                     const double lambda,
-                     const unsigned int nn,
-                     SparseBlockMatrix& betas,
-                     const PenaltyFunction& pen,
-                     const std::vector<double>& cors,
-                     double S[],
-                     const int verbose);
+void computeEdgeLoss(const double betaUpdate,           // proposed new value of beta_ab
+                     const unsigned int a,              // initial node (i.e. update beta_ab)
+                     const unsigned int b,              // terminal node (i.e. update beta_ab)
+                     const double lambda,               // value of regularization parameter
+                     const unsigned int nn,             // # of rows in data matrix
+                     SparseBlockMatrix& betas,          // current value of beta matrix
+                     const PenaltyFunction& pen,        // penalty function
+                     const std::vector<double>& cors,   // array containing the correlations between predictors
+                     double S[],                        // values of the loglikelihood function in the given block
+                     const int verbose                  // binary variable to specify whether or not to print progress reports
+);
 
 // prototype for concaveCDInit
 void concaveCDInit(const double lambda,                         // value of regularization parameter
@@ -235,9 +236,6 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
     #ifdef _DEBUG_ON_
         FILE_LOG(logDEBUG2) << "Function call: singleCCDr";
         FILE_LOG(logDEBUG1) << "Number of nonzero entries: " << betas.activeSetSize();
-        
-//        OUTPUT << std::endl << "Initial beta matrix: " << std::endl;
-//        betas.print(10);
     #endif
     
     //
@@ -296,7 +294,6 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
         CCDR.addSweep();
         
     } while( CCDR.keepGoing());
-//    } while(0); // hack to terminate loop during testing
     
 #ifdef _DEBUG_ON_
     std::ostringstream final_out;
@@ -353,7 +350,6 @@ void concaveCDInit(const double lambda,
     
     alg.resetError(); // sets maxAbsError = 0
     
-//    std::vector<double> S(2, 0); // to store the values of the loglikelihood when comparing edges in a block
     double S[2] = {0, 0};   // to store the values of the loglikelihood when comparing edges in a block; use an array instead of a vector for efficiency (faster initialization)
 
     #ifdef _DEBUG_ON_
@@ -445,9 +441,8 @@ void concaveCDInit(const double lambda,
                 
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 // NOTE: What if (S1ji + S1ij) == (S2ji + S2ij)??? This case should be
-                //       handled carefully since when the algorithm begins, we are guaranteed
-                //       to encounter this case. Breaking ties randomly has significant con-
-                //       sequences later in the algorithm!!
+                //       handled carefully: When the algorithm begins we are guaranteed
+                //       to encounter this case. 
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if((S1ji + S1ij) <= (S2ji + S2ij)){
                     // If S1 <= S2, then beta_ij gets updated and beta_ji = 0
@@ -550,11 +545,6 @@ void concaveCDInit(const double lambda,
             #ifdef _DEBUG_ON_
                 FILE_LOG(logDEBUG4) << "activeSetLength = " << betas.activeSetSize();
                 FILE_LOG(logDEBUG4) << "error = " << std::setprecision(4) << alg.getError();
-                
-//                    if(betas.dim() >= 10)
-//                        FILE_LOG(logDEBUG2) << printToFile(betas, row, col);
-//                    else
-//                        FILE_LOG(logDEBUG2) << printToFile(betas, 10);
             #endif
         
             // 04/05/14: This is the only place (so far) where activeSetSize() is used
@@ -563,9 +553,7 @@ void concaveCDInit(const double lambda,
             } else{
                 return; // terminate the algorithm if threshold is met
             }
-            
-//            } // end if update is nonzero (see bug above)
-            
+
         } // end for j (over columns)
         
     } // end for i (over rows)
@@ -605,7 +593,6 @@ void concaveCD(const double lambda,
     
     alg.resetError(); // sets maxAbsError = 0
     
-//    std::vector<double> S(2, 0);
     double S[2] = {0, 0};   // to store the values of the loglikelihood when comparing edges in a block; use an array instead of a vector for efficiency (faster initialization)
     
     #ifdef _DEBUG_ON_
@@ -614,7 +601,7 @@ void concaveCD(const double lambda,
     
     //
     // Compute sigmas
-    //   See Section 4.2.2. of the computational paper for the details of this calculation
+    //   See Section 4.2.2. for the details of this calculation
     //
     for(unsigned int j = 0; j < betas.dim(); ++j){
         double c = 0;
@@ -670,8 +657,6 @@ void concaveCD(const double lambda,
             } else if(fabs(betajk) > ZERO_THRESH){
                 betaUpdateji = singleUpdate(j, i, lambda, nn, betas, pen, cors, verbose);
             }
-
-            // !!! 02/04/15 REMOVED DEAD CODE !!! //
             
             //
             // Update the edge weights no matter what below -- if a block is "zeroed-out" this is ok
@@ -703,7 +688,7 @@ void concaveCD(const double lambda,
 //   Output: The value of the single parameter update
 //
 //   NOTES: 
-//     -See Sections 4.2.1 & 4.4 of the computational paper for a discussion of this calculation
+//     -See Sections 4.2.1 & 4.4 for a discussion of this calculation
 //
 double singleUpdate(const unsigned int a,
                     const unsigned int b,
@@ -796,10 +781,7 @@ void computeEdgeLoss(const double betaUpdate,
     if(oldIdx_ab >= 0) betas.setValue(b, oldIdx_ab, 0.0); // 7/31/14: used to be oldIdx_ab > 0; pretty sure this was a bug since this value can be zero and still valid
     
 #ifdef _DEBUG_ON_
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // CONSIDER REMOVING THE VARIABLES oldIdx_ba AND oldBeta_ba: THE FIND FUNCTION IS
-    //   COSTLY AND WILL IMPACT TESTING!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // Old code needed only for debugging
     int oldIdx_ba = betas.find(b, a); // THIS VALUE IS NEVER USED IN THE MAIN CODE
     double oldBeta_ba = (oldIdx_ba >= 0) ? betas.value(b, oldIdx_ba) : 0; // THIS VALUE IS NEVER USED IN THE MAIN CODE
     
@@ -913,27 +895,15 @@ bool checkCycleSparse(const int node,
         ccs_calls++;
     #endif
     
-//    int color[5000] = {};
-//    int S[5000] = {};
-//    
-//    if((a-b)%2){
-//        return true;
-//    } else{
-//        return false;
-//    }
-    
     a++; b++; // modification to adjust for re-indexing from zero
     
     if(a==b)  return true;
     
     int i, j, k, lo, nBot = 0, nTop = 0, SLeng = 1;
     bool bCycle = false;
+    
 //    std::vector<int> color(node, 0);
 //    std::vector<int> S(node, 0);
-    
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // WARNING: VARIABLE LENGTH ARRAYS USED BELOW!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     int color[MAX_CCS_ARRAY_SIZE] = {};
     int S[MAX_CCS_ARRAY_SIZE] = {};
     color[a-1] = 1;
