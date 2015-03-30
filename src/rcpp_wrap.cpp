@@ -2,8 +2,8 @@
 //  rcpp_wrap.cpp
 //  ccdr_proj
 //
-//  Created by Nick Austin on 3/24/14.
-//  Copyright (c) 2014 Nick Austin. All rights reserved.
+//  Created by Bryon Aragam on 3/24/14.
+//  Copyright (c) 2014-2015 Bryon Aragam. All rights reserved.
 //
 
 #ifndef rcpp_wrap_h

@@ -2,8 +2,8 @@
 //  CCDrAlgorithm.h
 //  ccdr_proj
 //
-//  Created by Nick Austin on 3/20/14.
-//  Copyright (c) 2014 Nick Austin. All rights reserved.
+//  Created by Bryon Aragam on 3/20/14.
+//  Copyright (c) 2014-2015 Bryon Aragam. All rights reserved.
 //
 
 #ifndef CCDrAlgorithm_h

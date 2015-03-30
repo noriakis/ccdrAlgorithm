@@ -2,8 +2,8 @@
 //  defines.h
 //  ccdr_proj
 //
-//  Created by Nick Austin on 5/1/14.
-//  Copyright (c) 2014 Nick Austin. All rights reserved.
+//  Created by Bryon Aragam on 5/1/14.
+//  Copyright (c) 2014-2015 Bryon Aragam. All rights reserved.
 //
 
 #ifndef defines_h

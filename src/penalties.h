@@ -2,8 +2,8 @@
 //  penalties.h
 //  ccdr_proj
 //
-//  Created by Nick Austin on 6/18/14.
-//  Copyright (c) 2014 Nick Austin. All rights reserved.
+//  Created by Bryon Aragam on 6/18/14.
+//  Copyright (c) 2014-2015 Bryon Aragam. All rights reserved.
 //
 
 #ifndef penalties_h

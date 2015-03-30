@@ -3,7 +3,7 @@
 //  ccdr_proj
 //
 //  Created by Bryon Aragam (local) on 3/19/14.
-//  Copyright (c) 2014 Bryon Aragam (local). All rights reserved.
+//  Copyright (c) 2014-2015 Bryon Aragam (local). All rights reserved.
 //
 
 #ifndef SparseBlockMatrix_h
