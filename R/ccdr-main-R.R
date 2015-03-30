@@ -39,8 +39,8 @@ NULL
 #' @param betas Initial guess for the algorithm. Represents the weighted adjacency matrix
 #'              of a DAG where the algorithm will begin searching for an optimal structure.
 #' @param lambdas (optional) Numeric vector containing a grid of lambda values (i.e. regularization
-#'                parameters) to use in the solution path. If missing, a suitable value will be automatically
-#'                computed (see also \code{lambdas.ratio} and \code{lambdas.length} arguments).
+#'                parameters) to use in the solution path. If missing, suitable values will be automatically
+#'                computed (see also \link{generate.lambdas}).
 #' @param lambdas.length Integer number of values to include in the solution path. If \code{lambdas}
 #'                       has also been specified, this value must also match the length of \code{lambdas}.
 #'                       Note also that the final solution path may contain fewer estimates (see
@@ -49,8 +49,6 @@ NULL
 #'              with \code{gamma} as the concavity parameter. If \code{gamma < 0}, then the L1 penalty
 #'              will be used and this value is otherwise ignored.
 #' @param error.tol Error tolerance for the algorithm, used to test for convergence.
-#' @param lambdas.ratio Ratio between the maximum lambda value and the minimum lambda value in the solution
-#'                      path. Note that by default, the maximum value is \code{sqrt(nrow(data))}.
 #' @param max.iters Maximum number of iterations for each internal sweep.
 #' @param alpha Threshold parameter used to terminate the algorithm whenever the number of edges in the
 #'              current estimation is \code{> alpha * ncol(data)}.
@@ -68,7 +66,7 @@ NULL
 #' pp <- ncol(dat)
 #' init.betas <- matrix(0, nrow = pp)                         # initialize algorithm with a random initial value
 #' init.betas[1,2] <- init.betas[1,3] <- init.betas[4,2] <- 1 #
-#' ccdr.run(data = dat, betas = init.betas, lambdas.length = 10, lambdas.ratio = 0.1, alpha = 10, verbose = TRUE)
+#' ccdr.run(data = dat, betas = init.betas, lambdas.length = 10, alpha = 10, verbose = TRUE)
 #'
 #' @export
 ccdr.run <- function(data,
@@ -77,7 +75,6 @@ ccdr.run <- function(data,
                      lambdas.length = 20,
                      gamma = 2.0,
                      error.tol = 1e-4,
-                     lambdas.ratio = 1e-2,
                      max.iters = NULL,
                      alpha = 10,
                      verbose = FALSE
@@ -89,7 +86,7 @@ ccdr.run <- function(data,
                nlam = lambdas.length,
                gamma = gamma,
                eps = error.tol,
-               rlam = lambdas.ratio,
+               rlam = NULL,
                maxIters = max.iters,
                alpha = alpha,
                verbose = verbose)
@@ -131,7 +128,11 @@ ccdr.run <- function(data,
         }
 
         if(missing(rlam)){
+            ### Even though .ccdr_call should never be called on its own, this behaviour is left for testing backwards-compatibility
             stop("rlam must be specified if lambdas is not explicitly specified.")
+        } else if(is.null(rlam)){
+            ### rlam = NULL is used as a sentinel value to indicate a default value should be used
+            rlam <- 1e-2
         } else{
             ### Check rlam if specified
             if(!is.numeric(rlam)) stop("rlam must be numeric!")
@@ -238,7 +239,7 @@ ccdr.run <- function(data,
 
         # 7-16-14: Added code below to check edge threshold via alpha parameter
         if(ccdr.out[[i]]$nedge > alpha * pp){
-            message("Edge threshold met, terminating algorithm with ", ccdr.out[[i-1]]$nedge, " edges.")
+            if(verbose) message("Edge threshold met, terminating algorithm with ", ccdr.out[[i-1]]$nedge, " edges.")
             break
         }
     }
