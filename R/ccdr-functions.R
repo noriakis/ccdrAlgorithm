@@ -16,6 +16,10 @@
 #' generate.lambdas
 #'
 #' Default / usual function for creating a grid of lambdas
+#'
+#' @param lambdas.ratio Ratio between the maximum lambda value and the minimum lambda value in the solution
+#'                      path. Note that by default, the maximum value is \code{sqrt(nn)}.
+
 #' @export
 generate.lambdas <- function(nn,
                              lambdas.ratio = 0.001,

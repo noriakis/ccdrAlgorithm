@@ -5,8 +5,7 @@
 \title{Main CCDr Algorithm}
 \usage{
 ccdr.run(data, betas, lambdas, lambdas.length = 20, gamma = 2,
-  error.tol = 1e-04, lambdas.ratio = 0.01, max.iters = NULL, alpha = 10,
-  verbose = FALSE)
+  error.tol = 1e-04, max.iters = NULL, alpha = 10, verbose = FALSE)
 }
 \arguments{
 \item{data}{Data matrix. Must be numeric and contain no missing values.}
@@ -15,8 +14,8 @@ ccdr.run(data, betas, lambdas, lambdas.length = 20, gamma = 2,
 of a DAG where the algorithm will begin searching for an optimal structure.}
 
 \item{lambdas}{(optional) Numeric vector containing a grid of lambda values (i.e. regularization
-parameters) to use in the solution path. If missing, a suitable value will be automatically
-computed (see also \code{lambdas.ratio} and \code{lambdas.length} arguments).}
+parameters) to use in the solution path. If missing, suitable values will be automatically
+computed (see also \link{generate.lambdas}).}
 
 \item{lambdas.length}{Integer number of values to include in the solution path. If \code{lambdas}
 has also been specified, this value must also match the length of \code{lambdas}.
@@ -28,9 +27,6 @@ with \code{gamma} as the concavity parameter. If \code{gamma < 0}, then the L1 p
 will be used and this value is otherwise ignored.}
 
 \item{error.tol}{Error tolerance for the algorithm, used to test for convergence.}
-
-\item{lambdas.ratio}{Ratio between the maximum lambda value and the minimum lambda value in the solution
-path. Note that by default, the maximum value is \code{sqrt(nrow(data))}.}
 
 \item{max.iters}{Maximum number of iterations for each internal sweep.}
 
@@ -64,6 +60,6 @@ ccdr.run(data = dat)
 pp <- ncol(dat)
 init.betas <- matrix(0, nrow = pp)                         # initialize algorithm with a random initial value
 init.betas[1,2] <- init.betas[1,3] <- init.betas[4,2] <- 1 #
-ccdr.run(data = dat, betas = init.betas, lambdas.length = 10, lambdas.ratio = 0.1, alpha = 10, verbose = TRUE)
+ccdr.run(data = dat, betas = init.betas, lambdas.length = 10, alpha = 10, verbose = TRUE)
 }
 

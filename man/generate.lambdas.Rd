@@ -7,6 +7,10 @@
 generate.lambdas(nn, lambdas.ratio = 0.001, lambdas.length = 50,
   scale = "linear")
 }
+\arguments{
+\item{lambdas.ratio}{Ratio between the maximum lambda value and the minimum lambda value in the solution
+path. Note that by default, the maximum value is \code{sqrt(nn)}.}
+}
 \description{
 Default / usual function for creating a grid of lambdas
 }
