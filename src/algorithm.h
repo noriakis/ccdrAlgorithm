@@ -901,7 +901,7 @@ bool checkCycleSparse(const int node,
     
     int i, j, k, lo, nBot = 0, nTop = 0, SLeng = 1;
     bool bCycle = false;
-    
+
 //    std::vector<int> color(node, 0);
 //    std::vector<int> S(node, 0);
     int color[MAX_CCS_ARRAY_SIZE] = {};

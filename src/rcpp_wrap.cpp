@@ -43,8 +43,6 @@ using namespace Rcpp;
 //      as<>: convert Rcpp object to C++ object
 //      wrap<>: convert C++ to Rcpp object (type handled automatically)
 //
-//
-//
 
 // [[Rcpp::export]]
 List gridCCDr(NumericVector cors,
@@ -77,9 +75,7 @@ List gridCCDr(NumericVector cors,
 
     std::vector<List> return_betas;
     for(int i = 0; i < grid_betas.size(); ++i){
-//    while(grid_betas.size() > 0){
         return_betas.push_back(grid_betas[i].get_R(lambdas[i]));
-//        grid_betas.erase(grid_betas.begin()); // remove the data that has been written already
     }
 
     return wrap(return_betas);

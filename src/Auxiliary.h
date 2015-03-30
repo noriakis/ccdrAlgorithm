@@ -27,8 +27,6 @@
 
 double sign(double x);                          // usual sign function
 
-//bool nonzero(double z);                         // determine if a number is nonzero or not
-
 int rand_int(int max_int);                      // generate a random integer between 1 and max_int
 
 SparseBlockMatrix randomSBM(int pp,             //

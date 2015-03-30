@@ -19,14 +19,15 @@
 //------------------------------------------------------------------------------/
 
 //
-// Implements various functions associated with the minimax concave penalty (MCP) function:
+// Implements various functions associated with the minimax concave penalty (MCP) 
+//  and L1 penalty functions:
 //
 //   p = penalty
 //   Dp = derivative
 //   DDp = second derivative
 //   threshold = associated threshold function (see SparseNet paper)
 //
-// Strictly speaking, any function could be used here (SCAD, L1, capped L1, etc). 
+// Strictly speaking, other functions could be used here (SCAD, L1, capped L1, etc). 
 //
 class PenaltyFunction{
     
@@ -56,16 +57,10 @@ private:
 // Explicit constructor
 PenaltyFunction::PenaltyFunction(double g){
     if(g >= 0){
-        // TESTING ONLY
-        // OUTPUT << "Using MCP!\n";
-        
         gamma = g;
         pPtr = &MCPPenalty;
         thresholdPtr = &MCPThreshold;
     } else{
-        // TESTING ONLY
-        // OUTPUT << "Using Lasso!\n";
-        
         gamma = g;
         pPtr = &LassoPenalty;
         thresholdPtr = &LassoThreshold;
