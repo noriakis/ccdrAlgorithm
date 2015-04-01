@@ -135,7 +135,7 @@ public:
               Rcpp::List vals_in,
               Rcpp::List blocks_in,
               Rcpp::NumericVector sigmas_in);
-    SparseBlockMatrix(Rcpp::List sbm);                                             // Explicit Constructor
+    SparseBlockMatrix(Rcpp::List sbm);          // Explicit Constructor
     
     //
     // Conversion to R List
@@ -203,8 +203,6 @@ void SparseBlockMatrix::init(const std::vector< std::vector<int> >& rows_in,
         //  NOTE: The way we have set up the data structure, for every nonzero edge in the model,
         //         there will be a zero edge (the 'sibling' a_ji of the nonzero edge a_ij). Thus,
         //         rows[i].size() does NOT represent the number of nonzero values in column i.
-        //         As it stands, we can just divide the final number by 2, but we should do a better
-        //         job of handling this.
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         neighbourhoodSizes.push_back(recomputeNeighbourhoodSize(j));
         activeSetLength += neighbourhoodSizes[j];
@@ -384,7 +382,6 @@ int SparseBlockMatrix::recomputeNeighbourhoodSize(int j) const{
         for(int i = 0; i < vals[j].size(); ++i){
             nhbd_out << vals[j][i] << " ";
         }
-//        nhbd_out << " | " << vals[j].size() << " - " << numZeroes << " = " << numNonZeroes;
         nhbd_out << " | " << numNonZeroes;
         FILE_LOG(logDEBUG4) << nhbd_out.str();
     #endif
@@ -393,10 +390,6 @@ int SparseBlockMatrix::recomputeNeighbourhoodSize(int j) const{
 }
 
 // Return the current active set size
-
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//  NOTE: Double-check this after correcting issues with activeSetLength calculation
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 int SparseBlockMatrix::activeSetSize() const{
     return activeSetLength;
 }
@@ -476,14 +469,10 @@ std::vector<double> SparseBlockMatrix::addBlock(int row, int col, double valij, 
     vals[row].push_back(valji);
     
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // This part is highly sketchy, need to double-check!!
+    // Check these calculations
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     blocks[col].push_back(static_cast<int>(rows[row].size()) - 1);
     blocks[row].push_back(static_cast<int>(rows[col].size()) - 1);
-    
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // This part too!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     activeSetLength++;   // don't forget to update the activeSet size
     
     // NOTE: These values may be negative; it is up to the getError() function to implement the desired error function

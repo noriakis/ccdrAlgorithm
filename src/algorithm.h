@@ -40,7 +40,7 @@
 //   GLOBAL VARIABLES
 //
 double ZERO_THRESH = 1e-12;
-const int MAX_CCS_ARRAY_SIZE = 4000; // upper bound on the array size used in checkCycleSparse
+// const int MAX_CCS_ARRAY_SIZE = 4000; // upper bound on the array size used in checkCycleSparse
 
 #ifdef _DEBUG_ON_
     int ccdinit_calls = 0, ccd_calls = 0, ccs_calls = 0, spu_calls = 0, spuV_calls = 0;
@@ -904,8 +904,8 @@ bool checkCycleSparse(const int node,
 
 //    std::vector<int> color(node, 0);
 //    std::vector<int> S(node, 0);
-    int color[MAX_CCS_ARRAY_SIZE] = {};
-    int S[MAX_CCS_ARRAY_SIZE] = {};
+    int color[_MAX_CCS_ARRAY_SIZE_] = {};
+    int S[_MAX_CCS_ARRAY_SIZE_] = {};
     color[a-1] = 1;
     S[0] = a;
     

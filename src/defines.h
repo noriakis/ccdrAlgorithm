@@ -20,16 +20,23 @@
 //   directive and defines are restricted to this file. In addition, any includes that
 //   depend on one of these directives are included here.
 //
-// The two main defines are:
+// The three main defines are:
 //
-//    1) _DEBUG_ON_ : When defined, debugging code is activated and the log file is
+//    1) _MAX_CCS_ARRAY_SIZE_ : This implicitly defines an upper limit on the size of the
+//                              graphs that this program will estimate (see checkCycleSparse
+//                              for details). Feel free to increase this value, however,
+//                              note that this code has only been tested up 8000 nodes.
+//
+//    2) _DEBUG_ON_ : When defined, debugging code is activated and the log file is
 //                    written to.
-//    2) _COMPILE_FOR_RCPP_ : When defined, the assumption is that Rcpp is compiling
+//    3) _COMPILE_FOR_RCPP_ : When defined, the assumption is that Rcpp is compiling
 //                            the code through R. As a result, the log file is completely
 //                            disabled, output is redirected to R, and the Rcpp.h header
 //                            is loaded.
 //
 //
+
+#define _MAX_CCS_ARRAY_SIZE_ 5000
 
 #define _DEBUG_ON_
 #undef _DEBUG_ON_
