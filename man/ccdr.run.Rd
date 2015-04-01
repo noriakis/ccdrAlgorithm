@@ -58,7 +58,7 @@ ccdr.run(data = dat)
 
 ### Optional: Adjust settings
 pp <- ncol(dat)
-init.betas <- matrix(0, nrow = pp)                         # initialize algorithm with a random initial value
+init.betas <- matrix(0, nrow = pp, ncol = pp)              # initialize algorithm with a random initial value
 init.betas[1,2] <- init.betas[1,3] <- init.betas[4,2] <- 1 #
 ccdr.run(data = dat, betas = init.betas, lambdas.length = 10, alpha = 10, verbose = TRUE)
 }
