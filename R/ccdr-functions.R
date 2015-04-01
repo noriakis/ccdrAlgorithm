@@ -15,11 +15,19 @@
 
 #' generate.lambdas
 #'
-#' Default / usual function for creating a grid of lambdas
+#' Convenience function for creating a grid of lambdas.
 #'
+#' See Section 5.3. of \href{http://arxiv.org/abs/1401.0852}{Aragam and Zhou (2015), JMLR}
+#' for a discussion of regularization paths (also, solution paths) as used in the CCDr
+#' algorithm.
+#'
+#' @param lambda.max Maximum value of lambda; in terms of the algorithm this is the initial value
+#'                   of the regularization parameter in the solution path.
 #' @param lambdas.ratio Ratio between the maximum lambda value and the minimum lambda value in the solution
-#'                      path. Note that by default, the maximum value is \code{sqrt(nn)}.
-
+#'                      path.
+#' @param lambdas.length Number of values to include.
+#' @param scale Which scale to use: Either \code{"linear"} or \code{"log"}.
+#'
 #' @export
 generate.lambdas <- function(lambda.max,
                              lambdas.ratio = 1e-3,
