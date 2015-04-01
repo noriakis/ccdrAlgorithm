@@ -21,34 +21,42 @@
 #'                      path. Note that by default, the maximum value is \code{sqrt(nn)}.
 
 #' @export
-generate.lambdas <- function(nn,
-                             lambdas.ratio = 0.001,
+generate.lambdas <- function(lambda.max,
+                             lambdas.ratio = 1e-3,
                              lambdas.length = 50,
                              scale = "linear"
 ){
-    .gen_lambdas(nn = nn,
-                 lambdas.ratio = lambdas.ratio,
+    lambda.min <- lambdas.ratio * lambda.max
+    .gen_lambdas(lambda.max = lambda.max,
+                 lambda.min = lambda.min,
                  lambdas.length = lambdas.length,
                  scale = scale)
 } # END GENERATE.LAMBDAS
 
 # .gen_lambdas
 #  Internal implementation of generate.lambdas
-.gen_lambdas <- function(nn,
-                         lambdas.ratio = 0.001,
+.gen_lambdas <- function(lambda.max,
+                         lambda.min,
                          lambdas.length = 50,
                          scale = "linear"
 ){
-    max.lam <- max(sqrt(nn))
-    min.lam <- lambdas.ratio * max.lam
+#     lambda.max <- max(sqrt(nn))
+#     lambda.min <- lambdas.ratio * lambda.max
 
     if(scale == "linear"){
-        lambdas <- seq(max.lam, min.lam, length.out = lambdas.length)
+        lambdas <- seq(lambda.max, lambda.min, length.out = lambdas.length)
     } else if(scale == "log"){
-        lambdas <- exp(seq(log(max.lam), log(min.lam), log(lambdas.ratio)/(lambdas.length-1)))
+        lambdas.ratio <- lambda.min / lambda.max
+        lambdas <- exp(seq(log(lambda.max), log(lambda.min), log(lambdas.ratio)/(lambdas.length-1)))
     } else{
         stop("Invalid input for scale argument! Must be either 'log' or 'linear'.")
     }
 
     lambdas
 } # END .GEN_LAMBDAS
+
+# .gen_lambdas <- function(nn,
+#                          lambdas.ratio = 0.001,
+#                          lambdas.length = 50,
+#                          scale = "linear"
+# ){}

@@ -141,7 +141,7 @@ ccdr.run <- function(data,
 
         # If no grid of lambdas is passed, then use the standard log-scale that starts at
         #  max.lam = sqrt(nn) and descends to min.lam = rlam * max.lam
-        lambdas <- generate.lambdas(nn,
+        lambdas <- generate.lambdas(lambda.max = sqrt(nn),
                                     lambdas.ratio = rlam,
                                     lambdas.length = as.integer(nlam),
                                     scale = "log")
