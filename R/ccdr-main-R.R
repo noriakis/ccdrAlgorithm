@@ -42,8 +42,8 @@ NULL
 #'                parameters) to use in the solution path. If missing, suitable values will be automatically
 #'                computed (see also \link{generate.lambdas}).
 #' @param lambdas.length Integer number of values to include in the solution path. If \code{lambdas}
-#'                       has also been specified, this value must also match the length of \code{lambdas}.
-#'                       Note also that the final solution path may contain fewer estimates (see
+#'                       has also been specified, this value will be ignored. Note also that the final
+#'                       solution path may contain fewer estimates (see
 #'                       \code{alpha}).
 #' @param gamma Value of concavity parameter. If \code{gamma > 0}, then the MCP will be used
 #'              with \code{gamma} as the concavity parameter. If \code{gamma < 0}, then the L1 penalty
@@ -151,9 +151,9 @@ ccdr.run <- function(data,
     if(!is.numeric(lambdas)) stop("lambdas must be a numeric vector!")
     if(any(lambdas < 0)) stop("lambdas must contain only nonnegative values!")
 
-    if(length(lambdas) != nlam){
-        warning("Length of lambdas vector does not match nlam. The specified lambdas vector will be used and nlam will be overwritten.")
-    }
+#     if(length(lambdas) != nlam){
+#         warning("Length of lambdas vector does not match nlam. The specified lambdas vector will be used and nlam will be overwritten.")
+#     }
 
     ### By default, set the initial guess for betas to be all zeroes
     if(missing(betas)){
