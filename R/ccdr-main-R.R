@@ -72,7 +72,7 @@ NULL
 ccdr.run <- function(data,
                      betas,
                      lambdas,
-                     lambdas.length = 20,
+                     lambdas.length = NULL,
                      gamma = 2.0,
                      error.tol = 1e-4,
                      max.iters = NULL,
@@ -119,7 +119,7 @@ ccdr.run <- function(data,
 
     ### Use default values for lambda if not specified
     if(missing(lambdas)){
-        if(missing(nlam)){
+        if(is.null(nlam)){
             stop("Both lambdas and nlam unspecified: Must specify a value for at least one of these arguments!")
         } else{
             ### Check nlam if specified
