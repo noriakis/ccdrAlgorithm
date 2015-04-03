@@ -17,6 +17,17 @@
 //   PENALTY FUNCTION DEFINITIONS
 //------------------------------------------------------------------------------/
 
+//
+// sign
+//
+//   Returns the usual sign function for a real number
+//
+double sign(double x){
+	if(x > 0) return 1;
+	else if(x < 0) return -1;
+	else return 0;
+}
+
 double MCPPenalty(double b, double lambda, double gamma){
     if(b < gamma * lambda)
         return lambda * (b - 0.5 * b * b / (gamma * lambda));
@@ -32,9 +43,9 @@ double MCPThreshold(double z, double lambda, double gamma){
     } else if(fabs(z) > lambda * gamma){
         return z;
     }
-    
+
     FILE_LOG(logERROR) << "There was a problem calculating the threshold function: z = " << z;
-    
+
     return 0;
 }
 
@@ -48,9 +59,9 @@ double LassoThreshold(double z, double lambda, double gamma = 0){
     } else {
         return sign(z) * (fabs(z) - lambda);
     }
-    
+
     FILE_LOG(logERROR) << "There was a problem calculating the threshold function: z = " << z;
-    
+
     return 0;
 }
 #endif
