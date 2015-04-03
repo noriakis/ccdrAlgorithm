@@ -28,6 +28,17 @@ double sign(double x){
 	else return 0;
 }
 
+//
+// MCPPenalty
+//
+//   Minimax concave penalty function; equivalent to p_lambda(t; gamma) for the MCP.
+//
+//   Input:
+//      t = value to penalize (e.g. coefficient)
+//      lambda = regularization parameter
+//      gamma = concavity paramater
+//   Output: value of p_lambda(t; gamma)
+//
 double MCPPenalty(double b, double lambda, double gamma){
     if(b < gamma * lambda)
         return lambda * (b - 0.5 * b * b / (gamma * lambda));
@@ -35,6 +46,14 @@ double MCPPenalty(double b, double lambda, double gamma){
         return 0.5 * lambda *lambda * gamma;
 }
 
+//
+// MCPThreshold
+//
+//   Thresholding function for MCP, equivalent to solving
+//          argmin_t (t-z)^2 / 2 + p_lambda(t; gamma)
+//
+//   See Section 5.2.1 and Mazumder et al (2011) for details of this function and its derivation.
+//
 double MCPThreshold(double z, double lambda, double gamma){
     if(fabs(z) <= lambda){
         return 0;
@@ -51,10 +70,30 @@ double MCPThreshold(double z, double lambda, double gamma){
     return 0;
 }
 
+//
+// LassoPenalty
+//
+//   Lasso penalty function; equivalent to p_lambda(t) = lambda*t.
+//
+//   Input:
+//      t = value to penalize (e.g. coefficient)
+//      lambda = regularization parameter
+//   Output: lambda * t
+//
+//   NOTE: The Lasso penalty is a convex function and hence has no concavity parameter
+//
 double LassoPenalty(double b, double lambda, double gamma = 0){
     return lambda * b;
 }
 
+//
+// LassoThreshold
+//
+//   Thresholding function for Lasso, equivalent to solving
+//          argmin_t (t-z)^2 / 2 + lambda * |t|
+//
+//   See Mazumder et al (2011) for the derivation of this function.
+//
 double LassoThreshold(double z, double lambda, double gamma = 0){
     if(fabs(z) <= lambda){
         return 0;
