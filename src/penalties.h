@@ -44,7 +44,9 @@ double MCPThreshold(double z, double lambda, double gamma){
         return z;
     }
 
-    FILE_LOG(logERROR) << "There was a problem calculating the threshold function: z = " << z;
+    #ifdef _DEBUG_ON_
+        FILE_LOG(logERROR) << "There was a problem calculating the threshold function: z = " << z;
+    #endif
 
     return 0;
 }
@@ -60,7 +62,9 @@ double LassoThreshold(double z, double lambda, double gamma = 0){
         return sign(z) * (fabs(z) - lambda);
     }
 
-    FILE_LOG(logERROR) << "There was a problem calculating the threshold function: z = " << z;
+    #ifdef _DEBUG_ON_
+        FILE_LOG(logERROR) << "There was a problem calculating the threshold function: z = " << z;
+    #endif
 
     return 0;
 }
