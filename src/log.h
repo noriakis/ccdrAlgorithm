@@ -1,17 +1,17 @@
 #ifndef __LOG_H__
 #define __LOG_H__
 
-/*
- * This is a simple log header class
- * To change reporting level:
- *	FILELog::ReportingLevel() = logDEBUG1;
- *	To log:
-	FILE_LOG(logINFO) << "text goes here";
-	To make it output to a file:
- *  FILE* pFile = fopen("log.txt", "w");
- * 	Output2FILE::Stream() = pFile;
- *
- */
+//
+// This is a simple log header class
+//
+// To change reporting level:
+//	 FILELog::ReportingLevel() = logDEBUG1;
+// To log:
+//   FILE_LOG(logINFO) << "text goes here";
+// To make it output to a file:
+//   FILE* pFile = fopen("log.txt", "w");
+//   Output2FILE::Stream() = pFile;
+//
 
 #include <sstream>
 #include <string>
@@ -64,7 +64,7 @@ Log<T>::~Log()
 	//add appropriate tabs to newlines
 	std::string output = os.str();
 	std::size_t i = 0;
-	int numTabs = 2 + (level > logDEBUG ? level - logDEBUG : 0); 
+	int numTabs = 2 + (level > logDEBUG ? level - logDEBUG : 0);
 	while ( i < output.size() && i != std::string::npos) {
 		i = output.find('\n',i+numTabs+1);
 		if (i != std::string::npos) {
@@ -130,7 +130,7 @@ inline FILE*& Output2FILE::Stream()
 }
 
 inline void Output2FILE::Output(const std::string& msg)
-{   
+{
     FILE* pStream = Stream();
     if (!pStream)
         return;
@@ -161,7 +161,7 @@ inline std::string NowTime()
     struct timeval tv;
     gettimeofday(&tv, 0);
     char result[100] = {0};
-    sprintf(result, "%s.%03ld", buffer, (long)tv.tv_usec / 1000); 
+    sprintf(result, "%s.%03ld", buffer, (long)tv.tv_usec / 1000);
     return result;
 }
 #endif //__LOG_H__

@@ -29,11 +29,11 @@
 //
 //    2) _DEBUG_ON_ : When defined, debugging code is activated and the log file is
 //                    written to.
+//
 //    3) _COMPILE_FOR_RCPP_ : When defined, the assumption is that Rcpp is compiling
 //                            the code through R. As a result, the log file is completely
 //                            disabled, output is redirected to R, and the Rcpp.h header
 //                            is loaded.
-//
 //
 
 #define _MAX_CCS_ARRAY_SIZE_ 5000
@@ -50,7 +50,7 @@
     #include <sstream>
     #include <iomanip>
 
-    #include "log.h"
+    #include "log.h" // logging moved here since it only runs in debug mode anyway
 #endif
 
 // Include the Rcpp header and redirect output to R if we are compiling using Rcpp
@@ -58,8 +58,6 @@
     #include <Rcpp.h>
     #define OUTPUT Rcpp::Rcout
     #define ERROR_OUTPUT Rcpp::Rcerr
-
-    // Old code that disabled FILE_LOG and debugging has been removed; works fine with Rcpp
 #else
     #define OUTPUT std::cout
     #define ERROR_OUTPUT std::cerr
