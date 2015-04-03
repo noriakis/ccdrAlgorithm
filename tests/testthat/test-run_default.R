@@ -1,4 +1,3 @@
-library("ccdr")
 context("Default run")
 
 source('~/Dropbox/PhD Research/Programming Projects/bncompare_dev/bncompare/R/bncompare-generate.R')
