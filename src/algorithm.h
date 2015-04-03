@@ -9,9 +9,9 @@
 //------------------------------------------------------------------------------/
 //
 // IMPORTANT NOTES FOR RCPP COMPILATION:
-//  1) Functions that return Rcpp objects (e.g. List, NumericVector, etc.) should 
+//  1) Functions that return Rcpp objects (e.g. List, NumericVector, etc.) should
 //      NOT be const -- right now this affects the get_R function
-//  2) Need to employ 'using namespace std;' unless we want to add a whole lot of 
+//  2) Need to employ 'using namespace std;' unless we want to add a whole lot of
 //      Rcpp::
 //
 //------------------------------------------------------------------------------/
@@ -25,11 +25,11 @@
 #include <time.h>  // for testing and profiling only
 
 #include "defines.h"
-#include "Auxiliary.h"
+//#include "Auxiliary.h"
 #include "SparseBlockMatrix.h"
 #include "PenaltyFunction.h"
 #include "CCDrAlgorithm.h"
-#include "log.h"
+//#include "log.h" // moved to defines.h
 #include "debug.h"
 
 //------------------------------------------------------------------------------/
@@ -138,13 +138,13 @@ bool checkCycleSparse(const int node,                    // number of nodes in g
 // gridCCDr
 //
 //   Computes a full array of CCDr estimates by progressing through a grid of regularization parameters, starting
-//     with the first. By default, the algorithm picks a large value lambda_max such that the first estimate is 
+//     with the first. By default, the algorithm picks a large value lambda_max such that the first estimate is
 //     guaranteed to be zero, and then the value of lambda decreases as the algorithm proceeds, allowing more and
 //     more edges into the model.
 //
 //   Output: A vector of SparseBlockMatrix objects, one estimate for each value of lambda in lambdas
 //
-//   NOTES: 
+//   NOTES:
 //     -betas and lambdas can be anything to start with
 //     -the C++ code enforces no defaults; these are all implemented in R
 //     -it is very important that the params values are passed in the CORRECT ORDER: {gamma, eps, maxIters, alpha}
@@ -159,11 +159,11 @@ std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,
     #ifdef _DEBUG_ON_
         FILE_LOG(logDEBUG2) << "Function call: gridCCDr";
     #endif
-    
+
     int nlam = static_cast<int>(lambdas.size());    // how many values of lambda are in the supplied grid?
     double alpha = params[3];                       // value of alpha; needed to know when to terminate algorithm
     std::vector<SparseBlockMatrix> grid_betas;      // the vector of SBMs that will eventually be returned
-    
+
     //
     // This function is simple: Simply call singleCCDr repeatedly for each value of lambda supplied
     //
@@ -173,18 +173,18 @@ std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,
         //--- VERBOSE ONLY ---//
         if(verbose){
             OUTPUT << "\nWorking on lambda = " << lambda << " [" << l+1 << "/" << nlam << "]";
-            
+
             #ifdef _DEBUG_ON_
                 FILE_LOG(logINFO) << "Working on lambda = " << lambda << " [" << l+1 << "/" << nlam << "]";
             #endif
         }
         //--------------------//
-        
+
         // To save memory, simply overwrite the same object (betas)
         // After each call to singleCCDr, we push_back the estimated object to grid_betas so there is no loss of data
         betas = singleCCDr(cors, betas, nn, lambda, params, verbose);
         grid_betas.push_back(betas);
-        
+
         //--- VERBOSE ONLY ---//
         if(verbose){
             OUTPUT << " | " << betas.activeSetSize() << " || " << betas.recomputeActiveSetSize(true) << std::endl;
@@ -192,22 +192,22 @@ std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,
             #ifdef _DEBUG_ON_
                 OUTPUT << std::endl << "Final beta matrix: " << std::endl;
                 betas.print(10);
-            
+
                 FILE_LOG(logINFO) << "activeSetSize = " << betas.activeSetSize() << " / recomputeActiveSetSize = " << betas.recomputeActiveSetSize(true);
             #endif
         }
         //--------------------//
-        
+
         // Once an estimate has been computed, the blocks vector is superfluous and so we get rid of it to save memory
         // This is negligible for small models, but in order to push the limits of the algorithm (i.e. pp in thousands+)
         //   we need to save memory wherever possible
         grid_betas[l].clearBlocks();
-        
+
         if(betas.activeSetSize() >= alpha * betas.dim()){
             break;
         }
     }
-    
+
     return grid_betas;
 }
 
@@ -221,7 +221,7 @@ std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,
 //
 //   Output: A single SparseBlockMatrix object, representing the estimate (Phi(lambda), R(lambda))
 //
-//   NOTES: 
+//   NOTES:
 //     -betas and lambda can be anything to start with
 //     -the C++ code enforces no defaults; these are all implemented in R
 //     -it is very important that the params values are passed in the CORRECT ORDER: {gamma, eps, maxIters, alpha}
@@ -237,29 +237,29 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
         FILE_LOG(logDEBUG2) << "Function call: singleCCDr";
         FILE_LOG(logDEBUG1) << "Number of nonzero entries: " << betas.activeSetSize();
     #endif
-    
+
     //
     // Set parameters for algorithm
     //
     if(params.size() != 4){
         OUTPUT << "Parameter vector 'params' should have exactly four elements! Check your input." << std::endl;
     }
-    
+
     double gammaMCP = params[0];  // set parameter for penalty function
     double eps = params[1];
     unsigned int maxIters = params[2];
     double alpha = params[3];
-    
+
     //
     // Create some critical objects for the algorithm
     //
     CCDrAlgorithm CCDR = CCDrAlgorithm(maxIters, eps, alpha, betas.dim());  // to keep track of the algorithm's progress
     PenaltyFunction MCP = PenaltyFunction(gammaMCP);                        // to compute MCP function
-    
+
     //
     // Begin the main part of the algorithm
     //
-    
+
     // The active set hasn't actually changed, but this guarantees that as long as the first pass of
     //  concaveCDInit doesn't add too many edges, the algorithm will do at least one sweep over the
     //  initial active set to update the edge values
@@ -271,14 +271,14 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
         //  otherwise, we terminate.
         //
         CCDR.resetFlags();
-        
-        // This pass runs over all blocks 
+
+        // This pass runs over all blocks
         concaveCDInit(lambda, nn, betas, CCDR, MCP, cors, verbose);
-        
+
         //
         // ADD EXTRA ALGORITHM CHECKS HERE IF NEEDED
         //
-        
+
         // As long as new edges have been added and we have not exceeded the maximum number of allowed edges,
         //   continue with single parameter updates for all active edges
         if(CCDR.keepGoing()){
@@ -289,12 +289,12 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
                 iters++;
             }
         }
-        
+
         // we have finished a full sweep
         CCDR.addSweep();
-        
+
     } while( CCDR.keepGoing());
-    
+
 #ifdef _DEBUG_ON_
     std::ostringstream final_out;
     final_out << "\n\n";
@@ -312,7 +312,7 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
     OUTPUT << final_out.str();
     FILE_LOG(logINFO) << final_out.str();
 #endif
-    
+
     return betas;
 }
 
@@ -326,7 +326,7 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
 //   Input: Note that betas & alg are all passed (and hence updated) by reference (hence void)
 //   Output: void
 //
-//   NOTES: 
+//   NOTES:
 //     -by default, the order of the update is to iterate across rows, starting at the top
 //     -later updates should allow the user to choose the direction of the updates:
 //          *across rows
@@ -342,26 +342,26 @@ void concaveCDInit(const double lambda,
                    const std::vector<double>& cors,
                    const int verbose
                    ){
-    
+
     #ifdef _DEBUG_ON_
         FILE_LOG(logDEBUG1) << "Function call: concaveCDInit";
         ccdinit_calls++;
     #endif
-    
+
     alg.resetError(); // sets maxAbsError = 0
-    
+
     double S[2] = {0, 0};   // to store the values of the loglikelihood when comparing edges in a block; use an array instead of a vector for efficiency (faster initialization)
 
     #ifdef _DEBUG_ON_
         FILE_LOG(logDEBUG4) << "Computing sigmas...";
     #endif
-    
+
     //
     // Compute sigmas
     //   See Section 4.2.2. of the computational paper for the details of this calculation
     //
     for(unsigned int j = 0; j < betas.dim(); ++j){
-        
+
         double c = 0;
         for(unsigned int l = 0; l < betas.rowsizes(j); ++l){
             unsigned int row = betas.row(j, l);
@@ -373,21 +373,21 @@ void concaveCDInit(const double lambda,
                 c += betas.value(j, l) * cors[(row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
             }
         }
-        
+
         double s = 0.5 * (1.0 * c + sqrt(c * c + 4 * nn));
         betas.setSigma(j, s);
     } // end for loop for sigmas
-    
+
     #ifdef _DEBUG_ON_
         std::ostringstream sigma_out;
         for(int jj = 0; jj < betas.dim(); ++jj){
             sigma_out << betas.sigma(jj) << " ";
         }
         FILE_LOG(logDEBUG1) << "Estimated sigmas: " << sigma_out.str();
-    
+
         FILE_LOG(logDEBUG4) << "Computing betas...";
     #endif
-    
+
     //
     // Main loop over all edges in model (i = 0...pp-1 and j > i)
     //
@@ -400,22 +400,22 @@ void concaveCDInit(const double lambda,
     unsigned int pp = betas.dim();
     for(unsigned int i = 0; i < pp; ++i){
     	for(unsigned int j = i + 1; j < pp; ++j){
-            
+
             double betaUpdateij = singleUpdate(i, j, lambda, nn, betas, pen, cors, verbose);
             double betaUpdateji = singleUpdate(j, i, lambda, nn, betas, pen, cors, verbose);
             bool hasCycleij = false, hasCycleji = false;
-            
+
             if(fabs(betaUpdateij) > ZERO_THRESH){
                 hasCycleij = checkCycleSparse(pp, betas, i, j);
             }
-            
+
             if(fabs(betaUpdateji) > ZERO_THRESH){
                 // If adding i->j induces a cycle, then j->i cannot induce a cycle, so we can skip checking in this case
                 if(!hasCycleij){
                     hasCycleji = checkCycleSparse(pp, betas, j, i);
                 }
             }
-            
+
             if(hasCycleij){
                 betaUpdateij = 0.0;
             } else if(hasCycleji){
@@ -425,41 +425,41 @@ void concaveCDInit(const double lambda,
                 computeEdgeLoss(betaUpdateji, j, i, lambda, nn, betas, pen, cors, S, verbose);
                 double S1ji = S[0]; // Qi|betaji=0
                 double S2ji = S[1]; // Qi|betaji=betaUpdate
-                
+
             #ifdef _DEBUG_ON_
                 FILE_LOG(logDEBUG4) << "S[0] = " << S[0] << ", S[1] = " << S[1];
             #endif
-                
+
                 // single parameter update for beta_ij
                 computeEdgeLoss(betaUpdateij, i, j, lambda, nn, betas, pen, cors, S, verbose);
                 double S1ij = S[1]; // Qj|betaij=betaUpdate
                 double S2ij = S[0]; // Qj|betaij=0
-                
+
             #ifdef _DEBUG_ON_
                 FILE_LOG(logDEBUG4) << "S[0] = " << S[0] << ", S[1] = " << S[1];
             #endif
-                
+
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 // NOTE: What if (S1ji + S1ij) == (S2ji + S2ij)??? This case should be
                 //       handled carefully: When the algorithm begins we are guaranteed
-                //       to encounter this case. 
+                //       to encounter this case.
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if((S1ji + S1ij) <= (S2ji + S2ij)){
                     // If S1 <= S2, then beta_ij gets updated and beta_ji = 0
                     betaUpdateji = 0.0;
-                    
+
                     // NOTE: Instead of updating the error here, update it after the SPUs have been computed
                     // and we are ready to update the sparse structure
                 } else{
                     // If S2 < S1, then beta_ji gets updated and beta_ij = 0
                     betaUpdateij = 0.0;
-                    
+
                     // NOTE: Instead of updating the error here, update it after the SPUs have been computed
                     // and we are ready to update the sparse structure
                 }
 
             }
-            
+
 //
 // DEPRECATED: This if statement is a relic from some older code. It was a bug that has been fixed, but the code
 //              is left here as a reminder to handle this carefully in the future.
@@ -483,7 +483,7 @@ void concaveCDInit(const double lambda,
                 // if the block exists in the sparse matrix, update it's value
                 //
                 // NOTE: This fixes the issue wherein nonzero edges could not be zeroed out
-                
+
                 #ifdef _DEBUG_ON_
                     // check if we are removing the edge (i,j)
                     if(fabs(betas.findValue(row, col)) > ZERO_THRESH && fabs(betaUpdateij) < ZERO_THRESH){
@@ -493,7 +493,7 @@ void concaveCDInit(const double lambda,
 
                         FILE_LOG(logWARNING) << "concaveCDInit: Removing edge " << "(" << i << ", " << j << ") in model!";
                     }
-                
+
                     // check if we are removing the edge (j,i)
                     if(fabs(betas.findValue(col, row)) > ZERO_THRESH && fabs(betaUpdateji) < ZERO_THRESH){
 //                            OUTPUT << "\n\n!!!!!!!!!!!!!!!!\n";
@@ -503,7 +503,7 @@ void concaveCDInit(const double lambda,
                         FILE_LOG(logWARNING) << "concaveCDInit: Removing edge " << "(" << j << ", " << i << ") in model!";
                     }
                 #endif
-                
+
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 // CHECKING THIS IS A BOTTLENECK IN THE CODE: Can we speed this up somehow?
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -513,9 +513,9 @@ void concaveCDInit(const double lambda,
                 if(fabs(betas.findValue(col, row)) > ZERO_THRESH && fabs(betaUpdateji) < ZERO_THRESH){
                     alg.activeSetChanged(); // since we removed an edge to the model, the active set has changed
                 }
-                
+
                 err = betas.updateBlock(col, found, betaUpdateij, betaUpdateji);
-                
+
                 #ifdef _DEBUG_ON_
                     if(betas.dim() <= 5){
                         FILE_LOG(logDEBUG1) << printToFile(betas, 5);
@@ -526,7 +526,7 @@ void concaveCDInit(const double lambda,
                 if(fabs(betaUpdateij) > ZERO_THRESH || fabs(betaUpdateji) > ZERO_THRESH){
                     err = betas.addBlock(row, col, betaUpdateij, betaUpdateji);
                     alg.activeSetChanged(); // since we added an edge to the model, the active set has changed
-                    
+
                     #ifdef _DEBUG_ON_
                         if(betas.dim() <= 5){
                             FILE_LOG(logDEBUG1) << printToFile(betas, 5);
@@ -546,7 +546,7 @@ void concaveCDInit(const double lambda,
                 FILE_LOG(logDEBUG4) << "activeSetLength = " << betas.activeSetSize();
                 FILE_LOG(logDEBUG4) << "error = " << std::setprecision(4) << alg.getError();
             #endif
-        
+
             // 04/05/14: This is the only place (so far) where activeSetSize() is used
             if(betas.activeSetSize() <= alg.edgeThreshold()){
                 alg.belowThreshold();
@@ -555,24 +555,24 @@ void concaveCDInit(const double lambda,
             }
 
         } // end for j (over columns)
-        
+
     } // end for i (over rows)
-    
+
     return;
-    
+
 }
 
 //
 // concaveCD
 //
-//   Runs a single PARTIAL sweep over ONLY the active set (determined by concaveCDInit). This sweep is intended to 
-//     update the edge weights (beta_ij) using coordinate descent. First each sigma (j=1,...,pp) is updated; then 
+//   Runs a single PARTIAL sweep over ONLY the active set (determined by concaveCDInit). This sweep is intended to
+//     update the edge weights (beta_ij) using coordinate descent. First each sigma (j=1,...,pp) is updated; then
 //     each active edge is updated (j=1,...,pp; k in rows[j]).
 //
 //   Input: Note that betas & alg are all passed (and hence updated) by reference (hence void)
 //   Output: void
 //
-//   NOTES: 
+//   NOTES:
 //     -by default, the order of the update is to iterate down columns
 //          ***THIS IS THE OPPOSITE OF CONCAVECDINIT
 //     -would allowing random order affect the results?
@@ -590,15 +590,15 @@ void concaveCD(const double lambda,
         FILE_LOG(logDEBUG1) << "Function call: concaveCD";
         ccd_calls++;
     #endif
-    
+
     alg.resetError(); // sets maxAbsError = 0
-    
+
     double S[2] = {0, 0};   // to store the values of the loglikelihood when comparing edges in a block; use an array instead of a vector for efficiency (faster initialization)
-    
+
     #ifdef _DEBUG_ON_
         FILE_LOG(logDEBUG4) << "Computing sigmas...";
     #endif
-    
+
     //
     // Compute sigmas
     //   See Section 4.2.2. for the details of this calculation
@@ -607,7 +607,7 @@ void concaveCD(const double lambda,
         double c = 0;
         for(unsigned int l = 0; l < betas.rowsizes(j); ++l){
             unsigned int row = betas.row(j, l);
-            
+
             if(j <= row){
                 c += betas.value(j, l) * cors[(j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
             }
@@ -615,11 +615,11 @@ void concaveCD(const double lambda,
                 c += betas.value(j, l) * cors[(row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
             }
         }
-        
+
         double s = 0.5 * (1.0 * c + sqrt(c * c + 4 * nn));
         betas.setSigma(j, s);
     } // end for loop for sigmas
-    
+
     #ifdef _DEBUG_ON_
         std::ostringstream sigma_out;
         for(int jj = 0; jj < betas.dim(); ++jj){
@@ -634,7 +634,7 @@ void concaveCD(const double lambda,
     for(unsigned int j = 0; j < pp; ++j){
     	for(unsigned int rowIdx = 0; rowIdx < betas.rowsizes(j); ++rowIdx){
             unsigned int i = betas.row(j, rowIdx); // get the row from the sparse structure
-            
+
             // By iterating over every element in the sparse structure, we are
             //  actually hitting every block twice: we can correct for this by
             //  only updating edges with j > i (upper triangle)
@@ -642,39 +642,39 @@ void concaveCD(const double lambda,
             // Note of course that both j -> i and i -> j get updated as a block
             //  so every edge does indeed end up getting updated
             if( j <= i) continue;
-            
+
             // get the current values in the block
             double betakj = betas.value(j, rowIdx);
             double betajk = betas.getSiblingValue(j, rowIdx);
-            
+
             // initialize the update values
             double betaUpdateij = 0.0;
             double betaUpdateji = 0.0;
-            
+
             // only update the nonzero edge
             if(fabs(betakj) > ZERO_THRESH){
                 betaUpdateij = singleUpdate(i, j, lambda, nn, betas, pen, cors, verbose);
             } else if(fabs(betajk) > ZERO_THRESH){
                 betaUpdateji = singleUpdate(j, i, lambda, nn, betas, pen, cors, verbose);
             }
-            
+
             //
             // Update the edge weights no matter what below -- if a block is "zeroed-out" this is ok
             //
             std::vector<double> err = betas.updateBlock(j, rowIdx, betaUpdateij, betaUpdateji);
-            
+
             #ifdef _DEBUG_ON_
                 if(betas.dim() <= 5){
                     FILE_LOG(logDEBUG1) << printToFile(betas, 5);
                 }
             #endif
-            
+
         } // end for rowIdx
-        
+
     } // end for j
-    
+
     return;
-    
+
 }
 
 //
@@ -687,7 +687,7 @@ void concaveCD(const double lambda,
 //
 //   Output: The value of the single parameter update
 //
-//   NOTES: 
+//   NOTES:
 //     -See Sections 4.2.1 & 4.4 for a discussion of this calculation
 //
 double singleUpdate(const unsigned int a,
@@ -699,14 +699,14 @@ double singleUpdate(const unsigned int a,
                     const std::vector<double>& cors,
                     const int verbose
                     ){
-    
+
     #ifdef _DEBUG_ON_
 //        FILE_LOG(logDEBUG2) << "Function call: SingleUpdate(" << a << ", " << b << ") with lambda = " << lambda;
         spu_calls++;
     #endif
-    
+
     double betaUpdate = 0; // initialize eventual return value
-    
+
     //
     // res_ab = the value of the residual factor from the paper, given by
     //    \sum_h { x_hk * r_kj^(h) } = \rho_j*<xk,xj> - \sum_{i != k} \phi_ij <xi,xk>
@@ -714,7 +714,7 @@ double singleUpdate(const unsigned int a,
     // Here, b = j = col, a = i = row.
     //
     double res_ab = 0;
-    
+
     // Get the value: \rho_j*<xk,xj>
     if(a <= b){
         res_ab = betas.sigma(b) * cors[(a + b*(b+1)/2)];
@@ -722,7 +722,7 @@ double singleUpdate(const unsigned int a,
     else{
         res_ab = betas.sigma(b) * cors[(b + a*(a+1)/2)];
     }
-    
+
     // Subtract the terms \phi_ij <xi,xk>
     for(unsigned int i = 0; i < betas.rowsizes(b); ++i){
         unsigned int row = betas.row(b, i);
@@ -733,18 +733,18 @@ double singleUpdate(const unsigned int a,
             res_ab -= cors[(a + row*(row+1)/2)] * betas.value(b, i);
         }
     }
-    
+
     //
     // The SPU is given by S_gamma(res_ab, lambda), aka evaluating the threshold function
     //   associated with the penalty function at the residual factor res_ab given the fixed
     //   values of gamma and lambda.
     //
     betaUpdate = pen.threshold(res_ab, lambda);
-    
+
     #ifdef _DEBUG_ON_
         FILE_LOG(logDEBUG2) << "Function call: singleUpdate(" << a << ", " << b << ") with lambda = " << lambda << "  /  res_ab = " << res_ab;
     #endif
-    
+
     return betaUpdate;
 }
 
@@ -771,56 +771,56 @@ void computeEdgeLoss(const double betaUpdate,
     //
     double loss = 0, penalty = 0;
     int oldIdx_ab = betas.find(a, b); // determine whether or not the edge a->b is already in the model
-    
+
     // If the edge a->b is in the model, grab its value, otherwise set it to zero
     //   This variable is used later to restore betas to its original state
     double oldBeta_ab = (oldIdx_ab >= 0) ? betas.value(b, oldIdx_ab) : 0; // 7/31/14: used to be oldIdx_ab > 0; pretty sure this was a bug since this value can be zero and still valid
-    
+
     // If the edge a->b is in the model, zero it out so we can compute the effect of eliminating this edge
     //   from the model
     if(oldIdx_ab >= 0) betas.setValue(b, oldIdx_ab, 0.0); // 7/31/14: used to be oldIdx_ab > 0; pretty sure this was a bug since this value can be zero and still valid
-    
+
 #ifdef _DEBUG_ON_
     // Old code needed only for debugging
     int oldIdx_ba = betas.find(b, a); // THIS VALUE IS NEVER USED IN THE MAIN CODE
     double oldBeta_ba = (oldIdx_ba >= 0) ? betas.value(b, oldIdx_ba) : 0; // THIS VALUE IS NEVER USED IN THE MAIN CODE
-    
+
     FILE_LOG(logDEBUG3) << oldIdx_ab << " / " << oldIdx_ba;
     FILE_LOG(logDEBUG3) << oldBeta_ab << " / " << oldBeta_ba;
 #endif
-    
+
     // Compute the value of the loss
     loss = betas.sigma(b) * betas.sigma(b);
     for(unsigned int m = 0; m < betas.rowsizes(b); ++m){
         unsigned int row_m = betas.row(b, m);
-        
+
         for(unsigned int n = 0; n < betas.rowsizes(b); ++n){
             unsigned int row_n = betas.row(b, n);
-            
+
             if(row_m <= row_n){
                 loss += cors[(row_m + row_n*(row_n+1)/2)] * betas.value(b, m) * betas.value(b, n);
             } else{
                 loss += cors[(row_n + row_m*(row_m+1)/2)] * betas.value(b, m) * betas.value(b, n);
             }
         }
-        
+
         if(row_m <= b){
             loss -= 2.0 * betas.sigma(b) * cors[(row_m + b*(b+1)/2)] * betas.value(b, m);
         } else{
             loss -= 2.0 * betas.sigma(b) * cors[(b + row_m*(row_m+1)/2)] * betas.value(b, m);
         }
     }
-    
+
     // Compute the value of the penalty
     penalty = 0;
     for(unsigned int i = 0; i < betas.rowsizes(b); ++i){
         penalty += pen.p(fabs(betas.value(b, i)), lambda);
     }
     //penalty -= pen.p(fabs(betas[(pp * b) + b]), lambda); // ignore contribution from beta_bb (should be zero anyway!!!)
-    
+
     // S[0] = value of the likelihood with beta_ab = 0
     S[0] = -1.0 * nn * log(betas.sigma(b)) + 0.5 * loss + penalty;
-    
+
     //
     // S[1] = value of the likelihood with beta_ab = betaUpdate
     //   Note that S[1] = S[0] + contribution of terms involving ONLY beta_ab
@@ -828,7 +828,7 @@ void computeEdgeLoss(const double betaUpdate,
     //    add up the contributions from the terms involving beta_ab.
     //
     S[1] = S[0];
-    
+
     //
     // If betaUpdate = 0, then the contribution from beta_ab is zero and there is nothing to add
     //
@@ -837,7 +837,7 @@ void computeEdgeLoss(const double betaUpdate,
         //betas.setValue(b, oldIdx_ab, betaUpdate);
         for(unsigned int i = 0; i < betas.rowsizes(b); ++i){
             unsigned int row = betas.row(b, i);
-            
+
             if(row < a){
                 S[1] += 2.0 * cors[(row + a*(a+1)/2)] * betas.value(b, i) * betaUpdate;
             }
@@ -846,22 +846,22 @@ void computeEdgeLoss(const double betaUpdate,
             }
         }
         S[1] += cors[(a + a*(a+1)/2)] * betaUpdate * betaUpdate;
-        
+
         if(a <= b){
             S[1] -= 2.0 * betas.sigma(b) * cors[(a + b*(b+1)/2)] * betaUpdate;
         }
         else{
             S[1] -= 2.0 * betas.sigma(b) * cors[(b + a*(a+1)/2)] * betaUpdate;
         }
-        
+
         // Of course the penalty decomposes like the loss as well, so we can just add
         //   the contribution of pen(beta_ab)
         S[1] += pen.p(fabs(betaUpdate), lambda) - pen.p(0.0, lambda); // subtract off the value at zero in case p(0) != 0
     }
-    
+
     // If we modified betas, return it to it's original value
     if(oldIdx_ab >= 0) betas.setValue(b, oldIdx_ab, oldBeta_ab); // 7/31/14: used to be oldIdx_ab > 0; pretty sure this was a bug since this value can be zero and still valid
-    
+
 }
 
 //
@@ -878,10 +878,10 @@ void computeEdgeLoss(const double betaUpdate,
 //                     forbidden anyway when the size is not known at compile time. For now, we have reverted back to
 //                     using vectors, but this should be revisited in the future.
 //
-//   NOTES: 
+//   NOTES:
 //     -see Fei's paper for original source for algorithm and his original code for the original implementation
 //     -the vectors that have been commented out have been left as a reminder to use ARRAYS in this function instead
-//       of vectors: the allocation cost of vectors turns out to be highly nontrivial and costly here and MUST be 
+//       of vectors: the allocation cost of vectors turns out to be highly nontrivial and costly here and MUST be
 //       avoided
 //
 bool checkCycleSparse(const int node,
@@ -889,16 +889,16 @@ bool checkCycleSparse(const int node,
                       int a,
                       int b
                       ){
-    
+
     #ifdef _DEBUG_ON_
         FILE_LOG(logDEBUG3) << "Function call: checkCycleSparse(" << a << ", " << b << ")";
         ccs_calls++;
     #endif
-    
+
     a++; b++; // modification to adjust for re-indexing from zero
-    
+
     if(a==b)  return true;
-    
+
     int i, j, k, lo, nBot = 0, nTop = 0, SLeng = 1;
     bool bCycle = false;
 
@@ -908,16 +908,16 @@ bool checkCycleSparse(const int node,
     int S[_MAX_CCS_ARRAY_SIZE_] = {};
     color[a-1] = 1;
     S[0] = a;
-    
+
     while(SLeng > 0){
-        
+
         i = S[nBot] - 1;
         SLeng--;
         nBot++;
-        
+
         for(k = 0; k < betas.rowsizes(i); ++k){
             j = betas.row(i, k);
-            
+
             if(fabs(betas.value(i, k)) > ZERO_THRESH){
                 if((j+1) == b){
                     bCycle = true;
@@ -930,10 +930,10 @@ bool checkCycleSparse(const int node,
                 }
             }
         }
-        
+
         if(bCycle) break;
     }
-    
+
     return bCycle;
 }
 

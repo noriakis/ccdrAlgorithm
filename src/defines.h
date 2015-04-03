@@ -49,6 +49,8 @@
     #include <fstream>
     #include <sstream>
     #include <iomanip>
+
+    #include "log.h"
 #endif
 
 // Include the Rcpp header and redirect output to R if we are compiling using Rcpp
