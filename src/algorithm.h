@@ -593,7 +593,7 @@ void concaveCD(const double lambda,
 
     alg.resetError(); // sets maxAbsError = 0
 
-    double S[2] = {0, 0};   // to store the values of the loglikelihood when comparing edges in a block; use an array instead of a vector for efficiency (faster initialization)
+//    double S[2] = {0, 0};   // to store the values of the loglikelihood when comparing edges in a block; use an array instead of a vector for efficiency (faster initialization)
 
     #ifdef _DEBUG_ON_
         FILE_LOG(logDEBUG4) << "Computing sigmas...";
