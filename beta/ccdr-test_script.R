@@ -30,11 +30,11 @@ sessionInfo()
     ### Load bioconductor
     tryCatch({
         source("http://bioconductor.org/biocLite.R")
-        biocLite()
+        biocLite(suppressUpdates = TRUE, suppressAutoUpdate = TRUE)
 
         ### Install bioconductor dependencies
-        if(!require("graph")) biocLite("graph")
-        if(!require("RBGL")) biocLite("RBGL")
+        if(!require("graph")) biocLite("graph", suppressUpdates = TRUE, suppressAutoUpdate = TRUE)
+        if(!require("RBGL")) biocLite("RBGL", suppressUpdates = TRUE, suppressAutoUpdate = TRUE)
     }, error = function(c){ stop(c)})
 
     status["bioconductor"] <- 1
@@ -95,8 +95,6 @@ if(exists("ccdr.run")){
         }
     }
 
-    status <- numeric(0)
-
     ### Small graphs
     status["(10, 10, 1)"] <- test_run(10, 10, 1)
     status["(10, 100, 1)"] <- test_run(10, 100, 1)
@@ -126,3 +124,6 @@ if(exists("ccdr.run")){
 
 ### Show results
 status
+
+### Remove dev package
+remove.packages("ccdr")
