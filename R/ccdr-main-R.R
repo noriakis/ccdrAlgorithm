@@ -80,14 +80,14 @@ ccdr.run <- function(data,
                      verbose = FALSE
 ){
     ### This is just a wrapper for the internal implementation given by .ccdr_call
-    .ccdr_call(X = data,
+    .ccdr_call(data = data,
                betas = betas,
                lambdas = lambdas,
-               nlam = lambdas.length,
+               lambdas.length = lambdas.length,
                gamma = gamma,
-               eps = error.tol,
+               error.tol = error.tol,
                rlam = NULL,
-               maxIters = max.iters,
+               max.iters = max.iters,
                alpha = alpha,
                verbose = verbose)
 } # END CCDR.RUN
@@ -98,33 +98,33 @@ ccdr.run <- function(data,
 #    passing to .ccdr_gridR and .ccdr_singleR. Some type-checking as well, although most of
 #    this is handled internally by .ccdr_gridR and .ccdr_singleR.
 #
-.ccdr_call <- function(X,
+.ccdr_call <- function(data,
                        betas,
                        lambdas,
-                       nlam,
+                       lambdas.length,
                        gamma,
-                       eps,
+                       error.tol,
                        rlam,
-                       maxIters,
+                       max.iters,
                        alpha,
                        verbose = FALSE
 ){
-    ### Check data X
-    if(!.check_if_data_matrix(X)) stop("Data must be either a data.frame or a numeric matrix!")
-    if(.count_nas(X) > 0) stop(paste0(.count_nas(X), " missing values detected!"))
+    ### Check data
+    if(!.check_if_data_matrix(data)) stop("Data must be either a data.frame or a numeric matrix!")
+    if(.count_nas(data) > 0) stop(paste0(.count_nas(data), " missing values detected!"))
 
     ### Get the dimensions of the data matrix
-    nn <- as.integer(nrow(X))
-    pp <- as.integer(ncol(X))
+    nn <- as.integer(nrow(data))
+    pp <- as.integer(ncol(data))
 
     ### Use default values for lambda if not specified
     if(missing(lambdas)){
-        if(is.null(nlam)){
-            stop("Both lambdas and nlam unspecified: Must specify a value for at least one of these arguments!")
+        if(is.null(lambdas.length)){
+            stop("Both lambdas and lambdas.length unspecified: Must specify a value for at least one of these arguments!")
         } else{
-            ### Check nlam if specified
-            if(!is.numeric(nlam)) stop("nlam must be numeric!")
-            if(nlam <= 0) stop("nlam must be positive!")
+            ### Check lambdas.length if specified
+            if(!is.numeric(lambdas.length)) stop("lambdas.length must be numeric!")
+            if(lambdas.length <= 0) stop("lambdas.length must be positive!")
         }
 
         if(missing(rlam)){
@@ -143,7 +143,7 @@ ccdr.run <- function(data,
         #  max.lam = sqrt(nn) and descends to min.lam = rlam * max.lam
         lambdas <- generate.lambdas(lambda.max = sqrt(nn),
                                     lambdas.ratio = rlam,
-                                    lambdas.length = as.integer(nlam),
+                                    lambdas.length = as.integer(lambdas.length),
                                     scale = "log")
     }
 
@@ -151,8 +151,8 @@ ccdr.run <- function(data,
     if(!is.numeric(lambdas)) stop("lambdas must be a numeric vector!")
     if(any(lambdas < 0)) stop("lambdas must contain only nonnegative values!")
 
-#     if(length(lambdas) != nlam){
-#         warning("Length of lambdas vector does not match nlam. The specified lambdas vector will be used and nlam will be overwritten.")
+#     if(length(lambdas) != lambdas.length){
+#         warning("Length of lambdas vector does not match lambdas.length. The specified lambdas vector will be used and lambdas.length will be overwritten.")
 #     }
 
     ### By default, set the initial guess for betas to be all zeroes
@@ -168,14 +168,14 @@ ccdr.run <- function(data,
 
     # This parameter can be set by the user, but in order to prevent the algorithm from taking too long to run
     #  it is a good idea to keep the threshold used by default which is O(sqrt(pp))
-    if(is.null(maxIters)){
-        maxIters <- 2 * max(10, sqrt(pp))
+    if(is.null(max.iters)){
+        max.iters <- 2 * max(10, sqrt(pp))
     }
 
     t1.cor <- proc.time()[3]
-    #     cors <- cor(X)
+    #     cors <- cor(data)
     #     cors <- cors[upper.tri(cors, diag = TRUE)]
-    cors <- .cor_vector(X)
+    cors <- .cor_vector(data)
     t2.cor <- proc.time()[3]
 
     .ccdr_gridR(cors,
@@ -184,8 +184,8 @@ ccdr.run <- function(data,
                 betas,
                 as.numeric(lambdas),
                 as.numeric(gamma),
-                as.numeric(eps),
-                as.integer(maxIters),
+                as.numeric(error.tol),
+                as.integer(max.iters),
                 as.numeric(alpha),
                 verbose)
 } # END .CCDR_CALL
