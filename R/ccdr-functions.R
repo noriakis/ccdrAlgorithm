@@ -10,7 +10,8 @@
 # PACKAGE CCDR: Functions
 #
 #   CONTENTS:
-#     gen.lambdas
+#     generate.lambdas
+#     gen_lambdas
 #
 
 #' generate.lambdas
@@ -35,15 +36,15 @@ generate.lambdas <- function(lambda.max,
                              scale = "linear"
 ){
     lambda.min <- lambdas.ratio * lambda.max
-    .gen_lambdas(lambda.max = lambda.max,
-                 lambda.min = lambda.min,
-                 lambdas.length = lambdas.length,
-                 scale = scale)
+    gen_lambdas(lambda.max = lambda.max,
+                lambda.min = lambda.min,
+                lambdas.length = lambdas.length,
+                scale = scale)
 } # END GENERATE.LAMBDAS
 
-# .gen_lambdas
+# gen_lambdas
 #  Internal implementation of generate.lambdas
-.gen_lambdas <- function(lambda.max,
+gen_lambdas <- function(lambda.max,
                          lambda.min,
                          lambdas.length = 50,
                          scale = "linear"
@@ -61,10 +62,4 @@ generate.lambdas <- function(lambda.max,
     }
 
     lambdas
-} # END .GEN_LAMBDAS
-
-# .gen_lambdas <- function(nn,
-#                          lambdas.ratio = 0.001,
-#                          lambdas.length = 50,
-#                          scale = "linear"
-# ){}
+} # END GEN_LAMBDAS
