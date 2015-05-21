@@ -9,8 +9,9 @@ Description: More about what it does (maybe more than one line)
 License: GPL (>= 2)
 LazyData: TRUE
 Imports:
-    Rcpp (>= 0.11.4),
+    Rcpp (>= 0.11.0),
     Matrix
 LinkingTo:
     Rcpp
-Suggests: testthat
+Suggests:
+    testthat
