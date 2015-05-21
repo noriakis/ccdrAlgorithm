@@ -262,7 +262,7 @@ is.zero.SparseBlockMatrixR <- function(x){
 #  from a matrix AND a sigmas vector
 #
 .init_sbm <- function(init_matrix, init_sigmas){
-    stopifnot(.check_if_matrix(init_matrix))
+    stopifnot(check_if_matrix(init_matrix))
     stopifnot(nrow(init_matrix) == ncol(init_matrix))
 
     stopifnot(is.numeric(init_sigmas))
