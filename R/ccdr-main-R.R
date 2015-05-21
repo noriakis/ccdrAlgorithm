@@ -11,9 +11,9 @@
 #
 #   CONTENTS:
 #     ccdr.run
-#     .ccdr_call
-#     .ccdr_gridR
-#     .ccdr_singleR
+#     ccdr_call
+#     ccdr_gridR
+#     ccdr_singleR
 #
 
 ###--- These two lines are necessary to import the auto-generated Rcpp methods in RcppExports.R---###
@@ -82,8 +82,8 @@ ccdr.run <- function(data,
                      alpha = 10,
                      verbose = FALSE
 ){
-    ### This is just a wrapper for the internal implementation given by .ccdr_call
-    .ccdr_call(data = data,
+    ### This is just a wrapper for the internal implementation given by ccdr_call
+    ccdr_call(data = data,
                betas = betas,
                lambdas = lambdas,
                lambdas.length = lambdas.length,
@@ -95,26 +95,26 @@ ccdr.run <- function(data,
                verbose = verbose)
 } # END CCDR.RUN
 
-# .ccdr_call
+# ccdr_call
 #
 #   Handles most of the bookkeeping for CCDr. Sets default values and prepares arguments for
-#    passing to .ccdr_gridR and .ccdr_singleR. Some type-checking as well, although most of
-#    this is handled internally by .ccdr_gridR and .ccdr_singleR.
+#    passing to ccdr_gridR and ccdr_singleR. Some type-checking as well, although most of
+#    this is handled internally by ccdr_gridR and ccdr_singleR.
 #
-.ccdr_call <- function(data,
-                       betas,
-                       lambdas,
-                       lambdas.length,
-                       gamma,
-                       error.tol,
-                       rlam,
-                       max.iters,
-                       alpha,
-                       verbose = FALSE
+ccdr_call <- function(data,
+                      betas,
+                      lambdas,
+                      lambdas.length,
+                      gamma,
+                      error.tol,
+                      rlam,
+                      max.iters,
+                      alpha,
+                      verbose = FALSE
 ){
     ### Check data
-    if(!.check_if_data_matrix(data)) stop("Data must be either a data.frame or a numeric matrix!")
-    if(.count_nas(data) > 0) stop(paste0(.count_nas(data), " missing values detected!"))
+    if(!check_if_data_matrix(data)) stop("Data must be either a data.frame or a numeric matrix!")
+    if(count_nas(data) > 0) stop(paste0(count_nas(data), " missing values detected!"))
 
     ### Get the dimensions of the data matrix
     nn <- as.integer(nrow(data))
@@ -131,7 +131,7 @@ ccdr.run <- function(data,
         }
 
         if(missing(rlam)){
-            ### Even though .ccdr_call should never be called on its own, this behaviour is left for testing backwards-compatibility
+            ### Even though ccdr_call should never be called on its own, this behaviour is left for testing backwards-compatibility
             stop("rlam must be specified if lambdas is not explicitly specified.")
         } else if(is.null(rlam)){
             ### rlam = NULL is used as a sentinel value to indicate a default value should be used
@@ -167,7 +167,7 @@ ccdr.run <- function(data,
         # If the initial matrix is the zero matrix, indexing does not matter so we don't need to use reIndexC here
         #   Still need to set start = 0, though.
         betas$start <- 0
-    } # Type-checking for betas happens in .ccdr_singleR
+    } # Type-checking for betas happens in ccdr_singleR
 
     # This parameter can be set by the user, but in order to prevent the algorithm from taking too long to run
     #  it is a good idea to keep the threshold used by default which is O(sqrt(pp))
@@ -178,10 +178,10 @@ ccdr.run <- function(data,
     t1.cor <- proc.time()[3]
     #     cors <- cor(data)
     #     cors <- cors[upper.tri(cors, diag = TRUE)]
-    cors <- .cor_vector(data)
+    cors <- cor_vector(data)
     t2.cor <- proc.time()[3]
 
-    .ccdr_gridR(cors,
+    ccdr_gridR(cors,
                 as.integer(pp),
                 as.integer(nn),
                 betas,
@@ -191,20 +191,20 @@ ccdr.run <- function(data,
                 as.integer(max.iters),
                 as.numeric(alpha),
                 verbose)
-} # END .CCDR_CALL
+} # END CCDR_CALL
 
-# .ccdr_gridR
+# ccdr_gridR
 #
 #   Main subroutine for running the CCDr algorithm on a grid of lambda values.
-.ccdr_gridR <- function(cors,
-                        pp, nn,
-                        betas,
-                        lambdas,
-                        gamma,
-                        eps,
-                        maxIters,
-                        alpha,
-                        verbose
+ccdr_gridR <- function(cors,
+                       pp, nn,
+                       betas,
+                       lambdas,
+                       gamma,
+                       eps,
+                       maxIters,
+                       alpha,
+                       verbose
 ){
 
     ### Check alpha
@@ -219,7 +219,7 @@ ccdr.run <- function(data,
         if(verbose) message("Working on lambda = ", round(lambdas[i], 5), " [", i, "/", nlam, "]")
 
         t1.ccdr <- proc.time()[3]
-        ccdr.out[[i]] <- .ccdr_singleR(cors,
+        ccdr.out[[i]] <- ccdr_singleR(cors,
                                        pp, nn,
                                        betas,
                                        lambdas[i],
@@ -250,18 +250,18 @@ ccdr.run <- function(data,
     ccdr.out[1:(i-1)] # only return up to i - 1 since the last (ith) model would not have finished running anyway
 } # END CCDR_GRIDR
 
-# .ccdr_singleR
+# ccdr_singleR
 #
 #   Internal subroutine for handling calls to singleCCDr: This is the only place where C++ is directly
 #    called. Type-checking is strongly enforced here.
-.ccdr_singleR <- function(cors,
+ccdr_singleR <- function(cors,
                           pp, nn,
                           betas,
                           lambda,
                           gamma,
                           eps,
                           maxIters,
-                          alpha,     # 2-9-15: No longer necessary in .ccdr_singleR, but needed since the C++ call asks for it
+                          alpha,     # 2-9-15: No longer necessary in ccdr_singleR, but needed since the C++ call asks for it
                           verbose = FALSE
 ){
 
@@ -274,7 +274,7 @@ ccdr.run <- function(data,
     if(pp <= 0 || nn <= 0) stop("Both pp and nn must be positive!")
 
     ### Check betas
-    if(.check_if_matrix(betas)){ # if the input is a matrix, convert to SBM object
+    if(check_if_matrix(betas)){ # if the input is a matrix, convert to SBM object
         betas <- SparseBlockMatrixR(betas) # if betas is non-numeric, SparseBlockMatrixR constructor should throw error
         betas <- reIndexC(betas) # use C-friendly indexing
     } else if(!is.SparseBlockMatrixR(betas)){ # otherwise check that it is an object of class SparseBlockMatrixR
@@ -300,7 +300,7 @@ ccdr.run <- function(data,
     if(!is.integer(maxIters)) stop("maxIters must be an integer!")
     if(maxIters <= 0) stop("maxIters must be > 0!")
 
-    ### alpha check is in .ccdr_gridR
+    ### alpha check is in ccdr_gridR
 
     # if(verbose) cat("Opening C++ connection...")
     t1.ccdr <- proc.time()[3]
@@ -325,4 +325,4 @@ ccdr.run <- function(data,
     ccdr.out$sbm <- reIndexR(ccdr.out$sbm)
 
     ccdrFit(ccdr.out)
-} # END .CCDR_SINGLER
+} # END CCDR_SINGLER
