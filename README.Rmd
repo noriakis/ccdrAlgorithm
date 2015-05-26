@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 # ccdr
 
-`ccdr` implements the CCDr structure learning algorithm described in [Aragam and Zhou (2015), Journal of Machine Learning Research](http://arxiv.org/abs/1401.0852). Based on observational data, this algorithm estimates the structure of a Bayesian network (aka edges in a DAG) using penalized maximum likelihood based on L1 or concave (MCP) regularization.
+`ccdr` implements the CCDr structure learning algorithm described in \[[1](#references)\]. Based on observational data, this algorithm estimates the structure of a Bayesian network (aka edges in a DAG) using penalized maximum likelihood based on L1 or concave (MCP) regularization.
 
 Presently, this package consists of a single method that implements the main algorithm; more functionality will be provided in the future. To generate data from a given Bayesian network and/or simulate random networks, the following R packages are recommended:
 
@@ -94,3 +94,7 @@ dat <- dat[, sample(1:pp)] # permute the columns to randomize node ordering
 ### Run the algorithm
 ccdr.fit <- ccdr.run(data = dat, lambdas.length = 10, alpha = 10, verbose = FALSE)
 ```
+
+# References
+
+\[1\] B. Aragam and Q. Zhou. [Concave penalized estimation of sparse Gaussian Bayesian networks.](http://arxiv.org/abs/1401.0852) _The Journal of Machine Learning Research_, In press, 2015.
