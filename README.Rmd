@@ -19,9 +19,9 @@ knitr::opts_chunk$set(
 
 Presently, this package consists of a single method that implements the main algorithm; more functionality will be provided in the future. To generate data from a given Bayesian network and/or simulate random networks, the following R packages are recommended:
 
-- `bnlearn`: [www.bnlearn.com](http://www.bnlearn.com), [bnlearn on CRAN](http://cran.r-project.org/web/packages/bnlearn/index.html)
+- `bnlearn`: [bnlearn on CRAN](http://cran.r-project.org/web/packages/bnlearn/index.html), [www.bnlearn.com](http://www.bnlearn.com)
 - `pcalg`: [pcalg on CRAN](http://cran.r-project.org/web/packages/pcalg/index.html)
-- `igraph`: [http://igraph.org/r/](http://igraph.org/r/), [igraph on CRAN](http://cran.r-project.org/web/packages/igraph/index.html)
+- `igraph`: [igraph on CRAN](http://cran.r-project.org/web/packages/igraph/index.html), [http://igraph.org/r/](http://igraph.org/r/)
 
 # Installation
 
@@ -64,8 +64,6 @@ ccdr.run(data = dat)
 
 This trivial example uses uncorrelated normal data, which is not very interesting. In order to do some interesting calculations, we first need to generate data according to some pre-specified DAG structure. The `ccdr` package does not provide this functionality: You can use either the `bnlearn` package or the `pcalg` package to generate random DAGs and random data.
 
-## Example using `bnlearn`
-
 ## Example using `pcalg`
 
 The `pcalg` package provides two useful functions: `randomDAG` for generating a random _ordered_ DAG and `rmvDAG` for generating random data according to the structural equation model implied by the DAG.
@@ -89,6 +87,34 @@ g <- randomDAG(n = pp, prob = edge.pr, lB = beta.min, uB = beta.max) # Note that
 
 ### Generate random data according to this DAG using the method rmvDAG
 dat <- rmvDAG(n = nn, dag = g, errDist = "normal")
+dat <- dat[, sample(1:pp)] # permute the columns to randomize node ordering
+
+### Run the algorithm
+ccdr.fit <- ccdr.run(data = dat, lambdas.length = 10, alpha = 10, verbose = FALSE)
+```
+
+## Example using `bnlearn`
+
+The `bnlearn` package provides methods for reading in data from the [Bayesian Network Repository](http://www.bnlearn.com/bnrepository/). We can use these methods along with the `pcalg` function `rmvDAG` to generate random data from these structures:
+
+```R
+library("bnlearn")
+library("graph")
+library("pcalg")
+
+### Download the RDA file containing bnlearn-compatible data from the repository
+con <- url("http://www.bnlearn.com/bnrepository/hailfinder/hailfinder.rda")
+load(con)
+close(con)
+
+### Convert the bnlearn data to a graph object
+this.adj <- amat(bn)
+this.graph <- as(this.adj, "graphNEL")
+
+### Generate random data according to this DAG using the method rmvDAG
+pp <- numNodes(this.graph)
+nn <- 100
+dat <- rmvDAG(n = nn, dag = this.graph, errDist = "normal")
 dat <- dat[, sample(1:pp)] # permute the columns to randomize node ordering
 
 ### Run the algorithm
