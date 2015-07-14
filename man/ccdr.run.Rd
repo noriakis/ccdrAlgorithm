@@ -14,8 +14,8 @@ ccdr.run(data, betas, lambdas, lambdas.length = NULL, gamma = 2,
 of a DAG where the algorithm will begin searching for an optimal structure.}
 
 \item{lambdas}{(optional) Numeric vector containing a grid of lambda values (i.e. regularization
-parameters) to use in the solution path. If missing, suitable values will be automatically
-computed (see also \link{generate.lambdas}).}
+parameters) to use in the solution path. If missing, a default grid of values will be
+used based on a decreasing log-scale  (see also \link{generate.lambdas}).}
 
 \item{lambdas.length}{Integer number of values to include in the solution path. If \code{lambdas}
 has also been specified, this value will be ignored. Note also that the final
