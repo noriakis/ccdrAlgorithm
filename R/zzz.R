@@ -7,5 +7,5 @@
 #
 
 .onAttach <- function(libname, pkgname){
-    packageStartupMessage("NOTE: This package is currently in a development state and may be unstable.\n Please report any bugs to the author.")
+    packageStartupMessage("NOTE: This package is currently in a development state and may be unstable.\n Please report any bugs at https://github.com/itsrainingdata/ccdr/issues.")
 }
