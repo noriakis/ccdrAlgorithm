@@ -1,11 +1,11 @@
 Package: ccdr
 Type: Package
 Title: (official) Implements CCDr structure learning algorithm for BNs.
-Version: 0.1
-Date: 2015-02-04
+Version: 0.0
+Date: 2015-07-14
 Author: Who wrote it
 Maintainer: Bryon Aragam <contactbryon@gmail.com>
-Description: More about what it does (maybe more than one line)
+Description: Structure learning for Bayesian networks using the CCDr algorithm.
 License: GPL (>= 2)
 LazyData: TRUE
 Imports:
