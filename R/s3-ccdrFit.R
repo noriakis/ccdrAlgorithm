@@ -35,7 +35,7 @@
 #' \describe{
 #' \item{\code{sbm}}{Should eventually be a graph object (probably).}
 #' \item{\code{lambda}}{(numeric) Value of lambda for this estimate.}
-#' \item{\code{nedge}}{(integer) Number of edges in this estiamte.}
+#' \item{\code{nedge}}{(integer) Number of edges in this estimate.}
 #' \item{\code{pp}}{(integer) Number of nodes.}
 #' \item{\code{nn}}{(integer) Number of observations this estimate was based on.}
 #' \item{\code{time}}{(numeric) Time in seconds to generate this estimate.}
@@ -95,49 +95,26 @@ get.adjacency.matrix.ccdrFit <- function(cf){
     as.matrix(cf$sbm)
 } # END GET.ADJACENCY.MATRIX.CCDRFIT
 
-#' get.sigmas.ccdrFit
-#'
-#' Extracts the vector of inverse variances from a \code{\link{ccdrFit-class}} object.
-#'
-#' @return
-#' \code{numeric}
+#' num.nodes.ccdrFit
 #'
 #' @export
-get.sigmas.ccdrFit <- function(cf){
-    #
-    # NOTE: cf$sbm stores the INVERSE variances in the slot sigmas (bad name!), so we invert these values
-    #       here to return the true estimated variances.
-    #
-    1 / (cf$sbm$sigmas)^2
-} # END GET.SIGMAS.CCDRFIT
+num.nodes.ccdrFit <- function(cf){
+    cf$pp
+} # END NUM.NODES.CCDRFIT
 
-# Operates on a list of ccdrFit objects
+#' num.edges.ccdrFit
+#'
 #' @export
-get.times <- function(li){
-    # check.class <- all(unlist(lapply(li, function(x){ is.ccdrFit(x)})))
-    if(!check_list_class(li, "ccdrFit")){
-        stop("Some component is not of type ccdrFit -- this function only works on lists of ccdrFit objects.")
-    }
+num.edges.ccdrFit <- function(cf){
+    cf$nedge
+} # END NUM.EDGES.CCDRFIT
 
-    times <- unlist(lapply(li, function(x){ x$time}))
-    names(times) <- NULL
-
-    times
-} # END GET.TIMES
-
-# Also operates on a list of ccdrFit objects
+#' num.samples.ccdrFit
+#'
 #' @export
-get.lambdas <- function(li){
-    # check.class <- all(unlist(lapply(li, function(x){ is.ccdrFit(x)})))
-    if(!check_list_class(li, "ccdrFit")){
-        stop("Some component is not of type ccdrFit -- this function only works on lists of ccdrFit objects.")
-    }
-
-    times <- unlist(lapply(li, function(x){ x$lambda}))
-    names(times) <- NULL
-
-    times
-} # END GET.LAMBDAS
+num.samples.ccdrFit <- function(cf){
+    cf$nn
+} # END NUM.SAMPLES.CCDRFIT
 
 #' @export
 print.ccdrFit <- function(cf){
