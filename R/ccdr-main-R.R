@@ -185,16 +185,18 @@ ccdr_call <- function(data,
     cors <- cor_vector(data)
     t2.cor <- proc.time()[3]
 
-    ccdr_gridR(cors,
-               as.integer(pp),
-               as.integer(nn),
-               betas,
-               as.numeric(lambdas),
-               as.numeric(gamma),
-               as.numeric(error.tol),
-               as.integer(max.iters),
-               as.numeric(alpha),
-               verbose)
+    fit <- ccdr_gridR(cors,
+                      as.integer(pp),
+                      as.integer(nn),
+                      betas,
+                      as.numeric(lambdas),
+                      as.numeric(gamma),
+                      as.numeric(error.tol),
+                      as.integer(max.iters),
+                      as.numeric(alpha),
+                      verbose)
+
+    ccdrPath.list(fit)
 } # END CCDR_CALL
 
 # ccdr_gridR
