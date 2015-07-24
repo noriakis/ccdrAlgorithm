@@ -54,6 +54,10 @@ NULL
 #'              current estimation is \code{> alpha * ncol(data)}.
 #' @param verbose \code{TRUE / FALSE} whether or not to print out progress and summary reports.
 #'
+#' @return A list of length \code{lambdas.length}. Each component of the list is an S3 object of type
+#'          \code{\link{ccdrFit-class}}, which represents one of the estimates in the solution path
+#'          for a fixed value of lambda.
+#'
 #' @examples
 #'
 #' \dontrun{
@@ -182,15 +186,15 @@ ccdr_call <- function(data,
     t2.cor <- proc.time()[3]
 
     ccdr_gridR(cors,
-                as.integer(pp),
-                as.integer(nn),
-                betas,
-                as.numeric(lambdas),
-                as.numeric(gamma),
-                as.numeric(error.tol),
-                as.integer(max.iters),
-                as.numeric(alpha),
-                verbose)
+               as.integer(pp),
+               as.integer(nn),
+               betas,
+               as.numeric(lambdas),
+               as.numeric(gamma),
+               as.numeric(error.tol),
+               as.integer(max.iters),
+               as.numeric(alpha),
+               verbose)
 } # END CCDR_CALL
 
 # ccdr_gridR

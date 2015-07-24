@@ -27,12 +27,34 @@
 # * get.sigmas
 #
 
+#' ccdrFit class
+#'
+#' Convenience wrapper class for output of CCDr algorithm: Represents a single DAG estimate in the solution path.
+#'
+#' @section Slots:
+#' \describe{
+#' \item{\code{sbm}}{Should eventually be a graph object (probably).}
+#' \item{\code{lambda}}{(numeric) Value of lambda for this estimate.}
+#' \item{\code{nedge}}{(integer) Number of edges in this estiamte.}
+#' \item{\code{pp}}{(integer) Number of nodes.}
+#' \item{\code{nn}}{(integer) Number of observations this estimate was based on.}
+#' \item{\code{time}}{(numeric) Time in seconds to generate this estimate.}
+#' }
+#'
+#'
+#' @section Methods:
+#' \code{\link{get.adjacency.matrix}}, \code{\link{get.sigmas}}
+#'
+#' @docType S3class
+#' @name ccdrFit-class
+NULL
+
 #' @export
 is.ccdrFit <- function(cf){
     inherits(cf, "ccdrFit")
 } # END IS.CCDRFIT
 
-# Constructor
+# ccdrFit constructor
 ccdrFit.list <- function(li){
 
     #
@@ -61,14 +83,32 @@ as.list.ccdrFit <- function(cf){
     list(sbm = cf$sbm, lambda = cf$lambda, nedge = cf$nedge, pp = cf$pp, nn = cf$nn, time = cf$time)
 } # END AS.LIST.CCDRFIT
 
+#' get.adjacency.matrix.ccdrFit
+#'
+#' Extracts the adjacency matrix from a \code{\link{ccdrFit-class}} object.
+#'
+#' @return
+#' \code{matrix}
+#'
 #' @export
 get.adjacency.matrix.ccdrFit <- function(cf){
     as.matrix(cf$sbm)
 } # END GET.ADJACENCY.MATRIX.CCDRFIT
 
+#' get.sigmas.ccdrFit
+#'
+#' Extracts the vector of inverse variances from a \code{\link{ccdrFit-class}} object.
+#'
+#' @return
+#' \code{numeric}
+#'
 #' @export
 get.sigmas.ccdrFit <- function(cf){
-    cf$sbm$sigmas
+    #
+    # NOTE: cf$sbm stores the INVERSE variances in the slot sigmas (bad name!), so we invert these values
+    #       here to return the true estimated variances.
+    #
+    1 / (cf$sbm$sigmas)^2
 } # END GET.SIGMAS.CCDRFIT
 
 # Operates on a list of ccdrFit objects
@@ -111,11 +151,12 @@ print.ccdrFit <- function(cf){
 
     cat("\nPhi: \n")
     if(cf$pp < MAX_NODES) {
-        print(as.matrix(cf$sbm))
+        print(get.adjacency.matrix(cf))
     } else{
         cat("<Adjacency matrix has more than ", MAX_NODES, " nodes: suppressing output>\n", sep = "")
     }
 
     cat("\nRho: \n")
-    print(cf$sbm$sigmas)
+    print(get.sigmas(cf))
 } # END PRINT.CCDRFIT
+
