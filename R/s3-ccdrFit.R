@@ -27,6 +27,7 @@
 # * get.sigmas
 #
 
+#' @export
 is.ccdrFit <- function(cf){
     inherits(cf, "ccdrFit")
 } # END IS.CCDRFIT
@@ -55,19 +56,23 @@ ccdrFit.list <- function(li){
     structure(li, class = "ccdrFit")
 } # END CCDRFIT.LIST
 
+#' @export
 as.list.ccdrFit <- function(cf){
     list(sbm = cf$sbm, lambda = cf$lambda, nedge = cf$nedge, pp = cf$pp, nn = cf$nn, time = cf$time)
 } # END AS.LIST.CCDRFIT
 
+#' @export
 get.adjacency.matrix.ccdrFit <- function(cf){
     as.matrix(cf$sbm)
 } # END GET.ADJACENCY.MATRIX.CCDRFIT
 
+#' @export
 get.sigmas.ccdrFit <- function(cf){
     cf$sbm$sigmas
 } # END GET.SIGMAS.CCDRFIT
 
 # Operates on a list of ccdrFit objects
+#' @export
 get.times <- function(li){
     # check.class <- all(unlist(lapply(li, function(x){ is.ccdrFit(x)})))
     if(!check_list_class(li, "ccdrFit")){
@@ -81,6 +86,7 @@ get.times <- function(li){
 } # END GET.TIMES
 
 # Also operates on a list of ccdrFit objects
+#' @export
 get.lambdas <- function(li){
     # check.class <- all(unlist(lapply(li, function(x){ is.ccdrFit(x)})))
     if(!check_list_class(li, "ccdrFit")){
@@ -93,6 +99,7 @@ get.lambdas <- function(li){
     times
 } # END GET.LAMBDAS
 
+#' @export
 print.ccdrFit <- function(cf){
     cat("CCDr estimate\n",
         cf$pp, " nodes with ", cf$nedge, " edges\n",

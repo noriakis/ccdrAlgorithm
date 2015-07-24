@@ -38,6 +38,7 @@
 #------------------------------------------------------------------------------#
 # is.SparseBlockMatrixR
 #
+#' @export
 is.SparseBlockMatrixR <- function(sbm){
     inherits(sbm, "SparseBlockMatrixR")
 } # END IS.SPARSEBLOCKMATRIXR
@@ -199,6 +200,7 @@ as.SparseBlockMatrixR.list <- function(li){
 # as.SparseBlockMatrixR.sparse
 #  Convert FROM sparse TO SparseBlockMatrixR
 #
+#' @export
 as.SparseBlockMatrixR.sparse <- function(sp){
     SparseBlockMatrixR.sparse(sp)
 } # END AS.SPARSEBLOCKMATRIXR.SPARSE
@@ -207,6 +209,7 @@ as.SparseBlockMatrixR.sparse <- function(sp){
 # as.SparseBlockMatrixR.matrix
 #  Convert FROM matrix TO SparseBlockMatrixR
 #
+#' @export
 as.SparseBlockMatrixR.matrix <- function(m){
     SparseBlockMatrixR.matrix(m)
 } # END AS.SPARSEBLOCKMATRIXR.MATRIX
@@ -216,6 +219,7 @@ as.SparseBlockMatrixR.matrix <- function(m){
 #  Convert FROM SparseBlockMatrixR TO list
 #  Even though internally the SBM object is a list, we must still manually define this function
 #
+#' @export
 as.list.SparseBlockMatrixR <- function(sbm){
     list(rows = sbm$rows, vals = sbm$vals, blocks = sbm$blocks, sigmas = sbm$sigmas, start = sbm$start)
 } # END AS.LIST.SPARSEBLOCKMATRIXR
@@ -224,6 +228,7 @@ as.list.SparseBlockMatrixR <- function(sbm){
 # as.matrix.SparseBlockMatrixR
 #  Convert FROM SparseBlockMatrixR TO matrix
 #
+#' @export
 as.matrix.SparseBlockMatrixR <- function(sbm){
     pp <- length(sbm$rows)
     m <- matrix(0, nrow = pp, ncol = pp)
@@ -250,6 +255,7 @@ as.matrix.SparseBlockMatrixR <- function(sbm){
 # is.zero.SparseBlockMatrixR
 # Check to see if an SBM object represents the zero matrix / null graph
 #
+#' @export
 is.zero.SparseBlockMatrixR <- function(x){
     check_if_zero <- (length(unlist(x$sbm$rows)) == 0)
 
