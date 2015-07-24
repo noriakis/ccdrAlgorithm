@@ -29,7 +29,9 @@
 
 #' ccdrFit class
 #'
-#' Convenience wrapper class for output of CCDr algorithm: Represents a single DAG estimate in the solution path.
+#' Convenience wrapper class for DAG estimates: Represents a single DAG estimate in the solution path.
+#' Generally speaking, these estimates should be wrapped up in a \code{\link{ccdrPath-class}} object, but
+#' can be handled separately if desired (be careful!).
 #'
 #' @section Slots:
 #' \describe{
@@ -43,7 +45,8 @@
 #'
 #'
 #' @section Methods:
-#' \code{\link{get.adjacency.matrix}}, \code{\link{get.sigmas}}
+#' \code{\link{get.adjacency.matrix}}
+#' \code{\link{num.nodes}}, \code{\link{num.edges}}, \code{\link{num.samples}}
 #'
 #' @docType S3class
 #' @name ccdrFit-class

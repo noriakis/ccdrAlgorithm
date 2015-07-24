@@ -18,6 +18,25 @@
 # Methods
 #
 
+#' ccdrPath class
+#'
+#' Convenience wrapper class for output of CCDr algorithm: Represents the entire solution path
+#' of the CCDr algorithm. It's components are of type \code{\link{ccdrFit-class}}. Also inherits
+#' from \code{\link{list}}.
+#'
+#' Each value of lambda in the (discrete) solution path corresponds to a single DAG estimate, which
+#' is of the form (Phi, Rho) (see \href{http://arxiv.org/abs/1401.0852}{Aragam and Zhou (2015), JMLR} for details).
+#' Internally, this estimate is represented by a \code{\link{ccdrFit-class}} object. The full solution
+#' path is then represented as a \code{\link{list}}. This class is essentially a wrapper for this list.
+#'
+#' @section Methods:
+#' \code{\link{get.adjacency.matrix}}, \code{\link{lambda.grid}},
+#' \code{\link{num.nodes}}, \code{\link{num.edges}}, \code{\link{num.samples}}
+#'
+#' @docType S3class
+#' @name ccdrPath-class
+NULL
+
 #' @export
 is.ccdrPath <- function(cp){
     inherits(cp, "ccdrPath")
@@ -33,14 +52,25 @@ ccdrPath.list <- function(li){
     structure(li, class = c("ccdrPath", "list"))
 }
 
+#' print.ccdrPath
+#'
+#' Prints the contents of a \code{\link{ccdrPath-class}} object neatly.
+#'
+#' @param verbose If \code{TRUE}, then each estimate in the solution path is printed separately. Do not use for
+#'        large graphs or large solution paths. (default = \code{FALSE})
+#'
 #' @export
-print.ccdrPath <- function(cp){
-    cat("CCDr solution path\n",
-        length(cp), " estimates for lambda in [", min(lambda.grid(cp)), ",", max(lambda.grid(cp)), "]\n",
-        "Number of edges per solution: ", paste(num.edges(cp), collapse = "-"), "\n",
-        num.nodes(cp), " nodes\n",
-        num.samples(cp), " observations\n",
-        sep = "")
+print.ccdrPath <- function(cp, verbose = FALSE){
+    if(verbose){
+        print.default(cp) # default generic reverts to list => separate calls to print.ccdrFit for each component
+    } else{
+        cat("CCDr solution path\n",
+            length(cp), " estimates for lambda in [", min(lambda.grid(cp)), ",", max(lambda.grid(cp)), "]\n",
+            "Number of edges per solution: ", paste(num.edges(cp), collapse = "-"), "\n",
+            num.nodes(cp), " nodes\n",
+            num.samples(cp), " observations\n",
+            sep = "")
+    }
 }
 
 #' num.nodes.ccdrPath

@@ -5,14 +5,16 @@
 \alias{ccdrFit-class}
 \title{ccdrFit class}
 \description{
-Convenience wrapper class for output of CCDr algorithm: Represents a single DAG estimate in the solution path.
+Convenience wrapper class for DAG estimates: Represents a single DAG estimate in the solution path.
+Generally speaking, these estimates should be wrapped up in a \code{\link{ccdrPath-class}} object, but
+can be handled separately if desired (be careful!).
 }
 \section{Slots}{
 
 \describe{
 \item{\code{sbm}}{Should eventually be a graph object (probably).}
 \item{\code{lambda}}{(numeric) Value of lambda for this estimate.}
-\item{\code{nedge}}{(integer) Number of edges in this estiamte.}
+\item{\code{nedge}}{(integer) Number of edges in this estimate.}
 \item{\code{pp}}{(integer) Number of nodes.}
 \item{\code{nn}}{(integer) Number of observations this estimate was based on.}
 \item{\code{time}}{(numeric) Time in seconds to generate this estimate.}
@@ -21,6 +23,7 @@ Convenience wrapper class for output of CCDr algorithm: Represents a single DAG 
 
 \section{Methods}{
 
-\code{\link{get.adjacency.matrix}}, \code{\link{get.sigmas}}
+\code{\link{get.adjacency.matrix}}
+\code{\link{num.nodes}}, \code{\link{num.edges}}, \code{\link{num.samples}}
 }
 

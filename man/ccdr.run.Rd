@@ -36,9 +36,7 @@ current estimation is \code{> alpha * ncol(data)}.}
 \item{verbose}{\code{TRUE / FALSE} whether or not to print out progress and summary reports.}
 }
 \value{
-A list of length \code{lambdas.length}. Each component of the list is an S3 object of type
-         \code{\link{ccdrFit-class}}, which represents one of the estimates in the solution path
-         for a fixed value of lambda.
+A \code{\link{ccdrPath-class}} object.
 }
 \description{
 Estimate a Bayesian network (directed acyclic graph) from observational data using the
