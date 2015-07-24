@@ -101,6 +101,8 @@ get.lambdas <- function(li){
 
 #' @export
 print.ccdrFit <- function(cf){
+    MAX_NODES <- 20
+
     cat("CCDr estimate\n",
         cf$pp, " nodes with ", cf$nedge, " edges\n",
         cf$nn, " observations\n",
@@ -108,7 +110,11 @@ print.ccdrFit <- function(cf){
         sep = "")
 
     cat("\nPhi: \n")
-    print(as.matrix(cf$sbm))
+    if(cf$pp < MAX_NODES) {
+        print(as.matrix(cf$sbm))
+    } else{
+        cat("<Adjacency matrix has more than ", MAX_NODES, " nodes: suppressing output>\n", sep = "")
+    }
 
     cat("\nRho: \n")
     print(cf$sbm$sigmas)
