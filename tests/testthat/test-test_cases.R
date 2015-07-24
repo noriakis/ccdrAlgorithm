@@ -8,6 +8,8 @@ context("CCDr test cases")
 #  (33) and (34)
 #
 
+expected_sigmas_value <- function(nn) 1/nn #sqrt(nn)
+
 test_that("If cors = 0 and betas = 0, ouput should be all zeroes (low-dim)", {
 
     ### Low-dimensions
@@ -22,10 +24,10 @@ test_that("If cors = 0 and betas = 0, ouput should be all zeroes (low-dim)", {
     check_zeroes <- check_vars <- TRUE
     for(k in seq_along(final)){
 #         check_zeroes <- check_zeroes & all(get.adjacency.matrix(final[[k]]) == 0)
-#         check_vars <- check_vars & isTRUE(all.equal(get.sigmas(final[[k]]), rep(sqrt(nn), pp)))
+#         check_vars <- check_vars & isTRUE(all.equal(get.rhos(final[[k]]), rep(expected_sigmas_value, pp)))
 
         expect_true(all(get.adjacency.matrix(final[[k]]) == 0))
-        expect_true(isTRUE(all.equal(get.sigmas(final[[k]]), rep(sqrt(nn), pp))))
+        expect_true(isTRUE(all.equal(get.rhos(final[[k]]), rep(expected_sigmas_value(nn), pp))))
     }
 
 #     expect_true(check_zeroes)
@@ -46,10 +48,10 @@ test_that("If cors = 0 and betas = 0, ouput should be all zeroes (high-dim)", {
     check_zeroes <- check_vars <- TRUE
     for(k in seq_along(final)){
 #         check_zeroes <- check_zeroes & all(get.adjacency.matrix(final[[k]]) == 0)
-#         check_vars <- check_vars & isTRUE(all.equal(get.sigmas(final[[k]]), rep(sqrt(nn), pp)))
+#         check_vars <- check_vars & isTRUE(all.equal(get.rhos(final[[k]]), rep(expected_sigmas_value, pp)))
 
         expect_true(all(get.adjacency.matrix(final[[k]]) == 0))
-        expect_true(isTRUE(all.equal(get.sigmas(final[[k]]), rep(sqrt(nn), pp))))
+        expect_true(isTRUE(all.equal(get.rhos(final[[k]]), rep(expected_sigmas_value(nn), pp))))
     }
 
 #     expect_true(check_zeroes)
