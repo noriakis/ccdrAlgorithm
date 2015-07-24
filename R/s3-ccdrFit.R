@@ -160,3 +160,13 @@ print.ccdrFit <- function(cf){
     print(get.sigmas(cf))
 } # END PRINT.CCDRFIT
 
+#------------------------------------------------------------------------------#
+# to_B.ccdrFit
+# Internal function to convert estimates from the (Rho, R) parametrization to
+#  the standard (B, Omega) parametrization.
+#
+to_B.ccdrFit <- function(cf){
+    cf$sbm <- to_B(cf$sbm)
+
+    cf
+}

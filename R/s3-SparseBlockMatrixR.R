@@ -288,3 +288,16 @@ is.zero.SparseBlockMatrixR <- function(x){
 .num_edges.SparseBlockMatrixR <- function(sbm){
     length(unlist(lapply(sbm$vals, function(z) which(abs(z) > .MACHINE_EPS))))
 } # END .NUM_EDGES.SPARSEBLOCKMATRIXR
+
+#------------------------------------------------------------------------------#
+# .to_B.SparseBlockMatrixR
+# Internal function to convert estimates from the (Rho, R) parametrization to
+#  the standard (B, Omega) parametrization.
+#
+to_B.SparseBlockMatrixR <- function(sbm){
+    ### Need to re-parametrize the betas FIRST
+    sbm$vals <- mapply(function(x, y) x/y, sbm$vals, sbm$sigmas) # Divide each vals vector by sigmas[j]
+    sbm$sigmas <- 1/ (sbm$sigmas)^2
+
+    sbm
+}

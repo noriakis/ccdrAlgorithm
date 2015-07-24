@@ -33,4 +33,5 @@ is.zero <- function(x) UseMethod("is.zero", x)
 
 # Internal generics
 .num_edges <- function(x) UseMethod(".num_edges", x)
+to_B <- function(x) UseMethod("to_B", x)
 
