@@ -132,9 +132,6 @@ print.ccdrFit <- function(cf){
     } else{
         cat("<Adjacency matrix has more than ", MAX_NODES, " nodes: suppressing output>\n", sep = "")
     }
-
-    cat("\nRho: \n")
-    print(get.sigmas(cf))
 } # END PRINT.CCDRFIT
 
 #------------------------------------------------------------------------------#
