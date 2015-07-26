@@ -112,6 +112,13 @@ get.adjacency.matrix.ccdrPath <- function(cp){
     lapply(cp, get.adjacency.matrix)
 } # END GET.ADJACENCY.MATRIX.CCDRPATH
 
+#' edge.list.ccdrPath
+#'
+#' @export
+edge.list.ccdrPath <- function(cp){
+    lapply(cp, edge.list)
+} # END EDGE.LIST.CCDRPATH
+
 #------------------------------------------------------------------------------#
 # DEPRECATED METHODS
 #------------------------------------------------------------------------------#

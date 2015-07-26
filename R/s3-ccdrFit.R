@@ -98,6 +98,18 @@ get.adjacency.matrix.ccdrFit <- function(cf){
     as.matrix(cf$sbm)
 } # END GET.ADJACENCY.MATRIX.CCDRFIT
 
+#' edge.list.ccdrFit
+#'
+#' Extracts the edge list associated with the DAG of a \code{\link{ccdrFit-class}} object.
+#'
+#' @return
+#' \code{matrix}
+#'
+#' @export
+edge.list.ccdrFit <- function(cf){
+    edge.list(cf$sbm)
+} # END EDGE.LIST.CCDRFIT
+
 #' num.nodes.ccdrFit
 #'
 #' @export

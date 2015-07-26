@@ -252,6 +252,34 @@ as.matrix.SparseBlockMatrixR <- function(sbm){
 } # END AS.MATRIX.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
+# edge.list.SparseBlockMatrixR
+# Obtain the edge list of a DAG returned by the CCDr algorithm
+#
+#' @export
+edge.list.SparseBlockMatrixR <- function(sbm){
+    #
+    # We have to be careful in obtaining the edge list of a SparseBlockMatrixR object:
+    #  It is NOT the same as the rows slot since some of these components may have
+    #  zero edge weights (see docs for SparseBlockMatrixR for explanation). Thus, in
+    #  order to obtain the edge list, we need to check which indices in the rows slot
+    #  have nonzero edge weights.
+    #
+    # y = rows, x = vals : Select the elements of rows which have nonzero values in vals,
+    #                       accouting for possible round-off (hence .MACHINE_EPS).
+    #
+    mapply(function(x, y){ y[which(abs(x) > .MACHINE_EPS)]}, sbm$vals, sbm$rows)
+}
+
+#------------------------------------------------------------------------------#
+# num.nodes.SparseBlockMatrixR
+#
+#' @export
+num.nodes.SparseBlockMatrixR <- function(sbm){
+    ### The number of nodes should be exactly the same as the length of the rows list
+    length(sbm$rows)
+}
+
+#------------------------------------------------------------------------------#
 # is.zero.SparseBlockMatrixR
 # Check to see if an SBM object represents the zero matrix / null graph
 #
