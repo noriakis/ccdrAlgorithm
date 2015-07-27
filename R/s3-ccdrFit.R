@@ -14,7 +14,7 @@
 # ccdrFit S3 class skeleton
 #
 # Data
-# * SparseBlockMatrixR sbm  // adjacency matrix as SparseBlockMatrix
+# * _______ edges           // edge list, adjacency matrix, or graphNEL object of DAG estimate
 # * numeric lambda          // regularization parameter
 # * integer nedge           // number of edges
 # * integer pp              // number of nodes
@@ -78,13 +78,49 @@ ccdrFit.list <- function(li){
         stop("Attempting to set nedge to an improper value: Must be equal to the number of nonzero values in sbm.")
     }
 
+    #
+    # Output DAG as an edge list (i.e. an edgeList object).
+    #  This is NOT the same as sbm$rows since some of these rows may correspond to edges with zero coefficients.
+    #  See docs for SpareBlockMatrixR class for details.
+    #
+    names(li)[1] <- "edges"
+    li$edges <- as.edgeList.SparseBlockMatrixR(li$edges) # Before coercion, li$edges is actually an SBM object
+
+    ### Update values to be consistent with edgeList
+    if(li$pp != num.nodes(li$edges)){
+        warning("Attempting to create ccdrFit object with inconsistent number of nodes! input = ", li$pp, " != output = ", num.nodes(li$edges))
+    }
+    li$pp <- num.nodes(li$edges)
+
+    if(li$nedge != num.edges(li$edges)){
+        warning("Attempting to create ccdrFit object with inconsistent number of edges! input = ", li$nedge, " != output = ", num.edges(li$edges))
+    }
+    li$nedge <- num.edges(li$edges)
+
+    ### Final output
     structure(li, class = "ccdrFit")
 } # END CCDRFIT.LIST
 
 #' @export
 as.list.ccdrFit <- function(cf){
-    list(sbm = cf$sbm, lambda = cf$lambda, nedge = cf$nedge, pp = cf$pp, nn = cf$nn, time = cf$time)
+    list(edges = cf$edges, lambda = cf$lambda, nedge = cf$nedge, pp = cf$pp, nn = cf$nn, time = cf$time)
 } # END AS.LIST.CCDRFIT
+
+#' @export
+print.ccdrFit <- function(cf){
+    MAX_NODES <- 20
+
+    cat("CCDr estimate\n",
+        cf$nn, " observations\n",
+        "lambda = ", cf$lambda, "\n",
+        sep = "")
+
+    cat("\nDAG: \n")
+    print(cf$edges)
+    if(cf$pp < MAX_NODES) {
+        # print(get.adjacency.matrix(cf))
+    }
+} # END PRINT.CCDRFIT
 
 #' get.adjacency.matrix.ccdrFit
 #'
@@ -95,20 +131,8 @@ as.list.ccdrFit <- function(cf){
 #'
 #' @export
 get.adjacency.matrix.ccdrFit <- function(cf){
-    as.matrix(cf$sbm)
+    get.adjacency.matrix.edgeList(cf$edges)
 } # END GET.ADJACENCY.MATRIX.CCDRFIT
-
-#' edge.list.ccdrFit
-#'
-#' Extracts the edge list associated with the DAG of a \code{\link{ccdrFit-class}} object.
-#'
-#' @return
-#' \code{matrix}
-#'
-#' @export
-edge.list.ccdrFit <- function(cf){
-    edge.list(cf$sbm)
-} # END EDGE.LIST.CCDRFIT
 
 #' num.nodes.ccdrFit
 #'
@@ -130,24 +154,6 @@ num.edges.ccdrFit <- function(cf){
 num.samples.ccdrFit <- function(cf){
     cf$nn
 } # END NUM.SAMPLES.CCDRFIT
-
-#' @export
-print.ccdrFit <- function(cf){
-    MAX_NODES <- 20
-
-    cat("CCDr estimate\n",
-        cf$pp, " nodes with ", cf$nedge, " edges\n",
-        cf$nn, " observations\n",
-        "lambda = ", cf$lambda, "\n",
-        sep = "")
-
-    cat("\nPhi: \n")
-    if(cf$pp < MAX_NODES) {
-        print(get.adjacency.matrix(cf))
-    } else{
-        cat("<Adjacency matrix has more than ", MAX_NODES, " nodes: suppressing output>\n", sep = "")
-    }
-} # END PRINT.CCDRFIT
 
 #------------------------------------------------------------------------------#
 # to_B.ccdrFit
