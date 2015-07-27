@@ -194,7 +194,8 @@ ccdr_call <- function(data,
                       as.numeric(alpha),
                       verbose)
 
-    ccdrPath.list(fit)
+    fit <- lapply(fit, ccdrFit.list)    # convert everything to ccdrFit objects
+    ccdrPath.list(fit)                  # wrap as ccdrPath object
 } # END CCDR_CALL
 
 # ccdr_gridR
@@ -224,14 +225,14 @@ ccdr_gridR <- function(cors,
 
         t1.ccdr <- proc.time()[3]
         ccdr.out[[i]] <- ccdr_singleR(cors,
-                                       pp, nn,
-                                       betas,
-                                       lambdas[i],
-                                       gamma = gamma,
-                                       eps = eps,
-                                       maxIters = maxIters,
-                                       alpha = alpha,
-                                       verbose = verbose
+                                      pp, nn,
+                                      betas,
+                                      lambdas[i],
+                                      gamma = gamma,
+                                      eps = eps,
+                                      maxIters = maxIters,
+                                      alpha = alpha,
+                                      verbose = verbose
         )
         t2.ccdr <- proc.time()[3]
 
@@ -328,5 +329,6 @@ ccdr_singleR <- function(cors,
                      time = t2.ccdr - t1.ccdr)
     ccdr.out$sbm <- reIndexR(ccdr.out$sbm)
 
-    ccdrFit(ccdr.out)
+    # ccdrFit(ccdr.out)
+    ccdr.out
 } # END CCDR_SINGLER
