@@ -72,12 +72,9 @@ reIndexC.SparseBlockMatrixR <- function(sbm){
 reIndexR.SparseBlockMatrixR <- function(sbm){
     #
     # Using lapply does NOT work here: if one of the list elements is an empty vector, adding 1 will
-    #  mysteriously coerce it to a numeric vector (should be integer!). Not sure why this happens, but
-    #  we shouldn't allow R to secretly change our data types without our permission. Use a for loop
-    #  instead.
-    #
-    # UPDATE 05/13/14: Using '1L' keeps everything as an integer. This makes sense since '1' is a numeric
-    #                   literal in R, while the corresponding literal for an integer is '1L'.
+    #  coerce it to a numeric vector (should be integer!). Using '1L' keeps everything as an integer.
+    #  This makes sense since '1' is a numeric literal in R, while the corresponding literal for an
+    #  integer is '1L'.
     #
     sbm$rows <- lapply(sbm$rows, function(x){ x + 1L})
     if(length(sbm$blocks) > 0) sbm$blocks <- lapply(sbm$blocks, function(x){ x + 1L})
@@ -252,6 +249,15 @@ as.matrix.SparseBlockMatrixR <- function(sbm){
 } # END AS.MATRIX.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
+# as.edgeList.SparseBlockMatrixR
+# Coerce SBM to edge list
+#
+#' @export
+as.edgeList.SparseBlockMatrixR <- function(sbm){
+    edge.list(sbm)
+} # AS.EDGELIST.SPARSEBLOCKMATRIXR
+
+#------------------------------------------------------------------------------#
 # edge.list.SparseBlockMatrixR
 # Obtain the edge list of a DAG returned by the CCDr algorithm
 #
@@ -267,8 +273,15 @@ edge.list.SparseBlockMatrixR <- function(sbm){
     # y = rows, x = vals : Select the elements of rows which have nonzero values in vals,
     #                       accouting for possible round-off (hence .MACHINE_EPS).
     #
-    mapply(function(x, y){ y[which(abs(x) > .MACHINE_EPS)]}, sbm$vals, sbm$rows)
+    el <- mapply(function(x, y){ y[which(abs(x) > .MACHINE_EPS)]}, sbm$vals, sbm$rows)
+
+    edgeList.list(el)
 }
+
+#' @export
+get.adjacency.matrix.SparseBlockMatrixR <- function(sbm){
+    get.adjacency.matrix.edgeList(as.edgeList.SparseBlockMatrixR(sbm))
+} # END GET.ADJACENCY.MATRIX.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
 # num.nodes.SparseBlockMatrixR
@@ -277,6 +290,15 @@ edge.list.SparseBlockMatrixR <- function(sbm){
 num.nodes.SparseBlockMatrixR <- function(sbm){
     ### The number of nodes should be exactly the same as the length of the rows list
     length(sbm$rows)
+}
+
+#------------------------------------------------------------------------------#
+# num.edges.SparseBlockMatrixR
+#
+#' @export
+num.edges.SparseBlockMatrixR <- function(sbm){
+    ### The number of nodes should be exactly the same as the length of the rows list
+    num.edges(as.edgeList.SparseBlockMatrixR(sbm))
 }
 
 #------------------------------------------------------------------------------#
@@ -314,7 +336,7 @@ is.zero.SparseBlockMatrixR <- function(x){
 #  object
 #
 .num_edges.SparseBlockMatrixR <- function(sbm){
-    length(unlist(lapply(sbm$vals, function(z) which(abs(z) > .MACHINE_EPS))))
+    num.edges.SparseBlockMatrixR(sbm)
 } # END .NUM_EDGES.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
