@@ -1,11 +1,11 @@
-context("ccdr.gridR")
+context("ccdr_gridR")
 
 pp <- 10
 nn <- 5
 X.test <- matrix(runif(pp*pp), ncol = pp)
 betas.test <- matrix(runif(pp*pp), ncol = pp)
 
-test_that("ccdr.gridR runs as expected", {
+test_that("ccdr_gridR runs as expected", {
     ### No error / Also tests default values for betas, nlam, gamma, eps, maxIters, alpha
     expect_error(not(ccdr_gridR(X = X.test)))
 

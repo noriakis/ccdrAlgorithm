@@ -30,9 +30,9 @@ test_that("Testing default behaviour of ccdr.run", {
 
     ### Check consistency of nedge
     for(i in seq_along(final)){
-        matrix.nedge <- sum(as.matrix(final[[i]]$sbm) != 0)
-        sbm.nedge <- .num_edges(final[[i]]$sbm)
-        expect_equal(final[[i]]$nedge, sbm.nedge, matrix.nedge)
+        matrix.nedge <- Matrix::nnzero(get.adjacency.matrix(final[[i]]$edges))
+        edgeL.nedge <- num.edges(final[[i]]$edges)
+        expect_equal(final[[i]]$nedge, edgeL.nedge, matrix.nedge)
     }
 })
 
@@ -49,9 +49,9 @@ test_that("Testing ccdr.run with manual settings", {
 
     ### Check consistency of nedge
     for(i in seq_along(final)){
-        matrix.nedge <- sum(as.matrix(final[[i]]$sbm) != 0)
-        sbm.nedge <- .num_edges(final[[i]]$sbm)
-        expect_equal(final[[i]]$nedge, sbm.nedge, matrix.nedge)
+        matrix.nedge <- Matrix::nnzero(get.adjacency.matrix(final[[i]]$edges))
+        edgeL.nedge <- num.edges(final[[i]]$edges)
+        expect_equal(final[[i]]$nedge, edgeL.nedge, matrix.nedge)
     }
 })
 
