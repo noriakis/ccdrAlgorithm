@@ -88,12 +88,12 @@ ccdrFit.list <- function(li){
 
     ### Update values to be consistent with edgeList
     if(li$pp != num.nodes(li$edges)){
-        warning("Attempting to create ccdrFit object with inconsistent number of nodes! input = ", li$pp, " != output = ", num.nodes(li$edges))
+        stop("Attempting to create ccdrFit object with inconsistent number of nodes! input = ", li$pp, " != output = ", num.nodes(li$edges))
     }
     li$pp <- num.nodes(li$edges)
 
     if(li$nedge != num.edges(li$edges)){
-        warning("Attempting to create ccdrFit object with inconsistent number of edges! input = ", li$nedge, " != output = ", num.edges(li$edges))
+        stop("Attempting to create ccdrFit object with inconsistent number of edges! input = ", li$nedge, " != output = ", num.edges(li$edges))
     }
     li$nedge <- num.edges(li$edges)
 
