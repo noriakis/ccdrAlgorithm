@@ -322,6 +322,8 @@ is.zero.SparseBlockMatrixR <- function(x){
 #  object
 #
 .num_edges.SparseBlockMatrixR <- function(sbm){
+    .Deprecated()
+
     num.edges.SparseBlockMatrixR(sbm)
 } # END .NUM_EDGES.SPARSEBLOCKMATRIXR
 
