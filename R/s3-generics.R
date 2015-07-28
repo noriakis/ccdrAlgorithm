@@ -41,12 +41,6 @@ as.sparse <- function(x) UseMethod("as.sparse", x)
 get.adjacency.matrix <- function(x) UseMethod("get.adjacency.matrix", x)
 
 #' @export
-edge.list <- function(x) UseMethod("edge.list", x)
-
-#' @export
-get.sigmas <- function(x) UseMethod("get.sigmas", x)
-
-#' @export
 lambda.grid <- function(x) UseMethod("lambda.grid", x)
 
 #' @export

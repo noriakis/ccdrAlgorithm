@@ -22,9 +22,7 @@
 # * numeric time            // time to run CCDr algorithm
 #
 # Methods
-# * as.graphCompare
 # * get.adjacency.matrix
-# * get.sigmas
 #
 
 #' ccdrFit class

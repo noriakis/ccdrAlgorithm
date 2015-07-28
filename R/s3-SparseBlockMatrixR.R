@@ -254,15 +254,6 @@ as.matrix.SparseBlockMatrixR <- function(sbm){
 #
 #' @export
 as.edgeList.SparseBlockMatrixR <- function(sbm){
-    edge.list(sbm)
-} # AS.EDGELIST.SPARSEBLOCKMATRIXR
-
-#------------------------------------------------------------------------------#
-# edge.list.SparseBlockMatrixR
-# Obtain the edge list of a DAG returned by the CCDr algorithm
-#
-#' @export
-edge.list.SparseBlockMatrixR <- function(sbm){
     #
     # We have to be careful in obtaining the edge list of a SparseBlockMatrixR object:
     #  It is NOT the same as the rows slot since some of these components may have
@@ -276,7 +267,7 @@ edge.list.SparseBlockMatrixR <- function(sbm){
     el <- mapply(function(x, y){ y[which(abs(x) > .MACHINE_EPS)]}, sbm$vals, sbm$rows)
 
     edgeList.list(el)
-}
+} # AS.EDGELIST.SPARSEBLOCKMATRIXR
 
 #' @export
 #' @describeIn get.adjacency.matrix Convert internal \code{SparseBlockMatrixR} representation to an adjacency matrix
