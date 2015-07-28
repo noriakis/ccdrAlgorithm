@@ -29,6 +29,14 @@ sparse <- function(x) UseMethod("sparse", x)
 as.sparse <- function(x) UseMethod("as.sparse", x)
 
 # Generics for various exported utility functions
+
+#' get.adjacency.matrix
+#'
+#' Extracts the adjacency matrix of the associated graph object.
+#'
+#' @return
+#' \code{matrix}
+#'
 #' @export
 get.adjacency.matrix <- function(x) UseMethod("get.adjacency.matrix", x)
 

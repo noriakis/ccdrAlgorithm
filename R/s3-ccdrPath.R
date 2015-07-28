@@ -105,44 +105,8 @@ lambda.grid.ccdrPath <- function(cp){
     lambdas
 } # END LAMBDA.GRID.CCDRPATH
 
-#' get.adjacency.matrix.ccdrPath
-#'
 #' @export
+#' @describeIn get.adjacency.matrix Retrieves all \code{edges} slots in the solution path, converts to an adjacency matrix, and returns as a list
 get.adjacency.matrix.ccdrPath <- function(cp){
     lapply(cp, get.adjacency.matrix)
 } # END GET.ADJACENCY.MATRIX.CCDRPATH
-
-#------------------------------------------------------------------------------#
-# DEPRECATED METHODS
-#------------------------------------------------------------------------------#
-
-# Operates on a list of ccdrPath objects
-#' @export
-get.times <- function(li){
-    .Deprecated()
-
-    # check.class <- all(unlist(lapply(li, function(x){ is.ccdrPath(x)})))
-    if(!check_list_class(li, "ccdrFit")){
-        stop("Some component is not of type ccdrFit -- this function only works on lists of ccdrFit objects.")
-    }
-
-    times <- unlist(lapply(li, function(x){ x$time}))
-    names(times) <- NULL
-
-    times
-} # END GET.TIMES
-
-# Also operates on a list of ccdrPath objects
-get.lambdas <- function(li){
-    .Deprecated()
-
-    # check.class <- all(unlist(lapply(li, function(x){ is.ccdrPath(x)})))
-    if(!check_list_class(li, "ccdrFit")){
-        stop("Some component is not of type ccdrFit -- this function only works on lists of ccdrFit objects.")
-    }
-
-    times <- unlist(lapply(li, function(x){ x$lambda}))
-    names(times) <- NULL
-
-    times
-} # END GET.LAMBDAS

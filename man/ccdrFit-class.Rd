@@ -5,14 +5,14 @@
 \alias{ccdrFit-class}
 \title{ccdrFit class}
 \description{
-Convenience wrapper class for DAG estimates: Represents a single DAG estimate in the solution path.
+Main class for representing DAG estimates: Represents a single DAG estimate in the solution path.
 Generally speaking, these estimates should be wrapped up in a \code{\link{ccdrPath-class}} object, but
 can be handled separately if desired (be careful!).
 }
 \section{Slots}{
 
 \describe{
-\item{\code{sbm}}{Should eventually be a graph object (probably).}
+\item{\code{edge}}{(edgeList) Edge list of estimated DAG (see \code{\link{edgeList-class}}).}
 \item{\code{lambda}}{(numeric) Value of lambda for this estimate.}
 \item{\code{nedge}}{(integer) Number of edges in this estimate.}
 \item{\code{pp}}{(integer) Number of nodes.}

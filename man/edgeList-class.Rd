@@ -6,7 +6,7 @@
 \title{edgeList class}
 \description{
 Convenience wrapper class for a (column-major) edge list. Each component of the list
-corresponds to a node, and each component is a list whose components are the parents
+corresponds to a node, and each component is an integer vector whose components are the parents
 of this node in the graph. Only intended for internal use.
 }
 \section{Slots}{

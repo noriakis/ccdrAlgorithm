@@ -22,7 +22,7 @@
 #' edgeList class
 #'
 #' Convenience wrapper class for a (column-major) edge list. Each component of the list
-#' corresponds to a node, and each component is a list whose components are the parents
+#' corresponds to a node, and each component is an integer vector whose components are the parents
 #' of this node in the graph. Only intended for internal use.
 #'
 #' @section Slots:
@@ -69,6 +69,7 @@ print.edgeList <- function(edgeL){
 }
 
 #' @export
+#' @describeIn get.adjacency.matrix Convert internal \code{edgeList} representation to an adjacency matrix
 get.adjacency.matrix.edgeList <- function(edgeL){
     numnode <- length(edgeL)
     Matrix.out <- Matrix::Matrix(0, nrow = numnode, ncol = numnode)

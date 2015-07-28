@@ -279,6 +279,7 @@ edge.list.SparseBlockMatrixR <- function(sbm){
 }
 
 #' @export
+#' @describeIn get.adjacency.matrix Convert internal \code{SparseBlockMatrixR} representation to an adjacency matrix
 get.adjacency.matrix.SparseBlockMatrixR <- function(sbm){
     get.adjacency.matrix.edgeList(as.edgeList.SparseBlockMatrixR(sbm))
 } # END GET.ADJACENCY.MATRIX.SPARSEBLOCKMATRIXR
