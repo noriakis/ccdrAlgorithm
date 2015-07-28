@@ -275,29 +275,23 @@ get.adjacency.matrix.SparseBlockMatrixR <- function(sbm){
     get.adjacency.matrix.edgeList(as.edgeList.SparseBlockMatrixR(sbm))
 } # END GET.ADJACENCY.MATRIX.SPARSEBLOCKMATRIXR
 
-#------------------------------------------------------------------------------#
-# num.nodes.SparseBlockMatrixR
-#
+
 #' @export
+#' @describeIn num.nodes
 num.nodes.SparseBlockMatrixR <- function(sbm){
     ### The number of nodes should be exactly the same as the length of the rows list
     length(sbm$rows)
 }
 
-#------------------------------------------------------------------------------#
-# num.edges.SparseBlockMatrixR
-#
 #' @export
+#' @describeIn num.edges
 num.edges.SparseBlockMatrixR <- function(sbm){
     ### The number of nodes should be exactly the same as the length of the rows list
     num.edges(as.edgeList.SparseBlockMatrixR(sbm))
 }
 
-#------------------------------------------------------------------------------#
-# is.zero.SparseBlockMatrixR
-# Check to see if an SBM object represents the zero matrix / null graph
-#
 #' @export
+#' @describeIn is.zero
 is.zero.SparseBlockMatrixR <- function(x){
     check_if_zero <- (length(unlist(x$sbm$rows)) == 0)
 

@@ -126,23 +126,20 @@ get.adjacency.matrix.ccdrFit <- function(cf){
     get.adjacency.matrix.edgeList(cf$edges)
 } # END GET.ADJACENCY.MATRIX.CCDRFIT
 
-#' num.nodes.ccdrFit
-#'
 #' @export
+#' @describeIn num.nodes
 num.nodes.ccdrFit <- function(cf){
     cf$pp
 } # END NUM.NODES.CCDRFIT
 
-#' num.edges.ccdrFit
-#'
 #' @export
+#' @describeIn num.edges
 num.edges.ccdrFit <- function(cf){
     cf$nedge
 } # END NUM.EDGES.CCDRFIT
 
-#' num.samples.ccdrFit
-#'
 #' @export
+#' @describeIn num.samples
 num.samples.ccdrFit <- function(cf){
     cf$nn
 } # END NUM.SAMPLES.CCDRFIT

@@ -73,24 +73,21 @@ print.ccdrPath <- function(cp, verbose = FALSE){
     }
 }
 
-#' num.nodes.ccdrPath
-#'
 #' @export
+#' @describeIn num.nodes
 num.nodes.ccdrPath <- function(cp){
     unique(unlist(lapply(cp, function(x) x$pp)))
 } # END NUM.NODES.CCDRPATH
 
-#' num.edges.ccdrPath
-#'
 #' @export
+#' @describeIn num.edges
 num.edges.ccdrPath <- function(cp){
     ### unique(.) not needed since different estimates should have different # of edges
     unlist(lapply(cp, function(x) x$nedge))
 } # END NUM.EDGES.CCDRPATH
 
-#' num.samples.ccdrPath
-#'
 #' @export
+#' @describeIn num.samples
 num.samples.ccdrPath <- function(cp){
     unique(unlist(lapply(cp, function(x) x$nn)))
 } # END NUM.SAMPLES.CCDRPATH

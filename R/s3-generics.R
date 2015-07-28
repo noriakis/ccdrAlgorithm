@@ -40,18 +40,38 @@ as.sparse <- function(x) UseMethod("as.sparse", x)
 #' @export
 get.adjacency.matrix <- function(x) UseMethod("get.adjacency.matrix", x)
 
+#' lambda.grid
+#'
+#' Extracts the lambda values from a \code{\link{ccdrPath-class}} object.
+#'
 #' @export
 lambda.grid <- function(x) UseMethod("lambda.grid", x)
 
+#' num.nodes
+#'
+#' Extracts the number of nodes of the associated graph object.
+#'
 #' @export
 num.nodes <- function(x) UseMethod("num.nodes", x)
 
+#' num.edges
+#'
+#' Extracts the number of edges of the associated graph object.
+#'
 #' @export
 num.edges <- function(x) UseMethod("num.edges", x)
 
+#' num.samples
+#'
+#' Extracts the number of samples of the associated object.
+#'
 #' @export
 num.samples <- function(x) UseMethod("num.samples", x)
 
+#' is.zero
+#'
+#' Determines whether or not the object is the same as the null or zero object from its class.
+#'
 #' @export
 is.zero <- function(x) UseMethod("is.zero", x)
 

@@ -85,16 +85,19 @@ get.adjacency.matrix.edgeList <- function(edgeL){
 } # END GET.ADJACENCY.MATRIX.EDGELIST
 
 #' @export
+#' @describeIn num.nodes
 num.nodes.edgeList <- function(edgeL){
     length(edgeL)
 } # END NUM.NODES.EDGELIST
 
 #' @export
+#' @describeIn num.edges
 num.edges.edgeList <- function(edgeL){
     sum(unlist(lapply(edgeL, length)))
 } # END NUM.EDGES.EDGELIST
 
 #' @export
+#' @describeIn is.zero
 is.zero.edgeList <- function(edgeL){
     (num.edges(edgeL) == 0)
 } # END IS.ZERO.EDGELIST

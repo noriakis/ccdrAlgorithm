@@ -26,12 +26,12 @@ Extracts the adjacency matrix of the associated graph object.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{SparseBlockMatrixR}: Convert internal SparseBlockMatrixR representation to an adjacency matrix
+\item \code{SparseBlockMatrixR}: Convert internal \code{SparseBlockMatrixR} representation to an adjacency matrix
 
 \item \code{ccdrFit}: Retrieves \code{edges} slot and converts to an adjacency matrix
 
 \item \code{ccdrPath}: Retrieves all \code{edges} slots in the solution path, converts to an adjacency matrix, and returns as a list
 
-\item \code{edgeList}: Convert internal edgeList representation to an adjacency matrix
+\item \code{edgeList}: Convert internal \code{edgeList} representation to an adjacency matrix
 }}
 
