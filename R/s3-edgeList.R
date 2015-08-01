@@ -34,7 +34,7 @@
 #' @section Methods:
 #' \code{\link{get.adjacency.matrix}}
 #'
-#' @docType S3class
+#' @docType class
 #' @name edgeList-class
 NULL
 
@@ -75,7 +75,7 @@ get.adjacency.matrix.edgeList <- function(edgeL){
     Matrix.out <- Matrix::Matrix(0, nrow = numnode, ncol = numnode)
 
     ### This loop is pretty slow!
-    for(j in 1:numnode){
+    for(j in seq_along(edgeL)){
         for(i in edgeL[[j]]){
             Matrix.out[i, j] <- 1
         }

@@ -33,7 +33,7 @@
 #' \code{\link{get.adjacency.matrix}}, \code{\link{lambda.grid}},
 #' \code{\link{num.nodes}}, \code{\link{num.edges}}, \code{\link{num.samples}}
 #'
-#' @docType S3class
+#' @docType class
 #' @name ccdrPath-class
 NULL
 
