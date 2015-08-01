@@ -46,7 +46,7 @@
 #' \code{\link{get.adjacency.matrix}}
 #' \code{\link{num.nodes}}, \code{\link{num.edges}}, \code{\link{num.samples}}
 #'
-#' @docType S3class
+#' @docType class
 #' @name ccdrFit-class
 NULL
 
@@ -72,7 +72,7 @@ ccdrFit.list <- function(li){
         stop("Input is not coercable to an object of type ccdrFit, check list for the following elements: sbm (SparseBlockMatrixR), lambda (numeric), nedge (integer), pp (integer), nn (integer), time (numeric or NA)")
     } else if( !is.SparseBlockMatrixR(li$sbm)){
         stop("'sbm' component must be a valid SparseBlockMatrixR object!")
-    } else if(.num_edges(li$sbm) != li$nedge){
+    } else if(num.edges(li$sbm) != li$nedge){
         stop("Attempting to set nedge to an improper value: Must be equal to the number of nonzero values in sbm.")
     }
 
