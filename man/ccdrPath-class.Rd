@@ -6,14 +6,14 @@
 \title{ccdrPath class}
 \description{
 Convenience wrapper class for output of CCDr algorithm: Represents the entire solution path
-of the CCDr algorithm. It's components are of type \code{\link{ccdrFit-class}}. Also inherits
+of the CCDr algorithm. Its components are of type \code{\link{ccdrFit-class}}. Also inherits
 from \code{\link{list}}.
 }
 \details{
 Each value of lambda in the (discrete) solution path corresponds to a single DAG estimate, which
 is of the form (Phi, Rho) (see \href{http://arxiv.org/abs/1401.0852}{Aragam and Zhou (2015), JMLR} for details).
 Internally, this estimate is represented by a \code{\link{ccdrFit-class}} object. The full solution
-path is then represented as a \code{\link{list}}. This class is essentially a wrapper for this list.
+path is then represented as a \code{\link{list}} of \code{\link{ccdrFit-class}} objects: This class is essentially a wrapper for this list.
 }
 \section{Methods}{
 
