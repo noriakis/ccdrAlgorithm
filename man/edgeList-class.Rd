@@ -9,15 +9,12 @@ Convenience wrapper class for a (column-major) edge list. Each component of the 
 corresponds to a node, and each component is an integer vector whose components are the parents
 of this node in the graph. Only intended for internal use.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{edges}}{Edge list representation of a graph sorted by children.}
+\details{
+Also inherits from \code{\link{list}}.
 }
-}
-
 \section{Methods}{
 
-\code{\link{get.adjacency.matrix}}
+\code{\link{get.adjacency.matrix}},
+\code{\link{num.nodes}}, \code{\link{num.edges}}
 }
 
