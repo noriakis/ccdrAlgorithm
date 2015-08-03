@@ -54,6 +54,8 @@ ccdr.path <- ccdr.run(data = dat)
 print(ccdr.path)
 ```
 
+The output of `ccdr.run` is an S3 object `ccdrPath`, which is essentially a list of estimates, one for each value of lambda in the solution path. Each estimate is an S3 object `ccdrFit`. The DAG itself is stored as an edge list (see documentation for `ccdrFit-class` and `edgeList-class` for more details).
+
 This trivial example uses uncorrelated normal data, which is not very interesting. In order to do some interesting calculations, we first need to generate data according to some pre-specified DAG structure. The `ccdr` package does not provide this functionality: You can use either the `bnlearn` package or the `pcalg` package to generate random DAGs and random data.
 
 Example using `pcalg`
