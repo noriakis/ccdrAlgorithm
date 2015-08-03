@@ -71,6 +71,17 @@ print.edgeList <- function(edgeL){
 }
 
 #' @export
+as.matrix.edgeList <- function(edgeL){
+    as.matrix(get.adjacency.matrix.edgeList(edgeL))
+}
+
+#' @export
+as.list.edgeList <- function(edgeL){
+    class(edgeL) <- "list"
+    edgeL
+}
+
+#' @export
 #' @describeIn get.adjacency.matrix Convert internal \code{edgeList} representation to an adjacency matrix
 get.adjacency.matrix.edgeList <- function(edgeL){
     numnode <- length(edgeL)
