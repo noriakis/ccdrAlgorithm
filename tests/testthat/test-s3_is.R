@@ -21,6 +21,15 @@ test_that("is.SparseBlockMatrixR works as expected", {
     expect_false(is.SparseBlockMatrixR(list(0)))
 })
 
+### S3 edgeList
+test_that("is.edgeList works as expected", {
+    edgeL <- generate_fixed_edgeList()
+    expect_is(edgeL, "edgeList")
+
+    expect_true(is.edgeList(edgeL))
+    expect_false(is.edgeList(list(0)))
+})
+
 ### S3 ccdrFit
 test_that("is.ccdrFit works as expected", {
     # "sbm", "lambda", "nedge", "pp", "nn", "time"

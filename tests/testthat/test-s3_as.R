@@ -4,7 +4,7 @@ context("sparse / SparseBlockMatrixR to matrix conversion")
 # NOTE: Need to use is_equivalent_to in order to ignore attributes!
 #
 
-### matrix <-> sparse
+### matrix -> sparse
 test_that("as.matrix -> as.sparse -> as.matrix makes no changes", {
 
     ### Test the zero matrix
@@ -26,7 +26,7 @@ test_that("as.matrix -> as.sparse -> as.matrix makes no changes", {
     expect_that(as.matrix(as.sparse(as.matrix(m))), is_equivalent_to(m))
 })
 
-### matrix <-> SparseBlockMatrixR
+### matrix -> SparseBlockMatrixR
 test_that("as.matrix -> as.SparseBlockMatrixR -> as.matrix makes no changes", {
 
     ### Test the zero matrix
@@ -43,7 +43,7 @@ test_that("as.matrix -> as.SparseBlockMatrixR -> as.matrix makes no changes", {
     expect_that(as.matrix(as.SparseBlockMatrixR(as.matrix(m))), is_equivalent_to(m))
 })
 
-### sparse <-> SparseBlockMatrixR
+### sparse -> SparseBlockMatrixR
 test_that("as.sparse -> as.SparseBlockMatrixR -> as.sparse makes no changes", {
 
     ### Test the zero matrix
@@ -64,17 +64,21 @@ test_that("as.sparse -> as.SparseBlockMatrixR -> as.sparse makes no changes", {
     expect_that(as.sparse(as.SparseBlockMatrixR(sp)), equals(sp))
 })
 
-### SparseBlockMatrixR <-> sparse
-test_that("as.SparseBlockMatrixR -> as.sparse -> as.SparseBlockMatrixR makes no changes", {
+### SparseBlockMatrixR -> edgeList -> matrix
+test_that("as.SparseBlockMatrixR -> as.edgeList -> as.matrix makes no changes", {
 
     ### Test the zero matrix
     m <- matrix(rep(0, 1), ncol = 1)
     sbm <- as.SparseBlockMatrixR(m)
-    expect_that(as.SparseBlockMatrixR(as.sparse(sbm)), equals(sbm))
+    m.sbm <- as.matrix(sbm)
+    m.edgeL <- as.matrix(as.edgeList.SparseBlockMatrixR(sbm))
+    expect_that(m.edgeL, is_equivalent_to(m.sbm))
 
     m <- matrix(rep(0, 4), ncol = 2)
     sbm <- as.SparseBlockMatrixR(m)
-    expect_that(as.SparseBlockMatrixR(as.sparse(sbm)), equals(sbm))
+    m.sbm <- as.matrix(sbm)
+    m.edgeL <- as.matrix(as.edgeList.SparseBlockMatrixR(sbm))
+    expect_that(m.edgeL, is_equivalent_to(m.sbm))
 
     ### NOTE: Cannot test on random sparse matrix since SBM class ASSUMES a block structure,
     ###        i.e. induced by a DAG
@@ -82,22 +86,9 @@ test_that("as.SparseBlockMatrixR -> as.sparse -> as.SparseBlockMatrixR makes no 
     ### Test a randomly generated DAG
     m <- random.dag.matrix(10, 10)
     sbm <- as.SparseBlockMatrixR(m)
-    expect_that(as.SparseBlockMatrixR(as.sparse(sbm)), equals(sbm))
-})
+    m.sbm <- as.matrix(sbm)
+    m.edgeL <- as.matrix(as.edgeList.SparseBlockMatrixR(sbm))
 
-# test_that("as.matrix -> as.sparse -> as.matrix makes no changes to REALLY BIG matrices", {
-#
-#     ### Test the zero matrix
-#     m <- matrix(rep(0, 100*100), ncol = 100)
-#     expect_that(as.matrix(as.sparse(as.matrix(m))), is_equivalent_to(m))
-#
-#     ### Test a randomly generated matrix
-#     m <- random.sparse(100, 5*100)
-#     expect_that(as.matrix(as.sparse(as.matrix(m))), is_equivalent_to(m))
-#
-#     ### Test a randomly generated DAG
-#     m <- random.dag.matrix(100, 5*100)
-#     expect_that(as.matrix(as.sparse(as.matrix(m))), is_equivalent_to(m))
-# })
-#
-# test_that("as.sparse converts matrix objects correctly", {})
+    m.sbm[m.sbm != 0] <- 1 # coerce to unweighted adjacencies
+    expect_that(m.edgeL, is_equivalent_to(m.sbm))
+})
