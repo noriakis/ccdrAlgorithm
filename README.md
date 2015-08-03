@@ -48,7 +48,10 @@ pp <- 100
 dat <- matrix(rnorm(nn * pp), nrow = nn)
 
 ### Run the ccdr algorithm
-ccdr.run(data = dat)
+ccdr.path <- ccdr.run(data = dat)
+
+### Display the results
+print(ccdr.path)
 ```
 
 This trivial example uses uncorrelated normal data, which is not very interesting. In order to do some interesting calculations, we first need to generate data according to some pre-specified DAG structure. The `ccdr` package does not provide this functionality: You can use either the `bnlearn` package or the `pcalg` package to generate random DAGs and random data.
@@ -80,7 +83,7 @@ dat <- rmvDAG(n = nn, dag = g, errDist = "normal")
 dat <- dat[, sample(1:pp)] # permute the columns to randomize node ordering
 
 ### Run the algorithm
-ccdr.fit <- ccdr.run(data = dat, lambdas.length = 10, alpha = 10, verbose = FALSE)
+ccdr.path <- ccdr.run(data = dat, lambdas.length = 10, alpha = 10, verbose = FALSE)
 ```
 
 Example using `bnlearn`
@@ -109,7 +112,7 @@ dat <- rmvDAG(n = nn, dag = this.graph, errDist = "normal")
 dat <- dat[, sample(1:pp)] # permute the columns to randomize node ordering
 
 ### Run the algorithm
-ccdr.fit <- ccdr.run(data = dat, lambdas.length = 10, alpha = 10, verbose = FALSE)
+ccdr.path <- ccdr.run(data = dat, lambdas.length = 10, alpha = 10, verbose = FALSE)
 ```
 
 References
