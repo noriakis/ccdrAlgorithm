@@ -11,6 +11,37 @@
 #------------------------------------------------------------------------------#
 
 #
+# SparseBlockMatrixR S3 class skeleton
+#
+# Data
+# * list rows
+# * list vals
+# * list blocks
+# * numeric sigmas
+# * integer start
+#
+# Methods
+# * is.SparseBlockMatrixR
+# * reIndexC.SparseBlockMatrixR
+# * reIndexR.SparseBlockMatrixR
+# * SparseBlockMatrixR.list
+# * SparseBlockMatrixR.sparse
+# * SparseBlockMatrixR.matrix
+# * as.SparseBlockMatrixR.list
+# * as.SparseBlockMatrixR.sparse
+# * as.SparseBlockMatrixR.matrix
+# * as.list.SparseBlockMatrixR
+# * as.matrix.SparseBlockMatrixR
+# * as.edgeList.SparseBlockMatrixR
+# * get.adjacency.matrix.SparseBlockMatrixR
+# * num.nodes.SparseBlockMatrixR
+# * num.edges.SparseBlockMatrixR
+# * is.zero.SparseBlockMatrixR
+# * .init_sbm
+# * to_B.SparseBlockMatrixR
+#
+
+#
 # A convenience class to make easier sharing data between R and C++ easier. This class mimics the structure
 #   of the C++ class 'SparseBlockMatrix' (note the name difference to differentiate the two) as a list in R,
 #   which makes it easy to use Rcpp to pass a sparse structure between R and C++. This class is NOT intended
@@ -281,14 +312,14 @@ get.adjacency.matrix.SparseBlockMatrixR <- function(sbm){
 num.nodes.SparseBlockMatrixR <- function(sbm){
     ### The number of nodes should be exactly the same as the length of the rows list
     length(sbm$rows)
-}
+} # END NUM.NODES.SPARSEBLOCKMATRIXR
 
 #' @export
 #' @describeIn num.edges
 num.edges.SparseBlockMatrixR <- function(sbm){
     ### The number of nodes should be exactly the same as the length of the rows list
     num.edges(as.edgeList.SparseBlockMatrixR(sbm))
-}
+} # END NUM.EDGES.SPARSEBLOCKMATRIXR
 
 #' @export
 #' @describeIn is.zero
@@ -315,17 +346,6 @@ is.zero.SparseBlockMatrixR <- function(x){
 
     sbm
 } # END .INIT_SBM
-
-#------------------------------------------------------------------------------#
-# .num_edges.SparseBlockMatrixR
-# Internal function for returning the number of edges in a SparseBlockMatrixR
-#  object
-#
-.num_edges.SparseBlockMatrixR <- function(sbm){
-    .Deprecated()
-
-    num.edges.SparseBlockMatrixR(sbm)
-} # END .NUM_EDGES.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
 # .to_B.SparseBlockMatrixR

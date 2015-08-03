@@ -14,9 +14,18 @@
 # edgeList S3 class skeleton
 #
 # Data
-# * list edges           // edge list as a list
+# * <wrapper for a list>
 #
 # Methods
+# * is.edgeList
+# * edgeList.list
+# * print.edgeList
+# * as.matrix.edgeList
+# * as.list.edgeList
+# * get.adjacency.matrix.edgeList
+# * num.nodes.edgeList
+# * num.edges.edgeList
+# * is.zero.edgeList
 #
 
 #' edgeList class

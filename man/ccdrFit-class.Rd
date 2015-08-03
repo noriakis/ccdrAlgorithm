@@ -12,7 +12,7 @@ can be handled separately if desired (be careful!).
 \section{Slots}{
 
 \describe{
-\item{\code{edge}}{(edgeList) Edge list of estimated DAG (see \code{\link{edgeList-class}}).}
+\item{\code{edges}}{(edgeList) Edge list of estimated DAG (see \code{\link{edgeList-class}}).}
 \item{\code{lambda}}{(numeric) Value of lambda for this estimate.}
 \item{\code{nedge}}{(integer) Number of edges in this estimate.}
 \item{\code{pp}}{(integer) Number of nodes.}

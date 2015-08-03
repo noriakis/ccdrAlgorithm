@@ -14,8 +14,18 @@
 # ccdrPath S3 class skeleton
 #
 # Data
+# * <wrapper for a list>
 #
 # Methods
+# * is.ccdrPath
+# * ccdrPath.list
+# * print.ccdrPath
+# * as.list.ccdrPath
+# * num.nodes.ccdrPath
+# * num.edges.ccdrPath
+# * num.samples.ccdrPath
+# * lambda.grid.ccdrPath
+# * get.adjacency.matrix.ccdrPath
 #
 
 #' ccdrPath class
@@ -50,7 +60,7 @@ ccdrPath.list <- function(li){
 
     ### Note that we still allow these objects to inherit from the base list class
     structure(li, class = c("ccdrPath", "list"))
-}
+} # END CCDRPATH.LIST
 
 #' print.ccdrPath
 #'
@@ -71,7 +81,13 @@ print.ccdrPath <- function(cp, verbose = FALSE){
             num.samples(cp), " observations\n",
             sep = "")
     }
-}
+} # END PRINT.CCDRPATH
+
+#' @export
+as.list.ccdrPath <- function(cp){
+    class(cp) <- "list"
+    cp
+} # END AS.LIST.CCDRPATH
 
 #' @export
 #' @describeIn num.nodes
