@@ -48,7 +48,7 @@ pp <- 100
 dat <- matrix(rnorm(nn * pp), nrow = nn)
 
 ### Run the ccdr algorithm
-ccdr.path <- ccdr.run(data = dat)
+ccdr.path <- ccdr.run(data = dat, lambdas.length = 20)
 
 ### Display the results
 print(ccdr.path)
@@ -85,7 +85,7 @@ dat <- rmvDAG(n = nn, dag = g, errDist = "normal")
 dat <- dat[, sample(1:pp)] # permute the columns to randomize node ordering
 
 ### Run the algorithm
-ccdr.path <- ccdr.run(data = dat, lambdas.length = 10, alpha = 10, verbose = FALSE)
+ccdr.path <- ccdr.run(data = dat, lambdas.length = 20, alpha = 10, verbose = FALSE)
 ```
 
 Example using `bnlearn`
@@ -114,7 +114,7 @@ dat <- rmvDAG(n = nn, dag = this.graph, errDist = "normal")
 dat <- dat[, sample(1:pp)] # permute the columns to randomize node ordering
 
 ### Run the algorithm
-ccdr.path <- ccdr.run(data = dat, lambdas.length = 10, alpha = 10, verbose = FALSE)
+ccdr.path <- ccdr.run(data = dat, lambdas.length = 20, alpha = 10, verbose = FALSE)
 ```
 
 References
