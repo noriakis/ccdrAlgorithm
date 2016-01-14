@@ -14,7 +14,7 @@
 # ccdrFit S3 class skeleton
 #
 # Data
-# * edgeList edges           // edge list, adjacency matrix, or graphNEL object of DAG estimate
+# * edgeList edges          // edge list, adjacency matrix, or graphNEL object of DAG estimate
 # * numeric lambda          // regularization parameter
 # * integer nedge           // number of edges
 # * integer pp              // number of nodes

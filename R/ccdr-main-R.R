@@ -86,15 +86,15 @@ ccdr.run <- function(data,
 ){
     ### This is just a wrapper for the internal implementation given by ccdr_call
     ccdr_call(data = data,
-               betas = betas,
-               lambdas = lambdas,
-               lambdas.length = lambdas.length,
-               gamma = gamma,
-               error.tol = error.tol,
-               rlam = NULL,
-               max.iters = max.iters,
-               alpha = alpha,
-               verbose = verbose)
+              betas = betas,
+              lambdas = lambdas,
+              lambdas.length = lambdas.length,
+              gamma = gamma,
+              error.tol = error.tol,
+              rlam = NULL,
+              max.iters = max.iters,
+              alpha = alpha,
+              verbose = verbose)
 } # END CCDR.RUN
 
 # ccdr_call
@@ -260,14 +260,14 @@ ccdr_gridR <- function(cors,
 #   Internal subroutine for handling calls to singleCCDr: This is the only place where C++ is directly
 #    called. Type-checking is strongly enforced here.
 ccdr_singleR <- function(cors,
-                          pp, nn,
-                          betas,
-                          lambda,
-                          gamma,
-                          eps,
-                          maxIters,
-                          alpha,     # 2-9-15: No longer necessary in ccdr_singleR, but needed since the C++ call asks for it
-                          verbose = FALSE
+                         pp, nn,
+                         betas,
+                         lambda,
+                         gamma,
+                         eps,
+                         maxIters,
+                         alpha,     # 2-9-15: No longer necessary in ccdr_singleR, but needed since the C++ call asks for it
+                         verbose = FALSE
 ){
 
     ### Check cors

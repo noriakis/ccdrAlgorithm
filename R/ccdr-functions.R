@@ -45,9 +45,9 @@ generate.lambdas <- function(lambda.max,
 # gen_lambdas
 #  Internal implementation of generate.lambdas
 gen_lambdas <- function(lambda.max,
-                         lambda.min,
-                         lambdas.length = 50,
-                         scale = "linear"
+                        lambda.min,
+                        lambdas.length = 50,
+                        scale = "linear"
 ){
 #     lambda.max <- max(sqrt(nn))
 #     lambda.min <- lambdas.ratio * lambda.max
