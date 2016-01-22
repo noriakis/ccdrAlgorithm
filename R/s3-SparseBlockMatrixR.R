@@ -20,26 +20,6 @@
 # * numeric sigmas
 # * integer start
 #
-# Methods
-# * is.SparseBlockMatrixR
-# * reIndexC.SparseBlockMatrixR
-# * reIndexR.SparseBlockMatrixR
-# * SparseBlockMatrixR.list
-# * SparseBlockMatrixR.sparse
-# * SparseBlockMatrixR.matrix
-# * as.SparseBlockMatrixR.list
-# * as.SparseBlockMatrixR.sparse
-# * as.SparseBlockMatrixR.matrix
-# * as.list.SparseBlockMatrixR
-# * as.matrix.SparseBlockMatrixR
-# * as.edgeList.SparseBlockMatrixR
-# * get.adjacency.matrix.SparseBlockMatrixR
-# * num.nodes.SparseBlockMatrixR
-# * num.edges.SparseBlockMatrixR
-# * is.zero.SparseBlockMatrixR
-# * .init_sbm
-# * to_B.SparseBlockMatrixR
-#
 
 #
 # A convenience class to make easier sharing data between R and C++ easier. This class mimics the structure
@@ -299,6 +279,59 @@ as.edgeList.SparseBlockMatrixR <- function(sbm){
 
     edgeList.list(el)
 } # AS.EDGELIST.SPARSEBLOCKMATRIXR
+
+#------------------------------------------------------------------------------#
+# sparse.SparseBlockMatrixR
+# 2016-01-22: Migrated to this file from s3-sparse.R
+#
+sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
+
+    if(index != "R" && index != "C") stop("Invalid entry for index parameter: Must be either 'R' or 'C'!")
+
+    pp <- length(sbm$rows)
+
+    sp.rows <- integer(0)
+    sp.cols <- integer(0)
+    sp.vals <- numeric(0)
+
+    sp.idx <- 0
+    for(j in 1:pp){
+        these.rows <- sbm$rows[[j]]
+        these.vals <- sbm$vals[[j]]
+        for(k in seq_along(these.rows)){
+
+            # Only include nonzero values
+            if(these.vals[k] != 0){
+                sp.idx <- sp.idx + 1
+
+                sp.rows <- c(sp.rows, these.rows[k])
+                sp.cols <- c(sp.cols, j)
+                sp.vals <- c(sp.vals, these.vals[k])
+            }
+        }
+    }
+
+    sp <- sparse.list(list(rows = as.integer(sp.rows), cols = as.integer(sp.cols), vals = sp.vals, dim = c(pp, pp), start = 1))
+
+    if(index == "R"){
+        sp
+    } else{
+        sp$start <- 0
+        reIndexC(sp)
+    }
+} # END SPARSE.SPARSEBLOCKMATRIXR
+
+#------------------------------------------------------------------------------#
+# as.sparse.SparseBlockMatrixR
+#  Convert FROM SparseBlockMatrixR TO sparse
+#  By default, return the object using R indexing. If desired, the method can return C-style indexing by setting
+#    index = "C".
+# 2016-01-22: Migrated to this file from s3-sparse.R
+#
+as.sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
+    sparse.SparseBlockMatrixR(sbm, index)
+} # END AS.SPARSE.SPARSEBLOCKMATRIXR
+
 
 #' @export
 #' @describeIn get.adjacency.matrix Convert internal \code{SparseBlockMatrixR} representation to an adjacency matrix
