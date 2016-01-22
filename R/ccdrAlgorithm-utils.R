@@ -1,13 +1,13 @@
 #
 #  ccdr-utils.R
-#  ccdr
+#  ccdrAlgorithm
 #
-#  Created by Bryon Aragam (local) on 5/28/14.
-#  Copyright (c) 2014-2015 Bryon Aragam (local). All rights reserved.
+#  Created by Bryon Aragam (local) on 1/22/16.
+#  Copyright (c) 2014-2016 Bryon Aragam. All rights reserved.
 #
 
 #
-# PACKAGE CCDR: Utils
+# PACKAGE CCDRALGORITHM: Utils
 #
 #   CONTENTS:
 #     check_if_matrix
