@@ -8,6 +8,8 @@ Maintainer: Bryon Aragam <contactbryon@gmail.com>
 Description: Internal CCDr methods for sparsebn package.
 License: GPL (>= 2)
 LazyData: TRUE
+Depends:
+    sparsebnUtils
 Imports:
     Rcpp (>= 0.11.0),
     Matrix
