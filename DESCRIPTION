@@ -1,11 +1,11 @@
-Package: ccdr
+Package: ccdrAlgorithm
 Type: Package
-Title: (official) Implements CCDr structure learning algorithm for BNs.
+Title: (dev) Internal CCDr methods for sparsebn package.
 Version: 0.0
-Date: 2015-07-14
+Date: 2016-01-22
 Author: Who wrote it
 Maintainer: Bryon Aragam <contactbryon@gmail.com>
-Description: Structure learning for Bayesian networks using the CCDr algorithm.
+Description: Internal CCDr methods for sparsebn package.
 License: GPL (>= 2)
 LazyData: TRUE
 Imports:
