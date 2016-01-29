@@ -54,7 +54,7 @@ NULL
 #'              current estimation is \code{> alpha * ncol(data)}.
 #' @param verbose \code{TRUE / FALSE} whether or not to print out progress and summary reports.
 #'
-#' @return A \code{\link{ccdrPath-class}} object.
+#' @return A \code{\link{sparsebnPath-class}} object.
 #'
 #' @examples
 #'
@@ -194,8 +194,18 @@ ccdr_call <- function(data,
                       as.numeric(alpha),
                       verbose)
 
-    fit <- lapply(fit, ccdrFit.list)    # convert everything to ccdrFit objects
-    ccdrPath.list(fit)                  # wrap as ccdrPath object
+    #
+    # Output DAGs as edge lists (i.e. edgeList objects).
+    #  This is NOT the same as sbm$rows since some of these rows may correspond to edges with zero coefficients.
+    #  See docs for SparseBlockMatrixR class for details.
+    #
+    for(k in seq_along(fit)){
+        names(fit[[k]])[1] <- "edges" # rename 'sbm' slot to 'edges': After the next line, this slot will no longer be an SBM object
+        fit[[k]]$edges <- as.edgeList.SparseBlockMatrixR(fit[[k]]$edges) # Before coercion, li$edges is actually an SBM object
+    }
+
+    fit <- lapply(fit, sparsebnFit.list)    # convert everything to sparsebnFit objects
+    sparsebnPath.list(fit)                  # wrap as sparsebnPath object
 } # END CCDR_CALL
 
 # ccdr_gridR
@@ -329,6 +339,6 @@ ccdr_singleR <- function(cors,
                      time = t2.ccdr - t1.ccdr)
     ccdr.out$sbm <- reIndexR(ccdr.out$sbm)
 
-    # ccdrFit(ccdr.out)
+    # sparsebnFit(ccdr.out)
     ccdr.out
 } # END CCDR_SINGLER
