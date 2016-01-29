@@ -34,23 +34,18 @@ test_that("is.edgeList works as expected", {
 test_that("is.sparsebnFit works as expected", {
     # "sbm", "lambda", "nedge", "pp", "nn", "time"
     li <- list(rows = list(integer(0)), vals = list(numeric(0)), blocks = list(integer(0)), sigmas = numeric(0), start = 1)
-    sbm <- SparseBlockMatrixR(li)
 
-    li <- list(sbm = sbm, lambda = pi, nedge = 0, pp = 1, nn = 10, time = runif(1))
-    cf <- sparsebnFit(li)
-    expect_is(cf, "sparsebnFit")
+    sbf <- generate_fixed_sparsebnFit()
+    expect_is(sbf, "sparsebnFit")
 
-    expect_true(is.sparsebnFit(cf))
+    expect_true(is.sparsebnFit(sbf))
     expect_false(is.sparsebnFit(list(0)))
 })
 
 test_that("is.sparsebnFit checks correctness of nedge", {
-    m <- rbind(c(0,  0,  0),
-           c(1,  0,  0),
-           c(0, 2.1, 0))
-    sbm <- SparseBlockMatrixR(m)
+    edges <- generate_fixed_edgeList()
 
-    # nedge = 2, but is set to 0 below: Should throw error!
-    li <- list(sbm = sbm, lambda = pi, nedge = 0, pp = 1, nn = 10, time = runif(1))
+    # nedge = 5, but is set to 0 below: Should throw error!
+    li <- list(edges = edges, lambda = pi, nedge = 0, pp = 5, nn = 10, time = runif(1))
     expect_error(sparsebnFit(li))
 })

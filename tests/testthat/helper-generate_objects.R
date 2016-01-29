@@ -8,13 +8,13 @@ generate_empty_SparseBlockMatrixR <- function(){
 }
 
 generate_empty_sparsebnFit <- function(){
-    li <- list(sbm = generate_empty_SparseBlockMatrixR(), lambda = 1, nedge = 0, pp = 0, nn = 10, time = 1)
+    li <- list(edges = generate_empty_edgeList(), lambda = 1, nedge = 0, pp = 0, nn = 10, time = 1)
     sparsebnFit.list(li)
 }
 
 generate_empty_sparsebnPath <- function(){
-    cf <- generate_empty_sparsebnFit()
-    sparsebnPath.list(list(cf, cf, cf, cf))
+    sbf <- generate_empty_sparsebnFit()
+    sparsebnPath.list(list(sbf, sbf, sbf, sbf))
 }
 
 generate_empty_adjacency_matrix <- function(){
@@ -75,17 +75,18 @@ generate_fixed_SparseBlockMatrixR <- function(){
 }
 
 generate_fixed_sparsebnFit <- function(){
-    sbm <- generate_fixed_SparseBlockMatrixR()
-    cf <- sparsebnFit.list(list(sbm = sbm, lambda = 1.54, nedge = num.edges(sbm), pp = num.nodes(sbm), nn = 10, time = 1))
+    # sbm <- generate_fixed_SparseBlockMatrixR()
+    edges <- generate_fixed_edgeList()
+    sbf <- sparsebnFit.list(list(edges = edges, lambda = 1.54, nedge = num.edges(edges), pp = num.nodes(edges), nn = 10, time = 1))
 
-    cf
+    sbf
 }
 
 generate_fixed_sparsebnPath <- function(){
-    cf <- generate_fixed_sparsebnFit()
-    cp <- sparsebnPath.list(list(cf, cf, cf, cf))
+    sbf <- generate_fixed_sparsebnFit()
+    sbp <- sparsebnPath.list(list(sbf, sbf, sbf, sbf))
 
-    cp
+    sbp
 }
 
 generate_fixed_adjacency_matrix <- function(){
