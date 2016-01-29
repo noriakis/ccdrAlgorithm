@@ -275,7 +275,7 @@ as.edgeList.SparseBlockMatrixR <- function(sbm){
     # y = rows, x = vals : Select the elements of rows which have nonzero values in vals,
     #                       accouting for possible round-off (hence .MACHINE_EPS).
     #
-    el <- mapply(function(x, y){ y[which(abs(x) > .MACHINE_EPS)]}, sbm$vals, sbm$rows)
+    el <- mapply(function(x, y){ y[which(abs(x) > sparsebnUtils:::.MACHINE_EPS)]}, sbm$vals, sbm$rows)
 
     edgeList.list(el)
 } # AS.EDGELIST.SPARSEBLOCKMATRIXR
