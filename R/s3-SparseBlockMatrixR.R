@@ -22,7 +22,7 @@
 #
 
 #
-# A convenience class to make easier sharing data between R and C++ easier. This class mimics the structure
+# A convenience class to make sharing data between R and C++ easier. This class mimics the structure
 #   of the C++ class 'SparseBlockMatrix' (note the name difference to differentiate the two) as a list in R,
 #   which makes it easy to use Rcpp to pass a sparse structure between R and C++. This class is NOT intended
 #   to be a general purpose sparse data structure for R; instead, it simply streamlines the connection between
@@ -191,7 +191,7 @@ SparseBlockMatrixR.matrix <- function(m){
 
     if(nrow(m) != ncol(m)) stop("Input matrix must be square!")
 
-    sp <- as.sparse(m)
+    sp <- sparsebnUtils:::as.sparse.matrix(m)
 
     SparseBlockMatrixR.sparse(sp)
 } # END SPARSEBLOCKMATRIXR.MATRIX
@@ -333,8 +333,9 @@ as.sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
 } # END AS.SPARSE.SPARSEBLOCKMATRIXR
 
 
-#' @export
-#' @describeIn get.adjacency.matrix Convert internal \code{SparseBlockMatrixR} representation to an adjacency matrix
+# !!! CROSS-REF TO ANOTHER PACKAGE: NEED TO FIX THIS
+# @export
+# @describeIn get.adjacency.matrix Convert internal \code{SparseBlockMatrixR} representation to an adjacency matrix
 get.adjacency.matrix.SparseBlockMatrixR <- function(sbm){
     get.adjacency.matrix.edgeList(as.edgeList.SparseBlockMatrixR(sbm))
 } # END GET.ADJACENCY.MATRIX.SPARSEBLOCKMATRIXR
