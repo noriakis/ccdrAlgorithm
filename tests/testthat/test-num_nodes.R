@@ -18,22 +18,22 @@ test_that("num.nodes works on SBM", {
     expect_equal(num.nodes(sbm), 5)
 })
 
-test_that("num.nodes works on ccdrFit", {
+test_that("num.nodes works on sparsebnFit", {
     ### Trivial case
-    cf <- generate_empty_ccdrFit()
+    cf <- generate_empty_sparsebnFit()
     expect_equal(num.nodes(cf), 0)
 
     ### Non-trivial case
-    cf <- generate_fixed_ccdrFit()
+    cf <- generate_fixed_sparsebnFit()
     expect_equal(num.nodes(cf), 5)
 })
 
-test_that("num.nodes works on ccdrPath", {
+test_that("num.nodes works on sparsebnPath", {
     ### Trivial case
-    cp <- generate_empty_ccdrPath()
+    cp <- generate_empty_sparsebnPath()
     expect_equal(num.nodes(cp), 0)
 
     ### Non-trivial case
-    cp <- generate_fixed_ccdrPath()
+    cp <- generate_fixed_sparsebnPath()
     expect_equal(num.nodes(cp), 5)
 })

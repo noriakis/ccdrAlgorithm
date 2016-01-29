@@ -25,7 +25,7 @@ test_that("Testing default behaviour of ccdr.run", {
 
     ### Check output types
     for(i in seq_along(final)){
-        expect_is(final[[i]], "ccdrFit")
+        expect_is(final[[i]], "sparsebnFit")
     }
 
     ### Check consistency of nedge
@@ -44,7 +44,7 @@ test_that("Testing ccdr.run with manual settings", {
 
     ### Check output types
     for(i in seq_along(final)){
-        expect_is(final[[i]], "ccdrFit")
+        expect_is(final[[i]], "sparsebnFit")
     }
 
     ### Check consistency of nedge
@@ -80,7 +80,7 @@ test_that("Testing ccdr.run with manual settings", {
 #
 #     ### Check output types
 #     for(i in seq_along(final)){
-#         expect_is(final[[i]], "ccdrFit")
+#         expect_is(final[[i]], "sparsebnFit")
 #     }
 #
 #     ### Check consistency of nedge

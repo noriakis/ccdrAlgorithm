@@ -1,4 +1,4 @@
 library(testthat)
-library(ccdr)
+library(ccdrAlgorithm)
 
-test_check("ccdr")
+test_check("ccdrAlgorithm")

@@ -30,21 +30,21 @@ test_that("is.edgeList works as expected", {
     expect_false(is.edgeList(list(0)))
 })
 
-### S3 ccdrFit
-test_that("is.ccdrFit works as expected", {
+### S3 sparsebnFit
+test_that("is.sparsebnFit works as expected", {
     # "sbm", "lambda", "nedge", "pp", "nn", "time"
     li <- list(rows = list(integer(0)), vals = list(numeric(0)), blocks = list(integer(0)), sigmas = numeric(0), start = 1)
     sbm <- SparseBlockMatrixR(li)
 
     li <- list(sbm = sbm, lambda = pi, nedge = 0, pp = 1, nn = 10, time = runif(1))
-    cf <- ccdrFit(li)
-    expect_is(cf, "ccdrFit")
+    cf <- sparsebnFit(li)
+    expect_is(cf, "sparsebnFit")
 
-    expect_true(is.ccdrFit(cf))
-    expect_false(is.ccdrFit(list(0)))
+    expect_true(is.sparsebnFit(cf))
+    expect_false(is.sparsebnFit(list(0)))
 })
 
-test_that("is.ccdrFit checks correctness of nedge", {
+test_that("is.sparsebnFit checks correctness of nedge", {
     m <- rbind(c(0,  0,  0),
            c(1,  0,  0),
            c(0, 2.1, 0))
@@ -52,5 +52,5 @@ test_that("is.ccdrFit checks correctness of nedge", {
 
     # nedge = 2, but is set to 0 below: Should throw error!
     li <- list(sbm = sbm, lambda = pi, nedge = 0, pp = 1, nn = 10, time = runif(1))
-    expect_error(ccdrFit(li))
+    expect_error(sparsebnFit(li))
 })

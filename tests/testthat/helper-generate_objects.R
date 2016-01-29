@@ -7,14 +7,14 @@ generate_empty_SparseBlockMatrixR <- function(){
     SparseBlockMatrixR.list(li)
 }
 
-generate_empty_ccdrFit <- function(){
+generate_empty_sparsebnFit <- function(){
     li <- list(sbm = generate_empty_SparseBlockMatrixR(), lambda = 1, nedge = 0, pp = 0, nn = 10, time = 1)
-    ccdrFit.list(li)
+    sparsebnFit.list(li)
 }
 
-generate_empty_ccdrPath <- function(){
-    cf <- generate_empty_ccdrFit()
-    ccdrPath.list(list(cf, cf, cf, cf))
+generate_empty_sparsebnPath <- function(){
+    cf <- generate_empty_sparsebnFit()
+    sparsebnPath.list(list(cf, cf, cf, cf))
 }
 
 generate_empty_adjacency_matrix <- function(){
@@ -74,16 +74,16 @@ generate_fixed_SparseBlockMatrixR <- function(){
     SparseBlockMatrixR.list(li)
 }
 
-generate_fixed_ccdrFit <- function(){
+generate_fixed_sparsebnFit <- function(){
     sbm <- generate_fixed_SparseBlockMatrixR()
-    cf <- ccdrFit.list(list(sbm = sbm, lambda = 1.54, nedge = num.edges(sbm), pp = num.nodes(sbm), nn = 10, time = 1))
+    cf <- sparsebnFit.list(list(sbm = sbm, lambda = 1.54, nedge = num.edges(sbm), pp = num.nodes(sbm), nn = 10, time = 1))
 
     cf
 }
 
-generate_fixed_ccdrPath <- function(){
-    cf <- generate_fixed_ccdrFit()
-    cp <- ccdrPath.list(list(cf, cf, cf, cf))
+generate_fixed_sparsebnPath <- function(){
+    cf <- generate_fixed_sparsebnFit()
+    cp <- sparsebnPath.list(list(cf, cf, cf, cf))
 
     cp
 }

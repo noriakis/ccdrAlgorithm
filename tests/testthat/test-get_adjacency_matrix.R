@@ -9,10 +9,10 @@ test_that("get.adjacency.matrix works on empty graphs", {
     sbm <- generate_empty_SparseBlockMatrixR()
     expect_equivalent(as.matrix(get.adjacency.matrix(sbm)), adj)
 
-    cf <- generate_empty_ccdrFit()
+    cf <- generate_empty_sparsebnFit()
     expect_equivalent(as.matrix(get.adjacency.matrix(cf)), adj)
 
-    cp <- generate_empty_ccdrPath()
+    cp <- generate_empty_sparsebnPath()
     expect_equivalent(lapply(get.adjacency.matrix(cp), as.matrix), list(adj, adj, adj, adj))
 })
 
@@ -25,10 +25,10 @@ test_that("get.adjacency.matrix works on nontrivial graphs", {
     sbm <- generate_fixed_SparseBlockMatrixR()
     expect_equivalent(as.matrix(get.adjacency.matrix(sbm)), adj)
 
-    cf <- generate_fixed_ccdrFit()
+    cf <- generate_fixed_sparsebnFit()
     expect_equivalent(as.matrix(get.adjacency.matrix(cf)), adj)
 
-    cp <- generate_fixed_ccdrPath()
+    cp <- generate_fixed_sparsebnPath()
     expect_equivalent(lapply(get.adjacency.matrix(cp), as.matrix), list(adj, adj, adj, adj))
 })
 
