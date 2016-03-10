@@ -332,6 +332,14 @@ as.sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
     sparse.SparseBlockMatrixR(sbm, index)
 } # END AS.SPARSE.SPARSEBLOCKMATRIXR
 
+# to_graphNEL.SparseBlockMatrixR
+#  Convert SBM object to graphNEL object
+to_graphNEL.SparseBlockMatrixR <- function(sbm){
+    el <- as.edgeList(sbm)
+    el <- to_graphNEL(el)
+
+    graphNEL(nodes = as.character(1:num.nodes(sbm)), edgeL = el, edgemode = 'directed')
+} # END TO_GRAPHNEL.SPARSEBLOCKMATRIXR
 
 # !!! CROSS-REF TO ANOTHER PACKAGE: NEED TO FIX THIS
 # @export
@@ -352,16 +360,17 @@ num.nodes.SparseBlockMatrixR <- function(sbm){
 #' @describeIn num.edges
 num.edges.SparseBlockMatrixR <- function(sbm){
     ### The number of nodes should be exactly the same as the length of the rows list
-    num.edges(as.edgeList.SparseBlockMatrixR(sbm))
+    sparsebnUtils::num.edges(as.edgeList.SparseBlockMatrixR(sbm))
 } # END NUM.EDGES.SPARSEBLOCKMATRIXR
 
-#' @export
-#' @describeIn is.zero
-is.zero.SparseBlockMatrixR <- function(x){
-    check_if_zero <- (length(unlist(x$sbm$rows)) == 0)
-
-    check_if_zero
-} # END IS.ZERO.SPARSEBLOCKMATRIXR
+# This function is not currently being used by any code
+# @export
+# @describeIn sparsebnUtils::is.zero
+# is.zero.SparseBlockMatrixR <- function(x){
+#     check_if_zero <- (length(unlist(x$sbm$rows)) == 0)
+#
+#     check_if_zero
+# } # END IS.ZERO.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
 # .init_sbm
