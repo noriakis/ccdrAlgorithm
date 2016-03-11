@@ -1,4 +1,4 @@
 ccdrAlgorithm
 =============
 
-This is an internal package that will eventually connect to the sparsebn family of packages.
+This package is currently under construction. If you are looking for the source code to the CCDr algorithm, please go to https://github.com/itsrainingdata/ccdr.
