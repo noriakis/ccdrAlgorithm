@@ -131,7 +131,7 @@ SparseBlockMatrixR.list <- function(li){
 #
 SparseBlockMatrixR.sparse <- function(sp){
 
-    if( !is.sparse(sp)){
+    if( !sparsebnUtils::is.sparse(sp)){
         stop("Input must be a sparse object!")
     } else if(sp$dim[1] != sp$dim[2]){
         stop("Input must be square!")
@@ -277,7 +277,7 @@ as.edgeList.SparseBlockMatrixR <- function(sbm){
     #
     el <- mapply(function(x, y){ y[which(abs(x) > sparsebnUtils:::.MACHINE_EPS)]}, sbm$vals, sbm$rows)
 
-    edgeList.list(el)
+    sparsebnUtils::edgeList.list(el)
 } # AS.EDGELIST.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
@@ -311,7 +311,7 @@ sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
         }
     }
 
-    sp <- sparse.list(list(rows = as.integer(sp.rows), cols = as.integer(sp.cols), vals = sp.vals, dim = c(pp, pp), start = 1))
+    sp <- sparsebnUtils::sparse.list(list(rows = as.integer(sp.rows), cols = as.integer(sp.cols), vals = sp.vals, dim = c(pp, pp), start = 1))
 
     if(index == "R"){
         sp
@@ -335,7 +335,7 @@ as.sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
 # to_graphNEL.SparseBlockMatrixR
 #  Convert SBM object to graphNEL object
 to_graphNEL.SparseBlockMatrixR <- function(sbm){
-    el <- as.edgeList(sbm)
+    el <- sparsebnUtils::as.edgeList(sbm)
     el <- to_graphNEL(el)
 
     graphNEL(nodes = as.character(1:num.nodes(sbm)), edgeL = el, edgemode = 'directed')
@@ -345,32 +345,28 @@ to_graphNEL.SparseBlockMatrixR <- function(sbm){
 # @export
 # @describeIn get.adjacency.matrix Convert internal \code{SparseBlockMatrixR} representation to an adjacency matrix
 get.adjacency.matrix.SparseBlockMatrixR <- function(sbm){
-    get.adjacency.matrix.edgeList(as.edgeList.SparseBlockMatrixR(sbm))
+    sparsebnUtils::get.adjacency.matrix.edgeList(as.edgeList.SparseBlockMatrixR(sbm))
 } # END GET.ADJACENCY.MATRIX.SPARSEBLOCKMATRIXR
 
-
 #' @export
-#' @describeIn num.nodes
 num.nodes.SparseBlockMatrixR <- function(sbm){
     ### The number of nodes should be exactly the same as the length of the rows list
     length(sbm$rows)
 } # END NUM.NODES.SPARSEBLOCKMATRIXR
 
 #' @export
-#' @describeIn num.edges
 num.edges.SparseBlockMatrixR <- function(sbm){
     ### The number of nodes should be exactly the same as the length of the rows list
     sparsebnUtils::num.edges(as.edgeList.SparseBlockMatrixR(sbm))
 } # END NUM.EDGES.SPARSEBLOCKMATRIXR
 
-# This function is not currently being used by any code
-# @export
-# @describeIn sparsebnUtils::is.zero
-# is.zero.SparseBlockMatrixR <- function(x){
-#     check_if_zero <- (length(unlist(x$sbm$rows)) == 0)
-#
-#     check_if_zero
-# } # END IS.ZERO.SPARSEBLOCKMATRIXR
+# This function is (so far) only used in unit tests
+#' @export
+is.zero.SparseBlockMatrixR <- function(x){
+    check_if_zero <- (length(unlist(x$sbm$rows)) == 0)
+
+    check_if_zero
+} # END IS.ZERO.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
 # .init_sbm
@@ -378,7 +374,7 @@ num.edges.SparseBlockMatrixR <- function(sbm){
 #  from a matrix AND a sigmas vector
 #
 .init_sbm <- function(init_matrix, init_sigmas){
-    stopifnot(check_if_matrix(init_matrix))
+    stopifnot(sparsebnUtils::check_if_matrix(init_matrix))
     stopifnot(nrow(init_matrix) == ncol(init_matrix))
 
     stopifnot(is.numeric(init_sigmas))

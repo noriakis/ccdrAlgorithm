@@ -115,8 +115,8 @@ ccdr_call <- function(data,
                       verbose = FALSE
 ){
     ### Check data
-    if(!check_if_data_matrix(data)) stop("Data must be either a data.frame or a numeric matrix!")
-    if(count_nas(data) > 0) stop(paste0(count_nas(data), " missing values detected!"))
+    if(!sparsebnUtils::check_if_data_matrix(data)) stop("Data must be either a data.frame or a numeric matrix!")
+    if(sparsebnUtils::count_nas(data) > 0) stop(paste0(count_nas(data), " missing values detected!"))
 
     ### Get the dimensions of the data matrix
     nn <- as.integer(nrow(data))
@@ -146,10 +146,10 @@ ccdr_call <- function(data,
 
         # If no grid of lambdas is passed, then use the standard log-scale that starts at
         #  max.lam = sqrt(nn) and descends to min.lam = rlam * max.lam
-        lambdas <- generate.lambdas(lambda.max = sqrt(nn),
-                                    lambdas.ratio = rlam,
-                                    lambdas.length = as.integer(lambdas.length),
-                                    scale = "log")
+        lambdas <- sparsebnUtils::generate.lambdas(lambda.max = sqrt(nn),
+                                                   lambdas.ratio = rlam,
+                                                   lambdas.length = as.integer(lambdas.length),
+                                                   scale = "log")
     }
 
     ### Check lambdas
@@ -180,7 +180,7 @@ ccdr_call <- function(data,
     t1.cor <- proc.time()[3]
     #     cors <- cor(data)
     #     cors <- cors[upper.tri(cors, diag = TRUE)]
-    cors <- cor_vector(data)
+    cors <- sparsebnUtils::cor_vector(data)
     t2.cor <- proc.time()[3]
 
     fit <- ccdr_gridR(cors,
@@ -204,8 +204,8 @@ ccdr_call <- function(data,
         fit[[k]]$edges <- as.edgeList.SparseBlockMatrixR(fit[[k]]$edges) # Before coercion, li$edges is actually an SBM object
     }
 
-    fit <- lapply(fit, sparsebnFit.list)    # convert everything to sparsebnFit objects
-    sparsebnPath.list(fit)                  # wrap as sparsebnPath object
+    fit <- lapply(fit, sparsebnUtils::sparsebnFit.list)    # convert everything to sparsebnFit objects
+    sparsebnUtils::sparsebnPath.list(fit)                  # wrap as sparsebnPath object
 } # END CCDR_CALL
 
 # ccdr_gridR
@@ -289,7 +289,7 @@ ccdr_singleR <- function(cors,
     if(pp <= 0 || nn <= 0) stop("Both pp and nn must be positive!")
 
     ### Check betas
-    if(check_if_matrix(betas)){ # if the input is a matrix, convert to SBM object
+    if(sparsebnUtils::check_if_matrix(betas)){ # if the input is a matrix, convert to SBM object
         betas <- SparseBlockMatrixR(betas) # if betas is non-numeric, SparseBlockMatrixR constructor should throw error
         betas <- reIndexC(betas) # use C-friendly indexing
     } else if(!is.SparseBlockMatrixR(betas)){ # otherwise check that it is an object of class SparseBlockMatrixR
