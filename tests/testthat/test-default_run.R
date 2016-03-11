@@ -37,7 +37,7 @@ test_that("Testing default behaviour of ccdr.run", {
 })
 
 test_that("Testing ccdr.run with manual settings", {
-    lambdas <- generate.lambdas(lambda.max = sqrt(nn), lambdas.ratio = 0.1, lambdas.length = 20, scale = "linear")
+    lambdas <- sparsebnUtils::generate.lambdas(lambda.max = sqrt(nn), lambdas.ratio = 0.1, lambdas.length = 20, scale = "linear")
     final <- ccdr.run(data = X, lambdas = lambdas, alpha = 3, max.iters = 10, verbose = FALSE)
 
     expect_is(final, "list")

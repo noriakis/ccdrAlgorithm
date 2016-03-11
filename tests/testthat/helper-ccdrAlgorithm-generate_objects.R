@@ -1,24 +1,24 @@
 generate_empty_edgeList <- function(){
-    edgeList.list(list())
+    sparsebnUtils::edgeList.list(list(integer(0)))
 }
 
 generate_empty_SparseBlockMatrixR <- function(){
-    li <- list(rows = list(), vals = list(), blocks = list(), sigmas = c(), start = 1)
+    li <- list(rows = list(integer(0)), vals = list(integer(0)), blocks = list(integer(0)), sigmas = c(0), start = 1)
     SparseBlockMatrixR.list(li)
 }
 
 generate_empty_sparsebnFit <- function(){
-    li <- list(edges = generate_empty_edgeList(), lambda = 1, nedge = 0, pp = 0, nn = 10, time = 1)
-    sparsebnFit.list(li)
+    li <- list(edges = generate_empty_edgeList(), lambda = 1, nedge = 0, pp = 1, nn = 10, time = 1)
+    sparsebnUtils::sparsebnFit.list(li)
 }
 
 generate_empty_sparsebnPath <- function(){
     sbf <- generate_empty_sparsebnFit()
-    sparsebnPath.list(list(sbf, sbf, sbf, sbf))
+    sparsebnUtils::sparsebnPath.list(list(sbf, sbf, sbf, sbf))
 }
 
 generate_empty_adjacency_matrix <- function(){
-    m <- matrix(0, nrow = 0, ncol = 0)
+    m <- matrix(0, nrow = 1, ncol = 1)
     m
     # Matrix::Matrix(m)
 }
@@ -39,7 +39,7 @@ generate_fixed_edgeList <- function(){
     li[[3]] <- integer(0)
     li[[4]] <- integer(0)
     li[[5]] <- integer(0)
-    edgeL <- edgeList.list(li)
+    edgeL <- sparsebnUtils::edgeList.list(li)
 
     edgeL
 }
@@ -77,14 +77,14 @@ generate_fixed_SparseBlockMatrixR <- function(){
 generate_fixed_sparsebnFit <- function(){
     # sbm <- generate_fixed_SparseBlockMatrixR()
     edges <- generate_fixed_edgeList()
-    sbf <- sparsebnFit.list(list(edges = edges, lambda = 1.54, nedge = num.edges(edges), pp = num.nodes(edges), nn = 10, time = 1))
+    sbf <- sparsebnUtils::sparsebnFit.list(list(edges = edges, lambda = 1.54, nedge = num.edges(edges), pp = num.nodes(edges), nn = 10, time = 1))
 
     sbf
 }
 
 generate_fixed_sparsebnPath <- function(){
     sbf <- generate_fixed_sparsebnFit()
-    sbp <- sparsebnPath.list(list(sbf, sbf, sbf, sbf))
+    sbp <- sparsebnUtils::sparsebnPath.list(list(sbf, sbf, sbf, sbf))
 
     sbp
 }
