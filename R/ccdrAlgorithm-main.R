@@ -114,13 +114,16 @@ ccdr_call <- function(data,
                       alpha,
                       verbose = FALSE
 ){
-    ### Check data
-    if(!sparsebnUtils::check_if_data_matrix(data)) stop("Data must be either a data.frame or a numeric matrix!")
-    if(sparsebnUtils::count_nas(data) > 0) stop(paste0(count_nas(data), " missing values detected!"))
+    ### Check data format
+    if(!sparsebnUtils::is.sparsebnData(data)) stop("Input data must be a valid sparsebnData object!")
+
+    ### Extract the data (CCDr only works on observational data, so ignore the intervention part)
+    data_matrix <- data$data
+    if(sparsebnUtils::count_nas(data_matrix) > 0) stop(sprintf("%d missing values detected!", count_nas(data)))
 
     ### Get the dimensions of the data matrix
-    nn <- as.integer(nrow(data))
-    pp <- as.integer(ncol(data))
+    nn <- as.integer(nrow(data_matrix))
+    pp <- as.integer(ncol(data_matrix))
 
     ### Use default values for lambda if not specified
     if(missing(lambdas)){
@@ -178,9 +181,9 @@ ccdr_call <- function(data,
     }
 
     t1.cor <- proc.time()[3]
-    #     cors <- cor(data)
+    #     cors <- cor(data_matrix)
     #     cors <- cors[upper.tri(cors, diag = TRUE)]
-    cors <- sparsebnUtils::cor_vector(data)
+    cors <- sparsebnUtils::cor_vector(data_matrix)
     t2.cor <- proc.time()[3]
 
     fit <- ccdr_gridR(cors,

@@ -17,9 +17,10 @@ g <- pcalg::randomDAG(n = pp, prob = edge.pr, lB = beta.min, uB = beta.max) # No
 pi <- sample(1:pp)
 X <- pcalg::rmvDAG(n = nn, dag = g, errDist = "normal")
 X <- X[, pi] ## permute the columns to randomize node ordering
+data <- sparsebnUtils::sparsebnData.matrix(X)
 
 test_that("Testing default behaviour of ccdr.run", {
-    final <- ccdr.run(data = X, lambdas.length = 20)
+    final <- ccdr.run(data = data, lambdas.length = 20)
 
     expect_is(final, "list")
 
@@ -38,7 +39,7 @@ test_that("Testing default behaviour of ccdr.run", {
 
 test_that("Testing ccdr.run with manual settings", {
     lambdas <- sparsebnUtils::generate.lambdas(lambda.max = sqrt(nn), lambdas.ratio = 0.1, lambdas.length = 20, scale = "linear")
-    final <- ccdr.run(data = X, lambdas = lambdas, alpha = 3, max.iters = 10, verbose = FALSE)
+    final <- ccdr.run(data = data, lambdas = lambdas, alpha = 3, max.iters = 10, verbose = FALSE)
 
     expect_is(final, "list")
 
