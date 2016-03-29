@@ -116,14 +116,12 @@ ccdr_call <- function(data,
 ){
     ### Allow users to input a data.frame, but kindly warn them about doing this
     if(is.data.frame(data)){
-        warning(sprintf("Data input as a data.frame: In order to coerce your data to a valid sparsebnData object,
-                         we will assume the data is purely observational. In the future, it's best to do this
-                         yourself to prevent loss of information."))
+        warning(sparsebnUtils::alg_input_data_frame())
         data <- sparsebnUtils::as.sparsebnData.data.frame(data)
     }
 
     ### Check data format
-    if(!sparsebnUtils::is.sparsebnData(data)) stop("Input data must be a valid sparsebnData object!")
+    if(!sparsebnUtils::is.sparsebnData(data)) stop(sparsebnUtils::input_not_sparsebnData(data))
 
     ### Extract the data (CCDr only works on observational data, so ignore the intervention part)
     data_matrix <- data$data
