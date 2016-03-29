@@ -114,12 +114,24 @@ ccdr_call <- function(data,
                       alpha,
                       verbose = FALSE
 ){
+    ### Allow users to input a data.frame, but kindly warn them about doing this
+    if(is.data.frame(data)){
+        warning(sprintf("Data input as a data.frame: In order to coerce your data to a valid sparsebnData object,
+                         we will assume the data is purely observational. In the future, it's best to do this
+                         yourself to prevent loss of information."))
+        data <- sparsebnUtils::as.sparsebnData.data.frame(data)
+    }
+
     ### Check data format
     if(!sparsebnUtils::is.sparsebnData(data)) stop("Input data must be a valid sparsebnData object!")
 
     ### Extract the data (CCDr only works on observational data, so ignore the intervention part)
     data_matrix <- data$data
-    if(sparsebnUtils::count_nas(data_matrix) > 0) stop(sprintf("%d missing values detected!", count_nas(data)))
+
+    # Could use check_if_complete_data here, but we avoid this in order to save a (small) amount of computation
+    #  and give a more informative error message
+    num_missing_values <- sparsebnUtils::count_nas(data_matrix)
+    if(num_missing_values > 0) stop(sprintf("%d missing values detected!", num_missing_values))
 
     ### Get the dimensions of the data matrix
     nn <- as.integer(nrow(data_matrix))
