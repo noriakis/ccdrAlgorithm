@@ -117,7 +117,7 @@ ccdr_call <- function(data,
     ### Allow users to input a data.frame, but kindly warn them about doing this
     if(is.data.frame(data)){
         warning(sparsebnUtils::alg_input_data_frame())
-        data <- sparsebnUtils::as.sparsebnData.data.frame(data)
+        data <- sparsebnUtils::sparsebnData.data.frame(data)
     }
 
     ### Check data format
