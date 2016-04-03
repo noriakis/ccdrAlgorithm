@@ -1,3 +1,5 @@
+library("sparsebnUtils") # Expose methods from sparsebnUtils for testing
+
 generate_empty_edgeList <- function(){
     sparsebnUtils::edgeList.list(list(integer(0)))
 }
