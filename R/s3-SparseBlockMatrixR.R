@@ -341,27 +341,21 @@ to_graphNEL.SparseBlockMatrixR <- function(sbm){
     graphNEL(nodes = as.character(1:num.nodes(sbm)), edgeL = el, edgemode = 'directed')
 } # END TO_GRAPHNEL.SPARSEBLOCKMATRIXR
 
-# !!! CROSS-REF TO ANOTHER PACKAGE: NEED TO FIX THIS
-# @export
-# @describeIn get.adjacency.matrix Convert internal \code{SparseBlockMatrixR} representation to an adjacency matrix
 get.adjacency.matrix.SparseBlockMatrixR <- function(sbm){
     sparsebnUtils::get.adjacency.matrix.edgeList(as.edgeList.SparseBlockMatrixR(sbm))
 } # END GET.ADJACENCY.MATRIX.SPARSEBLOCKMATRIXR
 
-#' @export
 num.nodes.SparseBlockMatrixR <- function(sbm){
     ### The number of nodes should be exactly the same as the length of the rows list
     length(sbm$rows)
 } # END NUM.NODES.SPARSEBLOCKMATRIXR
 
-#' @export
 num.edges.SparseBlockMatrixR <- function(sbm){
     ### The number of nodes should be exactly the same as the length of the rows list
     sparsebnUtils::num.edges(as.edgeList.SparseBlockMatrixR(sbm))
 } # END NUM.EDGES.SPARSEBLOCKMATRIXR
 
 # This function is (so far) only used in unit tests
-#' @export
 is.zero.SparseBlockMatrixR <- function(x){
     check_if_zero <- (length(unlist(x$sbm$rows)) == 0)
 
