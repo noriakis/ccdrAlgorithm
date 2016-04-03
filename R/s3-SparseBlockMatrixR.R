@@ -49,7 +49,6 @@
 #------------------------------------------------------------------------------#
 # is.SparseBlockMatrixR
 #
-#' @export
 is.SparseBlockMatrixR <- function(sbm){
     inherits(sbm, "SparseBlockMatrixR")
 } # END IS.SPARSEBLOCKMATRIXR
@@ -208,7 +207,6 @@ as.SparseBlockMatrixR.list <- function(li){
 # as.SparseBlockMatrixR.sparse
 #  Convert FROM sparse TO SparseBlockMatrixR
 #
-#' @export
 as.SparseBlockMatrixR.sparse <- function(sp){
     SparseBlockMatrixR.sparse(sp)
 } # END AS.SPARSEBLOCKMATRIXR.SPARSE
@@ -217,7 +215,6 @@ as.SparseBlockMatrixR.sparse <- function(sp){
 # as.SparseBlockMatrixR.matrix
 #  Convert FROM matrix TO SparseBlockMatrixR
 #
-#' @export
 as.SparseBlockMatrixR.matrix <- function(m){
     SparseBlockMatrixR.matrix(m)
 } # END AS.SPARSEBLOCKMATRIXR.MATRIX
@@ -227,7 +224,6 @@ as.SparseBlockMatrixR.matrix <- function(m){
 #  Convert FROM SparseBlockMatrixR TO list
 #  Even though internally the SBM object is a list, we must still manually define this function
 #
-#' @export
 as.list.SparseBlockMatrixR <- function(sbm){
     list(rows = sbm$rows, vals = sbm$vals, blocks = sbm$blocks, sigmas = sbm$sigmas, start = sbm$start)
 } # END AS.LIST.SPARSEBLOCKMATRIXR
@@ -236,7 +232,6 @@ as.list.SparseBlockMatrixR <- function(sbm){
 # as.matrix.SparseBlockMatrixR
 #  Convert FROM SparseBlockMatrixR TO matrix
 #
-#' @export
 as.matrix.SparseBlockMatrixR <- function(sbm){
     pp <- length(sbm$rows)
     m <- matrix(0, nrow = pp, ncol = pp)
@@ -263,7 +258,6 @@ as.matrix.SparseBlockMatrixR <- function(sbm){
 # as.edgeList.SparseBlockMatrixR
 # Coerce SBM to edge list
 #
-#' @export
 as.edgeList.SparseBlockMatrixR <- function(sbm){
     #
     # We have to be careful in obtaining the edge list of a SparseBlockMatrixR object:

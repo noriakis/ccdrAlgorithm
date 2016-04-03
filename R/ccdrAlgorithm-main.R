@@ -54,7 +54,7 @@ NULL
 #'              current estimation is \code{> alpha * ncol(data)}.
 #' @param verbose \code{TRUE / FALSE} whether or not to print out progress and summary reports.
 #'
-#' @return A \code{\link{sparsebnPath}} object.
+#' @return A \code{\link[sparsebnUtils]{sparsebnPath}} object.
 #'
 #' @examples
 #'

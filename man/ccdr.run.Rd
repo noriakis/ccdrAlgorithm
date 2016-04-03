@@ -36,7 +36,7 @@ current estimation is \code{> alpha * ncol(data)}.}
 \item{verbose}{\code{TRUE / FALSE} whether or not to print out progress and summary reports.}
 }
 \value{
-A \code{\link{sparsebnPath-class}} object.
+A \code{\link[sparsebnUtils]{sparsebnPath}} object.
 }
 \description{
 Estimate a Bayesian network (directed acyclic graph) from observational data using the
