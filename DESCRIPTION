@@ -1,13 +1,12 @@
 Package: ccdrAlgorithm
-Type: Package
-Title: (dev) Internal CCDr methods for sparsebn package.
-Version: 0.0
-Date: 2016-01-22
-Author: Who wrote it
-Maintainer: Bryon Aragam <contactbryon@gmail.com>
-Description: Internal CCDr methods for sparsebn package.
-License: GPL (>= 2)
-LazyData: TRUE
+Title: CCDr Algorithm for Learning Sparse Gaussian Bayesian Networks.
+Version: 0.0.0.9000
+Date: 2016-04-05
+Authors@R: person("Bryon", "Aragam", email = "bryon@stat.ucla.edu", role = c("aut", "cre"))
+Maintainer: Bryon Aragam <bryon@stat.ucla.edu>
+Description: Implementation of the CCDr algorithm described in Aragam and Zhou (2015).
+Depends:
+    R (>= 3.2.3)
 Imports:
     sparsebnUtils,
     Matrix,
@@ -15,4 +14,6 @@ Imports:
 LinkingTo: Rcpp
 Suggests:
     testthat
+License: GPL (>= 2)
+LazyData: TRUE
 RoxygenNote: 5.0.1
