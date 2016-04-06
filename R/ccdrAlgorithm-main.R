@@ -214,11 +214,11 @@ ccdr_call <- function(data,
     #
     for(k in seq_along(fit)){
         names(fit[[k]])[1] <- "edges" # rename 'sbm' slot to 'edges': After the next line, this slot will no longer be an SBM object
-        fit[[k]]$edges <- as.edgeList.SparseBlockMatrixR(fit[[k]]$edges) # Before coercion, li$edges is actually an SBM object
+        fit[[k]]$edges <- sparsebnUtils::as.edgeList(fit[[k]]$edges) # Before coercion, li$edges is actually an SBM object
     }
 
-    fit <- lapply(fit, sparsebnUtils::sparsebnFit.list)    # convert everything to sparsebnFit objects
-    sparsebnUtils::sparsebnPath.list(fit)                  # wrap as sparsebnPath object
+    fit <- lapply(fit, sparsebnUtils::sparsebnFit)    # convert everything to sparsebnFit objects
+    sparsebnUtils::sparsebnPath(fit)                  # wrap as sparsebnPath object
 } # END CCDR_CALL
 
 # ccdr_gridR
@@ -260,7 +260,7 @@ ccdr_gridR <- function(cors,
         t2.ccdr <- proc.time()[3]
 
         betas <- ccdr.out[[i]]$sbm
-        betas <- reIndexC(betas) # use C-friendly indexing
+        betas <- sparsebnUtils::reIndexC(betas) # use C-friendly indexing
 
         if(verbose){
             test.nedge <- sum(as.matrix(betas) != 0)
@@ -350,7 +350,7 @@ ccdr_singleR <- function(cors,
                      pp = pp,
                      nn = nn,
                      time = t2.ccdr - t1.ccdr)
-    ccdr.out$sbm <- reIndexR(ccdr.out$sbm)
+    ccdr.out$sbm <- sparsebnUtils::reIndexR(ccdr.out$sbm)
 
     # sparsebnFit(ccdr.out)
     ccdr.out

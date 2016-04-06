@@ -3,7 +3,7 @@ context("is.___ s3 methods")
 ### S3 sparse
 test_that("is.sparse works as expected", {
     li <- list(rows = integer(0), cols = integer(0), vals = numeric(0), dim = c(1,1), start = 1)
-    sp <- sparsebnUtils::sparse.list(li)
+    sp <- sparsebnUtils::sparse(li)
     expect_is(sp, "sparse")
 
     expect_true(sparsebnUtils::is.sparse(sp))
@@ -47,5 +47,5 @@ test_that("is.sparsebnFit checks correctness of nedge", {
 
     # nedge = 5, but is set to 0 below: Should throw error!
     li <- list(edges = edges, lambda = pi, nedge = 0, pp = 5, nn = 10, time = runif(1))
-    expect_error(sparsebnUtils::sparsebnFit.list(li))
+    expect_error(sparsebnUtils::sparsebnFit(li))
 })

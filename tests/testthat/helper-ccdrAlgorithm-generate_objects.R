@@ -1,7 +1,7 @@
 library("sparsebnUtils") # Expose methods from sparsebnUtils for testing
 
 generate_empty_edgeList <- function(){
-    sparsebnUtils::edgeList.list(list(integer(0)))
+    sparsebnUtils::edgeList(list(integer(0)))
 }
 
 generate_empty_SparseBlockMatrixR <- function(){
@@ -11,12 +11,12 @@ generate_empty_SparseBlockMatrixR <- function(){
 
 generate_empty_sparsebnFit <- function(){
     li <- list(edges = generate_empty_edgeList(), lambda = 1, nedge = 0, pp = 1, nn = 10, time = 1)
-    sparsebnUtils::sparsebnFit.list(li)
+    sparsebnUtils::sparsebnFit(li)
 }
 
 generate_empty_sparsebnPath <- function(){
     sbf <- generate_empty_sparsebnFit()
-    sparsebnUtils::sparsebnPath.list(list(sbf, sbf, sbf, sbf))
+    sparsebnUtils::sparsebnPath(list(sbf, sbf, sbf, sbf))
 }
 
 generate_empty_adjacency_matrix <- function(){
@@ -41,7 +41,7 @@ generate_fixed_edgeList <- function(){
     li[[3]] <- integer(0)
     li[[4]] <- integer(0)
     li[[5]] <- integer(0)
-    edgeL <- sparsebnUtils::edgeList.list(li)
+    edgeL <- sparsebnUtils::edgeList(li)
 
     edgeL
 }
@@ -79,14 +79,14 @@ generate_fixed_SparseBlockMatrixR <- function(){
 generate_fixed_sparsebnFit <- function(){
     # sbm <- generate_fixed_SparseBlockMatrixR()
     edges <- generate_fixed_edgeList()
-    sbf <- sparsebnUtils::sparsebnFit.list(list(edges = edges, lambda = 1.54, nedge = num.edges(edges), pp = num.nodes(edges), nn = 10, time = 1))
+    sbf <- sparsebnUtils::sparsebnFit(list(edges = edges, lambda = 1.54, nedge = num.edges(edges), pp = num.nodes(edges), nn = 10, time = 1))
 
     sbf
 }
 
 generate_fixed_sparsebnPath <- function(){
     sbf <- generate_fixed_sparsebnFit()
-    sbp <- sparsebnUtils::sparsebnPath.list(list(sbf, sbf, sbf, sbf))
+    sbp <- sparsebnUtils::sparsebnPath(list(sbf, sbf, sbf, sbf))
 
     sbp
 }

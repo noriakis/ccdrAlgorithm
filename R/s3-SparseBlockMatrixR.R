@@ -137,7 +137,7 @@ SparseBlockMatrixR.sparse <- function(sp){
     }
 
     pp <- sp$dim[1]
-    if(sp$start == 0) sp <- reIndexR(sp) # re-index rows and cols to start at 1 if necessary
+    if(sp$start == 0) sp <- sparsebnUtils::reIndexR(sp) # re-index rows and cols to start at 1 if necessary
 
     sbm.rows <- vector("list", length = pp)
     sbm.vals <- vector("list", length = pp)
@@ -190,7 +190,7 @@ SparseBlockMatrixR.matrix <- function(m){
 
     if(nrow(m) != ncol(m)) stop("Input matrix must be square!")
 
-    sp <- sparsebnUtils:::as.sparse.matrix(m)
+    sp <- sparsebnUtils:::as.sparse(m)
 
     SparseBlockMatrixR.sparse(sp)
 } # END SPARSEBLOCKMATRIXR.MATRIX
@@ -239,7 +239,7 @@ as.matrix.SparseBlockMatrixR <- function(sbm){
     ### 2015-03-02: Why was I using diag to construct this matrix?
     # m <- diag(rep(0, pp))
 
-    if(sbm$start == 0) sbm <- reIndexR(sbm)
+    if(sbm$start == 0) sbm <- sparsebnUtils::reIndexR(sbm)
 
     for(j in 1:pp){
         m[sbm$rows[[j]], j] <- sbm$vals[[j]]
@@ -271,7 +271,7 @@ as.edgeList.SparseBlockMatrixR <- function(sbm){
     #
     el <- mapply(function(x, y){ y[which(abs(x) > sparsebnUtils:::.MACHINE_EPS)]}, sbm$vals, sbm$rows)
 
-    sparsebnUtils::edgeList.list(el)
+    sparsebnUtils::edgeList(el)
 } # AS.EDGELIST.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
@@ -305,13 +305,13 @@ sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
         }
     }
 
-    sp <- sparsebnUtils::sparse.list(list(rows = as.integer(sp.rows), cols = as.integer(sp.cols), vals = sp.vals, dim = c(pp, pp), start = 1))
+    sp <- sparsebnUtils::sparse(list(rows = as.integer(sp.rows), cols = as.integer(sp.cols), vals = sp.vals, dim = c(pp, pp), start = 1))
 
     if(index == "R"){
         sp
     } else{
         sp$start <- 0
-        reIndexC(sp)
+        sparsebnUtils::reIndexC(sp)
     }
 } # END SPARSE.SPARSEBLOCKMATRIXR
 
@@ -336,7 +336,7 @@ to_graphNEL.SparseBlockMatrixR <- function(sbm){
 } # END TO_GRAPHNEL.SPARSEBLOCKMATRIXR
 
 get.adjacency.matrix.SparseBlockMatrixR <- function(sbm){
-    sparsebnUtils::get.adjacency.matrix.edgeList(as.edgeList.SparseBlockMatrixR(sbm))
+    sparsebnUtils::get.adjacency.matrix(as.edgeList.SparseBlockMatrixR(sbm))
 } # END GET.ADJACENCY.MATRIX.SPARSEBLOCKMATRIXR
 
 num.nodes.SparseBlockMatrixR <- function(sbm){

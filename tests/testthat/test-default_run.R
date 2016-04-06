@@ -17,7 +17,7 @@ g <- pcalg::randomDAG(n = pp, prob = edge.pr, lB = beta.min, uB = beta.max) # No
 pi <- sample(1:pp)
 X <- pcalg::rmvDAG(n = nn, dag = g, errDist = "normal")
 X <- X[, pi] ## permute the columns to randomize node ordering
-data <- sparsebnUtils::sparsebnData.matrix(X, type = "continuous")
+data <- sparsebnUtils::sparsebnData(X, type = "continuous")
 
 test_that("Testing default behaviour of ccdr.run", {
     final <- ccdr.run(data = data, lambdas.length = 20)

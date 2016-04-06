@@ -12,15 +12,15 @@ test_that("as.matrix -> as.sparse -> as.matrix makes no changes", {
 
     ### Test the zero matrix
     m <- matrix(rep(0, 1), ncol = 1)
-    mtest <- sparsebnUtils::as.sparse.matrix(as.matrix(m))
-    mtest <- sparsebnUtils::as.matrix.sparse(mtest)
+    mtest <- sparsebnUtils::as.sparse(as.matrix(m))
+    mtest <- as.matrix(mtest)
 #     print(m1)
 #     print(sum(m1-m))
     expect_equal(sum(mtest-m), 0)
 
     m <- matrix(rep(0, 4), ncol = 2)
-    mtest <- sparsebnUtils::as.sparse.matrix(as.matrix(m))
-    mtest <- sparsebnUtils::as.matrix.sparse(mtest)
+    mtest <- sparsebnUtils::as.sparse(as.matrix(m))
+    mtest <- as.matrix(mtest)
     expect_equal(sum(mtest-m), 0)
     # expect_equivalent(as.matrix(sparsebnUtils::as.sparse.matrix(m)), m)
 
@@ -30,15 +30,15 @@ test_that("as.matrix -> as.sparse -> as.matrix makes no changes", {
 
     ### Test a randomly generated matrix
     m <- random.sparse(5, 5)
-    mtest <- sparsebnUtils::as.sparse.matrix(as.matrix(m))
-    mtest <- sparsebnUtils::as.matrix.sparse(mtest)
+    mtest <- sparsebnUtils::as.sparse(as.matrix(m))
+    mtest <- as.matrix(mtest)
     expect_equal(sum(mtest-m), 0)
     # expect_that(as.matrix(sparsebnUtils::as.sparse.matrix(as.matrix(m))), is_equivalent_to(m))
 
     ### Test a randomly generated DAG
     m <- random.dag.matrix(10, 10)
-    mtest <- sparsebnUtils::as.sparse.matrix(as.matrix(m))
-    mtest <- sparsebnUtils::as.matrix.sparse(mtest)
+    mtest <- sparsebnUtils::as.sparse(as.matrix(m))
+    mtest <- as.matrix(mtest)
     expect_equal(sum(mtest-m), 0)
     # expect_that(as.matrix(sparsebnUtils::as.sparse.matrix(as.matrix(m))), is_equivalent_to(m))
 })
@@ -48,14 +48,14 @@ test_that("as.matrix -> as.SparseBlockMatrixR -> as.matrix makes no changes", {
 
     ### Test the zero matrix
     m <- matrix(rep(0, 1), ncol = 1)
-    mtest <- sparsebnUtils::as.sparse.matrix(as.matrix(m))
-    mtest <- sparsebnUtils::as.matrix.sparse(mtest)
+    mtest <- sparsebnUtils::as.sparse(as.matrix(m))
+    mtest <- as.matrix(mtest)
     expect_equal(sum(mtest-m), 0)
     # expect_that(as.matrix(as.SparseBlockMatrixR(as.matrix(m))), is_equivalent_to(m))
 
     m <- matrix(rep(0, 4), ncol = 2)
-    mtest <- sparsebnUtils::as.sparse.matrix(as.matrix(m))
-    mtest <- sparsebnUtils::as.matrix.sparse(mtest)
+    mtest <- sparsebnUtils::as.sparse(as.matrix(m))
+    mtest <- as.matrix(mtest)
     expect_equal(sum(mtest-m), 0)
     # expect_that(as.matrix(as.SparseBlockMatrixR(as.matrix(m))), is_equivalent_to(m))
 
@@ -64,8 +64,8 @@ test_that("as.matrix -> as.SparseBlockMatrixR -> as.matrix makes no changes", {
 
     ### Test a randomly generated DAG
     m <- random.dag.matrix(10, 10)
-    mtest <- sparsebnUtils::as.sparse.matrix(as.matrix(m))
-    mtest <- sparsebnUtils::as.matrix.sparse(mtest)
+    mtest <- sparsebnUtils::as.sparse(as.matrix(m))
+    mtest <- as.matrix(mtest)
     expect_equal(sum(mtest-m), 0)
     # expect_that(as.matrix(as.SparseBlockMatrixR(as.matrix(m))), is_equivalent_to(m))
 })
@@ -75,11 +75,11 @@ test_that("as.sparse -> as.SparseBlockMatrixR -> as.sparse makes no changes", {
 
     ### Test the zero matrix
     m <- matrix(rep(0, 1), ncol = 1)
-    sp <- sparsebnUtils::as.sparse.matrix(m)
+    sp <- sparsebnUtils::as.sparse(m)
     expect_that(sparsebnUtils::as.sparse(as.SparseBlockMatrixR(sp)), equals(sp))
 
     m <- matrix(rep(0, 4), ncol = 2)
-    sp <- sparsebnUtils::as.sparse.matrix(m)
+    sp <- sparsebnUtils::as.sparse(m)
     expect_that(sparsebnUtils::as.sparse(as.SparseBlockMatrixR(sp)), equals(sp))
 
     ### NOTE: Cannot test on random sparse matrix since SBM class ASSUMES a block structure,
@@ -87,7 +87,7 @@ test_that("as.sparse -> as.SparseBlockMatrixR -> as.sparse makes no changes", {
 
     ### Test a randomly generated DAG
     m <- random.dag.matrix(10, 10)
-    sp <- sparsebnUtils::as.sparse.matrix(m)
+    sp <- sparsebnUtils::as.sparse(m)
     expect_that(sparsebnUtils::as.sparse(as.SparseBlockMatrixR(sp)), equals(sp))
 })
 
@@ -98,13 +98,13 @@ test_that("as.SparseBlockMatrixR -> as.edgeList -> as.matrix makes no changes", 
     m <- matrix(rep(0, 1), ncol = 1)
     sbm <- as.SparseBlockMatrixR(m)
     m.sbm <- as.matrix(sbm)
-    m.edgeL <- as.matrix(as.edgeList.SparseBlockMatrixR(sbm))
+    m.edgeL <- as.matrix(as.edgeList(sbm))
     expect_that(m.edgeL, is_equivalent_to(m.sbm))
 
     m <- matrix(rep(0, 4), ncol = 2)
     sbm <- as.SparseBlockMatrixR(m)
     m.sbm <- as.matrix(sbm)
-    m.edgeL <- as.matrix(as.edgeList.SparseBlockMatrixR(sbm))
+    m.edgeL <- as.matrix(as.edgeList(sbm))
     expect_that(m.edgeL, is_equivalent_to(m.sbm))
 
     ### NOTE: Cannot test on random sparse matrix since SBM class ASSUMES a block structure,
@@ -114,7 +114,7 @@ test_that("as.SparseBlockMatrixR -> as.edgeList -> as.matrix makes no changes", 
     m <- random.dag.matrix(10, 10)
     sbm <- as.SparseBlockMatrixR(m)
     m.sbm <- as.matrix(sbm)
-    m.edgeL <- as.matrix(as.edgeList.SparseBlockMatrixR(sbm))
+    m.edgeL <- as.matrix(as.edgeList(sbm))
 
     m.sbm[m.sbm != 0] <- 1 # coerce to unweighted adjacencies
     expect_that(m.edgeL, is_equivalent_to(m.sbm))

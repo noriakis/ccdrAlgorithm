@@ -2,4 +2,10 @@
 
 export(ccdr.run)
 importFrom(Rcpp,sourceCpp)
+importFrom(sparsebnUtils,get.adjacency.matrix)
+importFrom(sparsebnUtils,is.zero)
+importFrom(sparsebnUtils,num.edges)
+importFrom(sparsebnUtils,num.nodes)
+importFrom(sparsebnUtils,reIndexC)
+importFrom(sparsebnUtils,reIndexR)
 useDynLib(ccdrAlgorithm)
