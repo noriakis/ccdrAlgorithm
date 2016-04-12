@@ -332,7 +332,7 @@ to_graphNEL.SparseBlockMatrixR <- function(sbm){
     el <- sparsebnUtils::as.edgeList(sbm)
     el <- to_graphNEL(el)
 
-    graphNEL(nodes = as.character(1:num.nodes(sbm)), edgeL = el, edgemode = 'directed')
+    graph::graphNEL(nodes = as.character(1:num.nodes(sbm)), edgeL = el, edgemode = 'directed')
 } # END TO_GRAPHNEL.SPARSEBLOCKMATRIXR
 
 get.adjacency.matrix.SparseBlockMatrixR <- function(sbm){
