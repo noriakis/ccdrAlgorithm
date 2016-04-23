@@ -190,7 +190,7 @@ SparseBlockMatrixR.matrix <- function(m){
 
     if(nrow(m) != ncol(m)) stop("Input matrix must be square!")
 
-    sp <- sparsebnUtils:::as.sparse(m)
+    sp <- sparsebnUtils::as.sparse(m)
 
     SparseBlockMatrixR.sparse(sp)
 } # END SPARSEBLOCKMATRIXR.MATRIX
@@ -269,7 +269,7 @@ as.edgeList.SparseBlockMatrixR <- function(sbm){
     # y = rows, x = vals : Select the elements of rows which have nonzero values in vals,
     #                       accouting for possible round-off (hence .MACHINE_EPS).
     #
-    el <- mapply(function(x, y){ y[which(abs(x) > sparsebnUtils:::.MACHINE_EPS)]}, sbm$vals, sbm$rows)
+    el <- mapply(function(x, y){ y[which(abs(x) > sparsebnUtils::zero_threshold())]}, sbm$vals, sbm$rows)
 
     sparsebnUtils::edgeList(el)
 } # AS.EDGELIST.SPARSEBLOCKMATRIXR
@@ -329,6 +329,11 @@ as.sparse.SparseBlockMatrixR <- function(sbm, index = "R"){
 # to_graphNEL.SparseBlockMatrixR
 #  Convert SBM object to graphNEL object
 to_graphNEL.SparseBlockMatrixR <- function(sbm){
+    ### This function require the 'graph' package to be installed
+    if (!requireNamespace("graph", quietly = TRUE)) {
+        stop("graph package (from BioConductor) required to coerce data to 'graphNEL' type!", call. = FALSE)
+    }
+
     el <- sparsebnUtils::as.edgeList(sbm)
     el <- to_graphNEL(el)
 
