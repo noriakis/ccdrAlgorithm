@@ -40,7 +40,7 @@ A \code{\link[sparsebnUtils]{sparsebnPath}} object.
 }
 \description{
 Estimate a Bayesian network (directed acyclic graph) from observational data using the
-CCDr algorithm as described in \href{http://arxiv.org/abs/1401.0852}{Aragam and Zhou (2015), JMLR}.
+CCDr algorithm as described in \href{http://arxiv.org/abs/1401.0852}{Aragam and Zhou (2015)}.
 }
 \details{
 Instead of producing a single estimate, this algorithm computes a solution path of estimates based
@@ -59,13 +59,17 @@ is controlled by the \code{gamma} argument.
 ### Generate some random data
 dat <- matrix(rnorm(1000), nrow = 20)
 
-### Run with default settings
+# Run with default settings
 ccdr.run(data = dat)
 
 ### Optional: Adjust settings
 pp <- ncol(dat)
-init.betas <- matrix(0, nrow = pp, ncol = pp)              # initialize algorithm with a random initial value
-init.betas[1,2] <- init.betas[1,3] <- init.betas[4,2] <- 1 #
+
+# Initialize algorithm with a random initial value
+init.betas <- matrix(0, nrow = pp, ncol = pp)
+init.betas[1,2] <- init.betas[1,3] <- init.betas[4,2] <- 1
+
+# Run with adjusted settings
 ccdr.run(data = dat, betas = init.betas, lambdas.length = 10, alpha = 10, verbose = TRUE)
 }
 

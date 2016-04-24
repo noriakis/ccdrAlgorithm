@@ -46,6 +46,8 @@
 #
 #
 
+#' @importFrom sparsebnUtils to_graphNEL
+
 #------------------------------------------------------------------------------#
 # is.SparseBlockMatrixR
 #
