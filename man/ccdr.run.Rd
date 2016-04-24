@@ -8,7 +8,7 @@ ccdr.run(data, betas, lambdas, lambdas.length = NULL, gamma = 2,
   error.tol = 1e-04, max.iters = NULL, alpha = 10, verbose = FALSE)
 }
 \arguments{
-\item{data}{Data matrix. Must be numeric and contain no missing values.}
+\item{data}{Data matrix as \code{\link[sparsebnUtils]{sparsebnData}} or \code{\link{data.frame}}. Must be numeric and contain no missing values.}
 
 \item{betas}{Initial guess for the algorithm. Represents the weighted adjacency matrix
 of a DAG where the algorithm will begin searching for an optimal structure.}
@@ -40,7 +40,7 @@ A \code{\link[sparsebnUtils]{sparsebnPath}} object.
 }
 \description{
 Estimate a Bayesian network (directed acyclic graph) from observational data using the
-CCDr algorithm as described in \href{http://arxiv.org/abs/1401.0852}{Aragam and Zhou (2015)}.
+CCDr algorithm as described in \href{http://jmlr.org/papers/v16/aragam15a.html}{Aragam and Zhou (2015)}.
 }
 \details{
 Instead of producing a single estimate, this algorithm computes a solution path of estimates based

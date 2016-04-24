@@ -24,7 +24,7 @@ NULL
 #' Main CCDr Algorithm
 #'
 #' Estimate a Bayesian network (directed acyclic graph) from observational data using the
-#' CCDr algorithm as described in \href{http://arxiv.org/abs/1401.0852}{Aragam and Zhou (2015)}.
+#' CCDr algorithm as described in \href{http://jmlr.org/papers/v16/aragam15a.html}{Aragam and Zhou (2015)}.
 #'
 #' Instead of producing a single estimate, this algorithm computes a solution path of estimates based
 #' on the values supplied to \code{lambdas} or \code{lambdas.length}. The CCDr algorithm approximates
@@ -35,7 +35,7 @@ NULL
 #' This implementation includes two options for the penalty: (1) MCP, and (2) L1 (or Lasso). This option
 #' is controlled by the \code{gamma} argument.
 #'
-#' @param data Data matrix. Must be numeric and contain no missing values.
+#' @param data Data matrix as \code{\link[sparsebnUtils]{sparsebnData}} or \code{\link{data.frame}}. Must be numeric and contain no missing values.
 #' @param betas Initial guess for the algorithm. Represents the weighted adjacency matrix
 #'              of a DAG where the algorithm will begin searching for an optimal structure.
 #' @param lambdas (optional) Numeric vector containing a grid of lambda values (i.e. regularization
