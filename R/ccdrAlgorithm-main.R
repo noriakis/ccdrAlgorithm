@@ -268,7 +268,7 @@ ccdr_gridR <- function(cors,
 
         if(verbose){
             test.nedge <- sum(as.matrix(betas) != 0)
-            message("  Estimated number of edges: ", ccdr.out[[i]]$nedge, " / test = ", test.nedge)
+            message("  Estimated number of edges: ", ccdr.out[[i]]$nedge)
             # message("  Estimated total variance: ", sum(1 / (betas$sigmas)^2))
         }
 
