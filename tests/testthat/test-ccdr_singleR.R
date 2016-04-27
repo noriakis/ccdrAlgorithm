@@ -27,7 +27,7 @@ test_that("ccdr_singleR runs as expected", {
     expect_error(ccdr_singleR(cors = cors.test))
 
     ### No error
-    expect_error(not(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test)))
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test), NA)
 })
 
 test_that("Check input: cors", {
@@ -73,7 +73,7 @@ test_that("Check input: gamma", {
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, lambda = lambda.test, gamma = -5, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
 
     ### gamma = -1 is OK
-    expect_error(not(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, lambda = lambda.test, gamma = -1, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test)))
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, lambda = lambda.test, gamma = -1, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test), NA)
 
 })
 
