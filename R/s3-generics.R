@@ -13,6 +13,6 @@
 #
 
 # Generics for SparseBlockMatrixR ------------------------------------------------------------
-SparseBlockMatrixR <- function(x) UseMethod("SparseBlockMatrixR", x)
+SparseBlockMatrixR <- function(x, ...) UseMethod("SparseBlockMatrixR", x)
 as.SparseBlockMatrixR <- function(x) UseMethod("as.SparseBlockMatrixR", x)
 to_B <- function(x) UseMethod("to_B", x)

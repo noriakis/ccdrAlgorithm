@@ -46,7 +46,8 @@
 #
 #
 
-#' @importFrom sparsebnUtils to_graphNEL
+### Need to import some generics from sparsebnUtils
+#' @importFrom sparsebnUtils to_graphNEL sparse
 
 #------------------------------------------------------------------------------#
 # is.SparseBlockMatrixR
@@ -100,21 +101,21 @@ reIndexR.SparseBlockMatrixR <- function(x){
 # SparseBlockMatrixR.list
 #  List constructor
 #
-SparseBlockMatrixR.list <- function(li){
+SparseBlockMatrixR.list <- function(x, ...){
 
-    if( !is.list(li)){
+    if( !is.list(x)){
         stop("Input must be a list!")
     }
 
-    if( length(li) != 5 || !setequal(names(li), c("rows", "vals", "blocks", "sigmas", "start"))){
+    if( length(x) != 5 || !setequal(names(x), c("rows", "vals", "blocks", "sigmas", "start"))){
         stop("Input is not coercable to an object of type SparseBlockMatrixR, check list for the following elements: rows (list), vals (list), blocks (list), sigmas (numeric), start (integer)")
     }
 
-    if(!is.list(li$rows) || !is.list(li$vals)){
+    if(!is.list(x$rows) || !is.list(x$vals)){
         stop("rows and vals must both be lists of length pp!")
     }
 
-    if( length(li$rows) != length(li$vals)){
+    if( length(x$rows) != length(x$vals)){
         #
         # We enforce that rows and vals must have the same length, but relax this assumption for blocks and sigmas
         #  since they are mostly internal to the CCDr algorithm, and once the algorithm has run we may want to free
@@ -123,14 +124,14 @@ SparseBlockMatrixR.list <- function(li){
         stop("rows and vals have different sizes; should all have the same length (pp)!!")
     }
 
-    structure(li, class = "SparseBlockMatrixR")
+    structure(x, class = "SparseBlockMatrixR")
 } # END SPARSEBLOCKMATRIXR.LIST
 
 #------------------------------------------------------------------------------#
 # SparseBlockMatrixR.sparse
 #  sparse object constructor
 #
-SparseBlockMatrixR.sparse <- function(x){
+SparseBlockMatrixR.sparse <- function(x, sigmas, ...){
 
     if( !sparsebnUtils::is.sparse(x)){
         stop("Input must be a sparse object!")
@@ -145,8 +146,13 @@ SparseBlockMatrixR.sparse <- function(x){
     sbm.vals <- vector("list", length = pp)
     sbm.blocks <- vector("list", length = pp)
 
-    warning("Attempting to coerce sparse object to SparseBlockMatrixR with no data for sigmas: \n   Setting sigma_j = 0 by default.")
-    sbm.sigmas <- rep(0, pp) ### 2015-03-25: check this default!
+    if(missing(sigmas)){
+        warning("Attempting to coerce sparse object to SparseBlockMatrixR with no data for sigmas: \n   Setting sigma_j = 0 by default.")
+        sbm.sigmas <- rep(0, pp)
+    } else{
+        sbm.sigmas <- sigmas # just duplicating data here, but kept for consistency with other internal parameters for this method
+    }
+
 
     # how to vectorize this???
     for(j in 1:pp){
@@ -188,11 +194,11 @@ SparseBlockMatrixR.sparse <- function(x){
 # SparseBlockMatrixR.matrix
 #  matrix constructor
 #
-SparseBlockMatrixR.matrix <- function(x){
+SparseBlockMatrixR.matrix <- function(x, sigmas, ...){
 
     if(nrow(x) != ncol(m)) stop("Input matrix must be square!")
 
-    SparseBlockMatrixR(sparsebnUtils::as.sparse(x))
+    SparseBlockMatrixR(sparsebnUtils::as.sparse(x), sigmas, ...)
 } # END SPARSEBLOCKMATRIXR.MATRIX
 
 #------------------------------------------------------------------------------#
@@ -278,7 +284,7 @@ as.edgeList.SparseBlockMatrixR <- function(x){
 # sparse.SparseBlockMatrixR
 # 2016-01-22: Migrated to this file from s3-sparse.R
 #
-sparse.SparseBlockMatrixR <- function(x, index = "R"){
+sparse.SparseBlockMatrixR <- function(x, index = "R", ...){
 
     if(index != "R" && index != "C") stop("Invalid entry for index parameter: Must be either 'R' or 'C'!")
 
@@ -322,7 +328,7 @@ sparse.SparseBlockMatrixR <- function(x, index = "R"){
 #    index = "C".
 # 2016-01-22: Migrated to this file from s3-sparse.R
 #
-as.sparse.SparseBlockMatrixR <- function(x, index = "R"){
+as.sparse.SparseBlockMatrixR <- function(x, index = "R", ...){
     sparse.SparseBlockMatrixR(x, index)
 } # END AS.SPARSE.SPARSEBLOCKMATRIXR
 
@@ -373,8 +379,10 @@ is.zero.SparseBlockMatrixR <- function(x){
     stopifnot(is.numeric(init_sigmas))
     stopifnot(length(init_sigmas) == nrow(init_matrix))
 
-    sbm <- suppressWarnings(SparseBlockMatrixR(init_matrix)) # suppress warnings since we are working in a controlled environment
-    sbm$sigmas <- init_sigmas
+    sbm <- SparseBlockMatrixR(init_matrix, init_sigmas)
+    ### 2016-04-29 These two lines replaced with the above call
+    # sbm <- suppressWarnings(SparseBlockMatrixR(init_matrix)) # suppress warnings since we are working in a controlled environment
+    # sbm$sigmas <- init_sigmas
 
     sbm
 } # END .INIT_SBM

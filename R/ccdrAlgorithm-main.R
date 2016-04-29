@@ -307,7 +307,7 @@ ccdr_singleR <- function(cors,
 
     ### Check betas
     if(sparsebnUtils::check_if_matrix(betas)){ # if the input is a matrix, convert to SBM object
-        betas <- SparseBlockMatrixR(betas) # if betas is non-numeric, SparseBlockMatrixR constructor should throw error
+        betas <- .init_sbm(betas, rep(0, pp)) # if betas is non-numeric, SparseBlockMatrixR constructor should throw error
         betas <- reIndexC(betas) # use C-friendly indexing
     } else if(!is.SparseBlockMatrixR(betas)){ # otherwise check that it is an object of class SparseBlockMatrixR
         stop("Incompatible data passed for betas parameter: Should be either matrix or list in SparseBlockMatrixR format.")
