@@ -196,7 +196,7 @@ SparseBlockMatrixR.sparse <- function(x, sigmas, ...){
 #
 SparseBlockMatrixR.matrix <- function(x, sigmas, ...){
 
-    if(nrow(x) != ncol(m)) stop("Input matrix must be square!")
+    if(nrow(x) != ncol(x)) stop("Input matrix must be square!")
 
     SparseBlockMatrixR(sparsebnUtils::as.sparse(x), sigmas, ...)
 } # END SPARSEBLOCKMATRIXR.MATRIX

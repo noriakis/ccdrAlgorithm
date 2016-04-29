@@ -1,23 +1,17 @@
 context("Default run")
 
-library("pcalg")
+library("mvtnorm")
 
-### Set test parameters
-pp <- 10
+### TEST CCDR ---------------------------------------------
+
+### Generate some random data
+pp <- 5
 nn <- 100
-ss <- 2
 
-### Generate random DAG
-beta.min <- 0.5
-beta.max <- 2
-edge.pr <- 2 * ss / (pp - 1)
-g <- pcalg::randomDAG(n = pp, prob = edge.pr, lB = beta.min, uB = beta.max) # Note that the edge weights are selected at random here!
-
-### Generate random data
-pi <- sample(1:pp)
-X <- pcalg::rmvDAG(n = nn, dag = g, errDist = "normal")
-X <- X[, pi] ## permute the columns to randomize node ordering
-data <- sparsebnUtils::sparsebnData(X, type = "continuous")
+mvmean <- rep(0, pp)
+mvcov <- diag(rep(1, pp))
+data <- suppressMessages(sparsebnUtils::sparsebnData(rmvnorm(n = nn, mean = mvmean, sigma = mvcov), type = "c"))
+# data <- suppressWarnings(sparsebnUtils::sparsebnData(X, type = "continuous"))
 
 test_that("Testing default behaviour of ccdr.run", {
     final <- ccdr.run(data = data, lambdas.length = 20)
