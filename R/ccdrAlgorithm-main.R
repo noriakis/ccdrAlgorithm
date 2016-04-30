@@ -88,8 +88,14 @@ ccdr.run <- function(data,
                      alpha = 10,
                      verbose = FALSE
 ){
-    ### This is just a wrapper for the internal implementation given by ccdr_call
-    ccdr_call(data = data,
+    ### Check data format
+    if(!sparsebnUtils::is.sparsebnData(data)) stop(sparsebnUtils::input_not_sparsebnData(data))
+
+    ### Extract the data (CCDr only works on observational data, so ignore the intervention part)
+    data_matrix <- data$data
+
+    ### Call the CCDr algorithm
+    ccdr_call(data = data_matrix,
               betas = betas,
               lambdas = lambdas,
               lambdas.length = lambdas.length,
@@ -118,26 +124,29 @@ ccdr_call <- function(data,
                       alpha,
                       verbose = FALSE
 ){
-    ### Allow users to input a data.frame, but kindly warn them about doing this
-    if(is.data.frame(data)){
-        warning(sparsebnUtils::alg_input_data_frame())
-        data <- sparsebnUtils::sparsebnData(data)
-    }
+#     ### Allow users to input a data.frame, but kindly warn them about doing this
+#     if(is.data.frame(data)){
+#         warning(sparsebnUtils::alg_input_data_frame())
+#         data <- sparsebnUtils::sparsebnData(data)
+#     }
+#
+#     ### Check data format
+#     if(!sparsebnUtils::is.sparsebnData(data)) stop(sparsebnUtils::input_not_sparsebnData(data))
+#
+#     ### Extract the data (CCDr only works on observational data, so ignore the intervention part)
+#     data_matrix <- data$data
 
     ### Check data format
-    if(!sparsebnUtils::is.sparsebnData(data)) stop(sparsebnUtils::input_not_sparsebnData(data))
-
-    ### Extract the data (CCDr only works on observational data, so ignore the intervention part)
-    data_matrix <- data$data
+    if(!sparsebnUtils::check_if_data_matrix(data)) stop("'data' argument must be a data.frame or matrix!")
 
     # Could use check_if_complete_data here, but we avoid this in order to save a (small) amount of computation
     #  and give a more informative error message
-    num_missing_values <- sparsebnUtils::count_nas(data_matrix)
+    num_missing_values <- sparsebnUtils::count_nas(data)
     if(num_missing_values > 0) stop(sprintf("%d missing values detected!", num_missing_values))
 
     ### Get the dimensions of the data matrix
-    nn <- as.integer(nrow(data_matrix))
-    pp <- as.integer(ncol(data_matrix))
+    nn <- as.integer(nrow(data))
+    pp <- as.integer(ncol(data))
 
     ### Use default values for lambda if not specified
     if(missing(lambdas)){
@@ -195,9 +204,9 @@ ccdr_call <- function(data,
     }
 
     t1.cor <- proc.time()[3]
-    #     cors <- cor(data_matrix)
+    #     cors <- cor(data)
     #     cors <- cors[upper.tri(cors, diag = TRUE)]
-    cors <- sparsebnUtils::cor_vector(data_matrix)
+    cors <- sparsebnUtils::cor_vector(data)
     t2.cor <- proc.time()[3]
 
     fit <- ccdr_gridR(cors,

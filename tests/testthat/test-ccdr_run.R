@@ -33,8 +33,8 @@ test_that("Check input: dat", {
     expect_error(ccdr.run(data = dat.test.na, lambdas.length = lambdas.length.test), "missing values detected")
     rm("dat.test.na")
 
-    ### Works on data frames
-    expect_error(ccdr.run(data = dat.test$data, lambdas.length = lambdas.length.test), NA)
+    ### Does not work on data frames
+    expect_error(ccdr.run(data = dat.test$data, lambdas.length = lambdas.length.test), "valid sparsebnData object")
 
 })
 
