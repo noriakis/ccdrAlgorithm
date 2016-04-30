@@ -47,9 +47,9 @@ test_that("Check input: lambdas", {
     lambdas.test.neg[3] <- -1 * lambdas.test.neg[3]
     expect_error(ccdr.run(data = dat.test, lambdas = lambdas.test.neg), "only nonnegative values!")
 
-    ### Integers not allowed
-    lambdas.test.int <- as.integer(lambdas.test)
-    expect_error(ccdr.run(data = dat.test, lambdas = lambdas.test.int), "lambdas must be a numeric vector!")
+#   ### Integers not allowed
+#     lambdas.test.int <- as.integer(lambdas.test)
+#     expect_error(ccdr.run(data = dat.test, lambdas = lambdas.test.int), "lambdas must be a numeric vector!")
 })
 
 test_that("Check input: lambdas.length", {
