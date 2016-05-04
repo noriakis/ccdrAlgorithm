@@ -1,15 +1,24 @@
 ### Ensure random.dag.matrix function is available to all tests
-library(pcalg)
 random.dag.matrix <- function(pp, nedge){
-    g <- randomDAG(n = pp, prob = 2 * nedge / (pp * (pp - 1)), lB = -5.0, uB = 5.0) # Note that the edge weights are selected at random here!
-    pi <- sample(1:pp) # permutation ordering
-    g <- as(g, "matrix")
-    m <- g[pi, pi]
-    colnames(m) <- rownames(m) <- as.character(1:pp)
+    ### initialize parameters
+    m <- matrix(0, nrow = pp, ncol = pp)
+    vals <- rep(0, pp*(pp-1)/2)
 
+    ### randomly sample indices for nonzero coefs
+    nonzero_coefs <- sample(seq_along(vals), size = nedge)
+
+    ### given these indices, update the values in m with random values
+    ### Note that we are only changing the lower triangular portion
+    vals[nonzero_coefs] <- runif(nedge)
+    m[lower.tri(m)] <- vals
+
+    ### shuffle the rows and columns
+    shuffle <- sample(1:pp)
+    m <- m[shuffle, shuffle]
+
+    ### Final output
     m
 }
-
 ### Generate a random sparse matrix with <= s nonzero elements (returned as a matrix object)
 random.sparse <- function(dim, s, diag = TRUE){
     if(length(dim) == 1){
