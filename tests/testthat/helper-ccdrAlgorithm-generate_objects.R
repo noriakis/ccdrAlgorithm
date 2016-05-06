@@ -1,5 +1,16 @@
 library("sparsebnUtils") # Expose methods from sparsebnUtils for testing
 
+### Generate data
+generate_fixed_data_frame <- function(){
+    a0 <- c(0.8723517,  1.2659643,  0.6484813,  1.1892274,  0.4934170, -0.6602971)
+    b0 <- c(-0.84539872,  1.29776453,  0.27604776,  0.99424489,  1.19389, -0.03904687)
+    c0 <- c(-0.04738671, -0.21364539, -0.45286873, -0.42745932, -0.96944, 0.41352986) 
+    d0 <- c( 1.0350479, 0.3385954, -0.2297281,  1.2739593,  0.96532, 1.3661716)  
+    e0 <- c(-0.2284215, -1.6957715, -0.3839743,  1.1515736, -0.27543, 0.6542333)
+    data.frame(a0,b0,c0,d0,e0)
+}
+
+### Generate empty objects
 generate_empty_edgeList <- function(){
     sparsebnUtils::edgeList(list(integer(0)))
 }

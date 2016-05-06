@@ -1,16 +1,11 @@
 context("Default run")
 
-library("mvtnorm")
+# library("mvtnorm")
 
 ### TEST CCDR ---------------------------------------------
 
-### Generate some random data
-pp <- 5
-nn <- 100
-
-mvmean <- rep(0, pp)
-mvcov <- diag(rep(1, pp))
-data <- suppressMessages(sparsebnUtils::sparsebnData(rmvnorm(n = nn, mean = mvmean, sigma = mvcov), type = "c"))
+### Generate data
+data <- suppressMessages(sparsebnUtils::sparsebnData(generate_fixed_data_frame(), type = "c"))
 # data <- suppressWarnings(sparsebnUtils::sparsebnData(X, type = "continuous"))
 
 test_that("Testing default behaviour of ccdr.run", {
@@ -32,7 +27,7 @@ test_that("Testing default behaviour of ccdr.run", {
 })
 
 test_that("Testing ccdr.run with manual settings", {
-    lambdas <- sparsebnUtils::generate.lambdas(lambda.max = sqrt(nn), lambdas.ratio = 0.1, lambdas.length = 20, scale = "linear")
+    lambdas <- sparsebnUtils::generate.lambdas(lambda.max = sqrt(nrow(data$data)), lambdas.ratio = 0.1, lambdas.length = 20, scale = "linear")
     final <- ccdr.run(data = data, lambdas = lambdas, alpha = 3, max.iters = 10, verbose = FALSE)
 
     expect_is(final, "list")
