@@ -2,7 +2,7 @@ Package: ccdrAlgorithm
 Title: CCDr Algorithm for Learning Sparse Gaussian Bayesian Networks
 Version: 0.0.0.9000
 Date: 2016-04-05
-Authors@R: person("Bryon", "Aragam", email = "bryon@stat.ucla.edu", role = c("aut", "cre"))
+Authors@R: person("Bryon", "Aragam", email = "sparsebn@gmail.com", role = c("aut", "cre"))
 Maintainer: Bryon Aragam <sparsebn@gmail.com>
 Description: Implementation of the CCDr algorithm described in Aragam and Zhou (2015).
 Depends:
