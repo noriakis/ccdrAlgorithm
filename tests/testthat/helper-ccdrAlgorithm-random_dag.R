@@ -19,6 +19,7 @@ random.dag.matrix <- function(pp, nedge){
     ### Final output
     m
 }
+
 ### Generate a random sparse matrix with <= s nonzero elements (returned as a matrix object)
 random.sparse <- function(dim, s, diag = TRUE){
     if(length(dim) == 1){

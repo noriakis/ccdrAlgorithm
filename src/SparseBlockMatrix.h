@@ -558,9 +558,17 @@ void SparseBlockMatrix::print() const{
             }
 
             if(found >= 0)
+        #ifdef _COMPILE_FOR_RCPP_
+                Rprintf("%8.2f",  vals[j][found]);
+        #else
                 printf("%8.2f",  vals[j][found]);
+        #endif
             else
+        #ifdef _COMPILE_FOR_RCPP_
+                Rprintf("%8d", 0);
+        #else
                 printf("%8d", 0);
+        #endif
 
         }
 
@@ -583,10 +591,17 @@ void SparseBlockMatrix::print(int r) const{
             }
 
             if(found >= 0)
+        #ifdef _COMPILE_FOR_RCPP_
+                Rprintf("%8.2f",  vals[j][found]);
+        #else
                 printf("%8.2f",  vals[j][found]);
+        #endif
             else
+        #ifdef _COMPILE_FOR_RCPP_
+                Rprintf("%8d", 0);
+        #else
                 printf("%8d", 0);
-
+        #endif
         }
 
         OUTPUT << std::endl << std::endl;
