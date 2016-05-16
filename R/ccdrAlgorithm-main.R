@@ -35,7 +35,7 @@ NULL
 #' This implementation includes two options for the penalty: (1) MCP, and (2) L1 (or Lasso). This option
 #' is controlled by the \code{gamma} argument.
 #'
-#' @param data Data matrix as \code{\link[sparsebnUtils]{sparsebnData}} or \code{\link{data.frame}}. Must be numeric and contain no missing values.
+#' @param data Data as \code{\link[sparsebnUtils]{sparsebnData}}. Must be numeric and contain no missing values.
 #' @param betas Initial guess for the algorithm. Represents the weighted adjacency matrix
 #'              of a DAG where the algorithm will begin searching for an optimal structure.
 #' @param lambdas (optional) Numeric vector containing a grid of lambda values (i.e. regularization
@@ -62,6 +62,7 @@ NULL
 #'
 #' ### Generate some random data
 #' dat <- matrix(rnorm(1000), nrow = 20)
+#' dat <- sparsebnData(dat, type = "continuous")
 #'
 #' # Run with default settings
 #' ccdr.run(data = dat)
