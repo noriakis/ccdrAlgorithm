@@ -8,7 +8,7 @@ ccdr.run(data, betas, lambdas, lambdas.length = NULL, gamma = 2,
   error.tol = 1e-04, max.iters = NULL, alpha = 10, verbose = FALSE)
 }
 \arguments{
-\item{data}{Data matrix as \code{\link[sparsebnUtils]{sparsebnData}}. Must be numeric and contain no missing values.}
+\item{data}{Data as \code{\link[sparsebnUtils]{sparsebnData}}. Must be numeric and contain no missing values.}
 
 \item{betas}{Initial guess for the algorithm. Represents the weighted adjacency matrix
 of a DAG where the algorithm will begin searching for an optimal structure.}

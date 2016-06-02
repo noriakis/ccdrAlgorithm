@@ -201,7 +201,7 @@ ccdr_call <- function(data,
     # This parameter can be set by the user, but in order to prevent the algorithm from taking too long to run
     #  it is a good idea to keep the threshold used by default which is O(sqrt(pp))
     if(is.null(max.iters)){
-        max.iters <- 2 * max(10, sqrt(pp))
+        max.iters <- sparsebnUtils::default_max_iters(pp)
     }
 
     t1.cor <- proc.time()[3]
