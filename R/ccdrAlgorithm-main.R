@@ -81,7 +81,7 @@ NULL
 #' @export
 ccdr.run <- function(data,
                      betas,
-                     lambdas,
+                     lambdas = NULL,
                      lambdas.length = NULL,
                      gamma = 2.0,
                      error.tol = 1e-4,
@@ -150,7 +150,7 @@ ccdr_call <- function(data,
     pp <- as.integer(ncol(data))
 
     ### Use default values for lambda if not specified
-    if(missing(lambdas)){
+    if(is.null(lambdas)){
         if(is.null(lambdas.length)){
             stop("Both lambdas and lambdas.length unspecified: Must specify a value for at least one of these arguments!")
         } else{

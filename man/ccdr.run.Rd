@@ -4,7 +4,7 @@
 \alias{ccdr.run}
 \title{Main CCDr Algorithm}
 \usage{
-ccdr.run(data, betas, lambdas, lambdas.length = NULL, gamma = 2,
+ccdr.run(data, betas, lambdas = NULL, lambdas.length = NULL, gamma = 2,
   error.tol = 1e-04, max.iters = NULL, alpha = 10, verbose = FALSE)
 }
 \arguments{
