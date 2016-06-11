@@ -51,7 +51,7 @@ NULL
 #' @param error.tol Error tolerance for the algorithm, used to test for convergence.
 #' @param max.iters Maximum number of iterations for each internal sweep.
 #' @param alpha Threshold parameter used to terminate the algorithm whenever the number of edges in the
-#'              current estimation is \code{> alpha * ncol(data)}.
+#'              current DAG estimate is \code{> alpha * ncol(data)}.
 #' @param verbose \code{TRUE / FALSE} whether or not to print out progress and summary reports.
 #'
 #' @return A \code{\link[sparsebnUtils]{sparsebnPath}} object.

@@ -31,7 +31,7 @@ will be used and this value is otherwise ignored.}
 \item{max.iters}{Maximum number of iterations for each internal sweep.}
 
 \item{alpha}{Threshold parameter used to terminate the algorithm whenever the number of edges in the
-current estimation is \code{> alpha * ncol(data)}.}
+current DAG estimate is \code{> alpha * ncol(data)}.}
 
 \item{verbose}{\code{TRUE / FALSE} whether or not to print out progress and summary reports.}
 }
