@@ -290,11 +290,12 @@ ccdr_gridR <- function(cors,
         # 7-16-14: Added code below to check edge threshold via alpha parameter
         if(ccdr.out[[i]]$nedge > alpha * pp){
             if(verbose) message("Edge threshold met, terminating algorithm with ", ccdr.out[[i-1]]$nedge, " edges.")
+            ccdr.out <- ccdr.out[1:(i-1)] # only return up to i - 1 since the last (ith) model did not finish
             break
         }
     }
 
-    ccdr.out[1:(i-1)] # only return up to i - 1 since the last (ith) model would not have finished running anyway
+    ccdr.out
 } # END CCDR_GRIDR
 
 # ccdr_singleR
