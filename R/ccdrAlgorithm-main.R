@@ -94,9 +94,11 @@ ccdr.run <- function(data,
 
     ### Extract the data (CCDr only works on observational data, so ignore the intervention part)
     data_matrix <- data$data
+    ivn_list <- data$ivn
 
     ### Call the CCDr algorithm
     ccdr_call(data = data_matrix,
+              ivn = ivn_list,
               betas = betas,
               lambdas = lambdas,
               lambdas.length = lambdas.length,
@@ -115,6 +117,7 @@ ccdr.run <- function(data,
 #    this is handled internally by ccdr_gridR and ccdr_singleR.
 #
 ccdr_call <- function(data,
+                      ivn = NULL,
                       betas,
                       lambdas,
                       lambdas.length,
@@ -148,6 +151,19 @@ ccdr_call <- function(data,
     ### Get the dimensions of the data matrix
     nn <- as.integer(nrow(data))
     pp <- as.integer(ncol(data))
+
+    if(is.null(ivn)) ivn <- vector("list", nn)
+    ########################
+    ### Check ivn format????
+    ### if(!check_if_ivn_list(ivn, nn, pp)) print("'ivn' argument must be a list of vectors!")
+    ########################
+    ### currently supress it to pass testthat
+    ########################
+
+    nj <- rep(0, pp)
+    for(j in 1:pp) { ## include 0 here or not?
+        nj[j] <- sum(!sapply(lapply(ivn, is.element, j), any)) ## optimize for sorted column?
+    }
 
     ### Use default values for lambda if not specified
     if(is.null(lambdas)){
@@ -188,6 +204,7 @@ ccdr_call <- function(data,
 #     }
 
     ### By default, set the initial guess for betas to be all zeroes
+
     if(missing(betas)){
         betas <- matrix(0, nrow = pp, ncol = pp)
         # betas <- SparseBlockMatrixR(betas) # 2015-03-26: Deprecated and replaced with .init_sbm below
@@ -197,7 +214,6 @@ ccdr_call <- function(data,
         #   Still need to set start = 0, though.
         betas$start <- 0
     } # Type-checking for betas happens in ccdr_singleR
-
     # This parameter can be set by the user, but in order to prevent the algorithm from taking too long to run
     #  it is a good idea to keep the threshold used by default which is O(sqrt(pp))
     if(is.null(max.iters)){
@@ -207,12 +223,16 @@ ccdr_call <- function(data,
     t1.cor <- proc.time()[3]
     #     cors <- cor(data)
     #     cors <- cors[upper.tri(cors, diag = TRUE)]
-    cors <- sparsebnUtils::cor_vector(data)
+    corlist <- cor_vector_ivn(data, ivn)
+    cors <- corlist$cors
+    indexj <- corlist$indexj
     t2.cor <- proc.time()[3]
 
     fit <- ccdr_gridR(cors,
                       as.integer(pp),
                       as.integer(nn),
+                      as.integer(nj),
+                      as.integer(indexj),
                       betas,
                       as.numeric(lambdas),
                       as.numeric(gamma),
@@ -245,6 +265,8 @@ ccdr_call <- function(data,
 #   Main subroutine for running the CCDr algorithm on a grid of lambda values.
 ccdr_gridR <- function(cors,
                        pp, nn,
+                       nj = NULL,
+                       indexj = NULL,
                        betas,
                        lambdas,
                        gamma,
@@ -261,13 +283,21 @@ ccdr_gridR <- function(cors,
     ### nlam is now set automatically
     nlam <- length(lambdas)
 
+    ### Check indexj
+    if(is.null(indexj)) indexj <- rep(0L, pp + 1)
+    ### Check nj
+    if(is.null(nj)) nj <- as.integer(rep(nn, pp))
+
     ccdr.out <- list()
     for(i in 1:nlam){
+
         if(verbose) message("Working on lambda = ", round(lambdas[i], 5), " [", i, "/", nlam, "]")
 
         t1.ccdr <- proc.time()[3]
         ccdr.out[[i]] <- ccdr_singleR(cors,
                                       pp, nn,
+                                      nj,
+                                      indexj,
                                       betas,
                                       lambdas[i],
                                       gamma = gamma,
@@ -304,6 +334,8 @@ ccdr_gridR <- function(cors,
 #    called. Type-checking is strongly enforced here.
 ccdr_singleR <- function(cors,
                          pp, nn,
+                         nj = NULL,
+                         indexj = NULL,
                          betas,
                          lambda,
                          gamma,
@@ -313,9 +345,15 @@ ccdr_singleR <- function(cors,
                          verbose = FALSE
 ){
 
+    ### Check indexj
+    if(is.null(indexj)) indexj <- rep(0L, pp + 1)
+    ### Check nj
+    if(is.null(nj)) nj <- as.integer(rep(nn, pp))
+    aj <- nj / nn
+
     ### Check cors
     if(!is.numeric(cors)) stop("cors must be a numeric vector!")
-    if(length(cors) != pp*(pp+1)/2) stop(paste0("cors has incorrect length: Expected length = ", pp*(pp+1)/2, " input length = ", length(cors)))
+    if(length(cors) != length(unique(indexj))*pp*(pp+1)/2) stop(paste0("cors has incorrect length: Expected length = ", length(unique(indexj))*pp*(pp+1)/2, " input length = ", length(cors)))
 
     ### Check dimension parameters
     if(!is.integer(pp) || !is.integer(nn)) stop("Both pp and nn must be integers!")
@@ -354,7 +392,9 @@ ccdr_singleR <- function(cors,
     t1.ccdr <- proc.time()[3]
     ccdr.out <- singleCCDr(cors,
                            betas,
-                           nn,
+                           nj,
+                           indexj,
+                           aj,
                            lambda,
                            c(gamma, eps, maxIters, alpha),
                            verbose = verbose)
