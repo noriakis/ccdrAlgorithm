@@ -2,6 +2,8 @@ context("ccdr_singleR")
 
 pp <- 10L
 nn <- 5L
+indexj <- rep(0L, pp + 1)
+nj <- as.integer(rep(nn, pp))
 cors.length <- pp*(pp+1)/2
 cors.test <- runif(cors.length)
 betas.test <- matrix(runif(pp*pp), ncol = pp)
@@ -28,6 +30,10 @@ test_that("ccdr_singleR runs as expected", {
 
     ### No error
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test), NA)
+
+    ### No error
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = nj, indexj = indexj, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test), NA)
+
 })
 
 test_that("Check input: cors", {
@@ -50,6 +56,42 @@ test_that("Check input: nn", {
 
     ### nn is not > 0
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = -1L, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+})
+
+test_that("Check input: indexj", {
+    ### indexj is not a vector
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, indexj = matrix(0L, nrow = 1, ncol = pp + 1), betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+    ### indexj is of wrong size
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, indexj = rep(0L, pp + 2), betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+    ### indexj has non-integer
+    indexj1 <- indexj
+    indexj1[1] <- pi
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, indexj = indexj1, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+    indexj1[1] <- NA
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, indexj = indexj1, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+    ### indexj out of bound
+    indexj1[1] <- 0
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, indexj = indexj1, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+    indexj1[1] <- pp + 2
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, indexj = indexj1, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+})
+
+test_that("Check input: nj", {
+    ### nj is not a vector
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = matrix(nn, nrow = 1, ncol = pp), betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+    ### nj is of wrong size
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = as.integer(rep(nn, pp + 1)), betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+    ### nj has non-integer
+    nj1 <- nj
+    nj1[1] <- pi
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = nj1, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+    nj1[1] <- NA
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = nj1, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+    ### nj out of bound
+    nj1 <- rep(-1L, pp)
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = nj1, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
+    nj1 <- as.integer(rep(nn + 1, pp))
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = nj1, betas = betas.test, lambda = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test))
 })
 
 test_that("Check input: betas", {

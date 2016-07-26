@@ -152,13 +152,11 @@ ccdr_call <- function(data,
     nn <- as.integer(nrow(data))
     pp <- as.integer(ncol(data))
 
-    if(is.null(ivn)) ivn <- vector("list", nn)
-    ########################
-    ### Check ivn format????
-    ### if(!check_if_ivn_list(ivn, nn, pp)) print("'ivn' argument must be a list of vectors!")
-    ########################
-    ### currently supress it to pass testthat
-    ########################
+    if(is.null(ivn)) ivn <- vector("list", nn) # to pass testthat for observational data cases
+    ### Check ivn
+    if(!check_if_ivn_list(ivn)) stop("'ivn' argument must be a list of NULLs or vectors!")
+    if(!check_ivn_size(ivn, nn)) stop(sprintf("Length of 'ivn' is %d, expected %d!", length(ivn), nn))
+    if(!check_ivn_label(ivn, pp)) stop("Intervention labels incorrect. Probably non-integer, out of range, or duplicates.")
 
     nj <- rep(0, pp)
     for(j in 1:pp) { ## include 0 here or not?
@@ -345,10 +343,20 @@ ccdr_singleR <- function(cors,
                          verbose = FALSE
 ){
 
-    ### Check indexj
     if(is.null(indexj)) indexj <- rep(0L, pp + 1)
-    ### Check nj
+    ### Check indexj
+    if(!is.vector(indexj)) stop("index for cors vector is not a vector")
+    if(length(indexj) > pp + 1) stop("index for cors vector is too long")
+    if(!is.integer(indexj)) stop("index for cors vector has non-integer")
+    if(any(indexj < 0 | indexj > pp + 1)) stop("index for cors vector is out of bound")
+
     if(is.null(nj)) nj <- as.integer(rep(nn, pp))
+    ### Check nj
+    if(!is.vector(nj)) stop("number of interventions at each node is not a vector")
+    if(length(nj) != pp) stop("number of interventions at some nodes is missing")
+    if(!is.integer(nj)) stop("number of interventions at each node is non-integer")
+    if(any(nj < 0 | nj > nn)) stop("number of interventions at some node is out of range")
+
     aj <- nj / nn
 
     ### Check cors
