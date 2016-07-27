@@ -1,8 +1,8 @@
-## function for generating random data based on DAG
-## Currently only supports single-node intervention in each sample
-## To do: to support ivnlist
+rmvDAG.fix <- function(dag, n, vfix = NULL, m = 0, s = 1) {
+    ## function for generating random data based on DAG
+    ## Currently only supports single-node intervention in each sample
+    ## To do: to support ivnlist
 
-rmvDAG.fix <- function(dag, n, vfix = NULL, m = 0, s = 1, back.compatible = F) {
     ## Based on rmvDAG
     ## Original Author: Markus Kalisch, Date: 26 Jan 2006;  Martin Maechler
     ## ----------------------------------------------------------------------
@@ -15,7 +15,8 @@ rmvDAG.fix <- function(dag, n, vfix = NULL, m = 0, s = 1, back.compatible = F) {
 
     ## as(.,"matrix") now {for some versions of 'graph' pkg} is 0/1
     ## weightMatrix <- t(as(dag,"matrix"))
-    weightMatrix <- if(back.compatible) wgtMatrix.0(dag) else wgtMatrix(dag)
+    ## weightMatrix <- if(back.compatible) wgtMatrix.0(dag) else wgtMatrix(dag)
+    weightMatrix <- wgtMatrix(dag)
 
     ## check if top. sorted
     nonZeros <- which(weightMatrix != 0, arr.ind = TRUE)
