@@ -15,7 +15,7 @@ sFedL2graphedL <- function(sFedL) {
     }
     names(edL) <- as.character(1:pp)
     return(edL)
-}
+} # END sFedL2graphedL
 
 sparsebnFit2graphedL <- function(sF) {
     ## edgelist of sF: children, then parent.
@@ -23,22 +23,14 @@ sparsebnFit2graphedL <- function(sF) {
     ## edgelist of graphNEL: parent, then children.
     ## e.g. edL(g)[[1]]$edges = 2 means edge 1->2 exists.
     return(sFedL2graphedL(sF$edges))
-}
+} # END sparsebnFit2graphedL
 
 sparsebnFit2graph <- function(sF) {
     ## edgelist of sF: children, then parent
     ## edgelist of graphNEL: parent, then children
     edL <- sparsebnFit2graphedL(sF)
     return(graph::graphNEL(nodes = names(edL), edgeL = edL, edgemode = 'directed'))
-}
-
-sparsebnFit2matrix <- function(sF) {
-    ## to matrix
-    ## m_{ij} = 1 <--> edge i->j exists
-    ## or t(get.adjacency.matrix()) for a sparse matrix
-    ## or wgtMatrix(, FALSE)
-    return(as(sparsebnFit2graph(sF), "matrix") != 0)
-}
+} # END sparseFit2graph
 
 graphedL2sFedL <- function(gedL) {
     ## edgelist of sF: children, then parent.
@@ -54,16 +46,7 @@ graphedL2sFedL <- function(gedL) {
         }
     }
     structure(sFedL, class = c("edgeList", "list"))
-}
-
-## adjacency matrix to graph
-## m_{ij} = 1 <--> edge i->j exists
-## no longer need to transpose here
-adj2graph <- function(m, newname = NULL) {
-    g <- as(graphAM(adj = m, edgemode = 'directed'), "graphNEL")
-    if(!is.null(newname)) nodes(g) <- newname
-    return(g)
-}
+} # graphedL2sFedL
 
 ## permute nodes (and edges) of a graph
 permutenodes.edgeL <- function(edL, o) {
@@ -83,7 +66,7 @@ permutenodes.edgeL <- function(edL, o) {
         edL1[[q[i]]]$edges <- q[edL[[i]]$edges]
     }
     return(edL1)
-}
+} # END permutenodes.edgeL
 
 permutenodes.edgeList <- function(edL, o) {
     ## edgeList from sparsebnUtils
@@ -102,7 +85,7 @@ permutenodes.edgeList <- function(edL, o) {
         edL1[[q[i]]] <- q[edL[[i]]]
     }
     structure(edL1, class = c("edgeList", "list"))
-}
+} # END permutenodes.edgeList
 
 permutenodes.graph <- function(g, o) {
     ## so that when plot, they are the same
@@ -122,5 +105,5 @@ permutenodes.graph <- function(g, o) {
     for(i in 1:nn) {
         edges1[[q[i]]]$edges <- q[edges0[[i]]$edges]
     }
-    return(graphNEL(nodes = nodes1, edgeL = edges1, edgemode = 'directed'))
-}
+    return(graph::graphNEL(nodes = nodes1, edgeL = edges1, edgemode = 'directed'))
+} # END permutenodes.graph
