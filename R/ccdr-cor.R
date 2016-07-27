@@ -1,23 +1,40 @@
 ## returns TRUE if ivn_list is a list of vectors or NULL elements,
-## and when nn and pp provided:
-## additionally check if all components in vectors are appropriate labels
 check_if_ivn_list <- function(X, nn, pp) {
     ## check if it is a list
     if(!is.list(X)) return(FALSE)
 
     ## check if every component is a vector of NULL
-    if(!any(sapply(X, is.vector) | sapply(X, is.null))) return(FALSE)
-
-    ## check if length matches with nn
-    if(length(X) != nn) return(FALSE)
-
-    ## check if labels are integers and fall in 1...pp
-    labels <- unlist(X)
-    if(any(!is.integer(labels))) return(FALSE) ## non-integer labels
-    if(any(labels < 1) | any(labels > pp)) return(FALSE) ## labels out of range
-
-    return(TRUE)
+    return(all(sapply(X, is.vector) | sapply(X, is.null)))
 } # END CHECK_IF_IVN_LIST
+
+## returns TRUE if ivn_list has length nn, the number of sample rows
+check_ivn_size <- function(X, nn) {
+    ## check if length matches with nn
+    return(length(X) == nn)
+} # END CHECK_IF_IVN_SIZE
+
+## returns TRUE if a vector has all correct labels
+check_vector_label <- function(vec, pp) {
+
+    if(is.null(vec)) return(TRUE)
+
+    ## Note: If a vector has only integers and NAs, is.integer returns all TRUE
+    ## e.g.: c(NA, 1L, NA, 3L, NA, 5L)
+    ## However, c(1L, NA, 3L, 4, NA) returns all FALSE
+    ## check if labels are integers
+    if(any(is.na(vec)) || !is.integer(vec)) return(FALSE)
+
+    ## check if labels are in 1..pp
+    if(any(vec < 1) | any(vec > pp)) return(FALSE)
+
+    ## check if labels are unique
+    return(!anyDuplicated(vec))
+} # END CHECK_VECTOR_LABEL
+
+## returns TRUE if all vectors has correct labels
+check_ivn_label <- function(X, pp) {
+    return(all(sapply(X, check_vector_label, pp)))
+} # END CHECK_IVN_LABEL
 
 ## to do:
 ## to be included in `sparsebn` package
