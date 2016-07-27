@@ -59,7 +59,7 @@ test_that("Bugfix: ccdr.run returns the correct number of solutions", {
     expect_equal(length(final), 1)
 })
 
-test_that("ccdr.run with intervention:", {
+test_that("ccdr.run with intervention, case 1:", {
     pp <- 4
     nn <- 10
     x1 <- rnorm(4 * nn)
@@ -72,7 +72,7 @@ test_that("ccdr.run with intervention:", {
     q <- order(o) ## o[q] == q[o] == 1:pp
     q1 <- order(o1)
     X1 <- X[, o] ## permute the columns to randomize node ordering
-    ivnvector <- as.integer(c(rep(1, nn), rep(2, nn), rep(3, nn), rep(4, nn)))
+    ivnvector <- as.integer(as.vector(sapply(1:pp, rep, nn)))
     ivnvector1 <- q1[ivnvector]
     data1 <- sparsebnUtils::sparsebnData(X1, type = "c", ivn = as.list(ivnvector1))
 
@@ -87,8 +87,46 @@ test_that("ccdr.run with intervention:", {
     edL1 <- permutenodes.edgeL(edL, o)
     ##g1 <- permutenodes(g0, o)
 
-    final <- ccdr.run(data = data1, lambdas.length = 10) # use most of the default settings
+    final <- ccdr.run(data = data1, lambdas.length = 10) ## use most of the default settings
     compare.path <- sapply(lapply(final, getElement, "edges"), compare.sFg, edL1)
     shd.val <- compare.path[7, ]
-    expect_true(min(shd.val) < 2)
+    expect_true(min(shd.val) < 2) ## ideally this should be zero
+})
+
+test_that("ccdr.run with intervention, case 2:", {
+    pp <- 6
+    nn <- 20
+    x1 <- rnorm(6 * nn)
+    x2 <- rnorm(6 * nn)
+    x3 <- 0.5 * x1; x3[(2*nn+1):(3*nn)] <- rnorm(nn)
+    x4 <- rnorm(6 * nn)
+    x5 <- 0.7 * x2 + 0.5 * x3; x5[(4*nn+1):(5*nn)] <- rnorm(nn)
+    x6 <- 0.4 * x1 + 0.8 * x5; x6[(5*nn+1):(6*nn)] <- rnorm(nn)
+    X <- cbind(x1, x2, x3, x4, x5, x6)
+    o <- sample(1:pp)
+    o1 <- c(o, pp + 1)
+    q <- order(o) ## o[q] == q[o] == 1:pp
+    q1 <- order(o1)
+    X1 <- X[, o] ## permute the columns to randomize node ordering
+    ivnvector <- as.integer(as.vector(sapply(1:pp, rep, nn)))
+    ivnvector1 <- q1[ivnvector]
+    data1 <- sparsebnUtils::sparsebnData(X1, type = "c", ivn = as.list(ivnvector1))
+
+    V <- as.character(1:pp)
+    edL <- vector("list", pp)
+    names(edL) <- V
+    edL[[1]] <- list(edges = c(3,6), weights = c(0.5, 0.4))
+    edL[[2]] <- list(edges = 5, weights = 0.7)
+    edL[[3]] <- list(edges = 5, weights = 0.5)
+    edL[[4]] <- list(edges = numeric(0))
+    edL[[5]] <- list(edges = 6, weights = 0.8)
+    edL[[6]] <- list(edges = numeric(0))
+    ## g0 <- graph::graphNEL(nodes = as.character(1:4), edgeL = edL, edgemode = "directed")
+    edL1 <- permutenodes.edgeL(edL, o)
+    ##g1 <- permutenodes(g0, o)
+
+    final <- ccdrAlgorithm::ccdr.run(data = data1, lambdas.length = 10) # use most of the default settings
+    compare.path <- sapply(lapply(final, getElement, "edges"), compare.sFg, edL1)
+    shd.val <- compare.path[7, ]
+    expect_true(min(shd.val) < 2) ## ideally this should be zero
 })
