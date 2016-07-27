@@ -3,11 +3,7 @@ context("ccdr.run with ivn")
 suppressMessages({
     pp <- 4
     nn <- 10
-    x1 <- rnorm(4 * nn)
-    x2 <- 2 * x1; x2[(nn+1):(2*nn)] <- rnorm(nn)
-    x3 <- rnorm(4 * nn)
-    x4 <- x2 + x3; x4[(3*nn+1):(4*nn)] <- rnorm(nn)
-    X.test <- cbind(x1, x2, x3, x4)
+    X.test <- matrix(rnorm(4 * nn * pp), 4 * nn, pp)
     ivnvector <- as.integer(c(rep(1, nn), rep(2, nn), rep(3, nn), rep(4, nn)))
     dat.test <- sparsebnUtils::sparsebnData(X.test, type = "c", ivn = as.list(ivnvector))
     betas.test <- matrix(runif(pp*pp), ncol = pp)
