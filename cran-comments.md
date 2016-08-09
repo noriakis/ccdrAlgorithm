@@ -4,4 +4,17 @@
 * win-builder (devel and release)
 
 ## R CMD check results
-There were no ERRORs, WARNINGs, or NOTEs.
+There were no ERRORs or WARNINGs.
+
+There was 1 NOTE:
+
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: ‘Bryon Aragam <sparsebn@gmail.com>’
+
+New submission
+
+This is the first version of this package that has been submitted to CRAN.
+
+## Dependencies
+
+CHECK has been run on all dependencies and passed.
