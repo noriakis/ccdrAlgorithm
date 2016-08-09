@@ -20,9 +20,9 @@ knitr::opts_chunk$set(
 
 Presently, this package consists of a single method that implements the main algorithm; more functionality will be provided in the future. To generate data from a given Bayesian network and/or simulate random networks, the following R packages are recommended:
 
-- `bnlearn`: [bnlearn on CRAN](http://cran.r-project.org/web/packages/bnlearn/index.html), [www.bnlearn.com](http://www.bnlearn.com)
-- `pcalg`: [pcalg on CRAN](http://cran.r-project.org/web/packages/pcalg/index.html)
-- `igraph`: [igraph on CRAN](http://cran.r-project.org/web/packages/igraph/index.html), [http://igraph.org/r/](http://igraph.org/r/)
+- `bnlearn`: [bnlearn on CRAN](https://cran.r-project.org/package=bnlearn), [www.bnlearn.com](http://www.bnlearn.com)
+- `pcalg`: [pcalg on CRAN](https://cran.r-project.org/package=pcalg)
+- `igraph`: [igraph on CRAN](https://cran.r-project.org/package=igraph), [http://igraph.org/r/](http://igraph.org/r/)
 
 ## Overview
 

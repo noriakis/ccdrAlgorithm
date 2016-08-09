@@ -3,18 +3,18 @@ ccdrAlgorithm
 
 [![Travis-CI Build Status](https://travis-ci.org/itsrainingdata/ccdrAlgorithm.svg?branch=master)](https://travis-ci.org/itsrainingdata/ccdrAlgorithm)
 
-`ccdrAlgorithm` implements the CCDr structure learning algorithm described in [[1](#references)]. Based on observational data, this algorithm estimates the structure of a Bayesian network (aka edges in a DAG) using penalized maximum likelihood based on L1 or concave (MCP) regularization.
+`ccdrAlgorithm` implements the CCDr structure learning algorithm described in [1](#references). Based on observational data, this algorithm estimates the structure of a Bayesian network (aka edges in a DAG) using penalized maximum likelihood based on L1 or concave (MCP) regularization.
 
 Presently, this package consists of a single method that implements the main algorithm; more functionality will be provided in the future. To generate data from a given Bayesian network and/or simulate random networks, the following R packages are recommended:
 
--   `bnlearn`: [bnlearn on CRAN](http://cran.r-project.org/web/packages/bnlearn/index.html), [www.bnlearn.com](http://www.bnlearn.com)
--   `pcalg`: [pcalg on CRAN](http://cran.r-project.org/web/packages/pcalg/index.html)
--   `igraph`: [igraph on CRAN](http://cran.r-project.org/web/packages/igraph/index.html), <http://igraph.org/r/>
+-   `bnlearn`: [bnlearn on CRAN](https://cran.r-project.org/package=bnlearn), [www.bnlearn.com](http://www.bnlearn.com)
+-   `pcalg`: [pcalg on CRAN](https://cran.r-project.org/package=pcalg)
+-   `igraph`: [igraph on CRAN](https://cran.r-project.org/package=igraph), <http://igraph.org/r/>
 
 Overview
 --------
 
-The main method is `ccdr.run`, which runs the CCDr structure learning algorithm as described in [[1](#references)].
+The main method is `ccdr.run`, which runs the CCDr structure learning algorithm as described in \[[1](#references)\].
 
 Installation
 ------------
