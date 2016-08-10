@@ -18,3 +18,16 @@ This is the first version of this package that has been submitted to CRAN.
 ## Dependencies
 
 CHECK has been run on all dependencies and passed.
+
+## Re-submission note
+
+Pls explain CCDr, and provide a DOI for the reference.
+
+Pls write these as
+
+   Authors (year) <DOI:.....>
+
+(with no space after 'DOI:').
+
+The description has been updated with a more detailed description of the CCDr algorithm, and the citation has been removed entirely.
+
