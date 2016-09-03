@@ -54,99 +54,108 @@ double ZERO_THRESH = 1e-12;
 //------------------------------------------------------------------------------/
 
 // prototype for gridCCDr
-std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,    // array containing the correlations between predictors
+std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,    // multiple arrays concatenated as a vector
+                                                                            // each array contains the correlations between predictors by removing rows where each node is under intervention
                                         SparseBlockMatrix betas,            // initial guess of beta matrix
-                                        const std::vector<int>& nj,         // replace nn with nj
-                                        const std::vector<int>& indexj,     // index for "cors" vector
-                                        const std::vector<double>& aj,      // aj = nj / nn
+                                        const std::vector<int>& nj,         // vector containing the number of times each node is free of intervention (to replace nn)
+                                        const std::vector<int>& indexj,     // index vector to indicate the start position of the array for node j in 'cors'
+                                        const std::vector<double>& aj,      // weight vector for penalty term p(beta_{ij})
                                         const std::vector<double>& lambdas, // vector containing the grid of regularization parameters to be tested
                                         const std::vector<double>& params,  // vector containing user-defined parameters: {gamma, eps, maxIters, alpha}
                                         const int verbose                   // binary variable to specify whether or not to print progress reports
                                         );
 
 // prototype for singleCCDr
-SparseBlockMatrix singleCCDr(const std::vector<double>& cors,   // array containing the correlations between predictors
-                             SparseBlockMatrix betas,           // initial guess of beta matrix
-                             const std::vector<int>& nj,         // replace nn with nj
-                             const std::vector<int>& indexj,     // index for "cors" vector
-                             const std::vector<double>& aj,      // aj = nj / nn
-                             const double lambda,               // value of regularization parameter
-                             const std::vector<double>& params, // vector containing user-defined parameters: {gamma, eps, maxIters, alpha}
-                             const int verbose                  // binary variable to specify whether or not to print progress reports
+SparseBlockMatrix singleCCDr(const std::vector<double>& cors,               // multiple arrays concatenated as a vector
+                                                                            // each array contains the correlations between predictors by removing rows where each node is under intervention
+                             SparseBlockMatrix betas,                       // initial guess of beta matrix
+                             const std::vector<int>& nj,                    // vector containing the number of times each node is free of intervention (to replace nn)
+                             const std::vector<int>& indexj,                // index vector to indicate the start position of the array for node j in 'cors'
+                             const std::vector<double>& aj,                 // weight vector for penalty term p(beta_{ij})
+                             const double lambda,                           // value of regularization parameter
+                             const std::vector<double>& params,             // vector containing user-defined parameters: {gamma, eps, maxIters, alpha}
+                             const int verbose                              // binary variable to specify whether or not to print progress reports
 );
 
 // prototype for computeEdgeLoss
-void computeEdgeLoss(const double betaUpdate,           // proposed new value of beta_ab
-                     const unsigned int a,              // initial node (i.e. update beta_ab)
-                     const unsigned int b,              // terminal node (i.e. update beta_ab)
-                     const double lambda,               // value of regularization parameter
-                     const int njb,
-                     const int b1,
-                     const double ajb,
-                     SparseBlockMatrix& betas,          // current value of beta matrix
-                     // const PenaltyFunction& pen,     // penalty function
-                     const double gammaMCP,             // for flexible penalty parameter
-                     const std::vector<double>& cors,   // array containing the correlations between predictors
-                     double S[],                        // values of the loglikelihood function in the given block
-                     const int verbose                  // binary variable to specify whether or not to print progress reports
+void computeEdgeLoss(const double betaUpdate,                               // proposed new value of beta_ab
+                     const unsigned int a,                                  // initial node (i.e. update beta_ab)
+                     const unsigned int b,                                  // terminal node (i.e. update beta_ab)
+                     const double lambda,                                   // value of regularization parameter
+                     const int njb,                                         // the b-th element in 'nj'; the number of times where node b is under intervention
+                     const int b1,                                          // the b-th element in 'indexj'
+                     const double ajb,                                      // the b-th element in 'aj'; the weight for penalty terms p(beta_{ab}) for a=1,...,n, a !=b
+                     SparseBlockMatrix& betas,                              // current value of beta matrix
+                     // const PenaltyFunction& pen,                         // penalty function
+                     // since the introduction of weight on penalty terms, 'aj', the penalty parameters is no longer constant
+                     // we will construct PenaltyFunction only when necessary; until then we just pass in parameters such as 'aj' and 'gammaMCP'
+                     const double gammaMCP,                                 // for flexible penalty parameter
+                     const std::vector<double>& cors,                       // multiple arrays concatenated as a vector
+                                                                            // each array contains the correlations between predictors by removing rows where each node is under intervention
+                     double S[],                                            // values of the loglikelihood function in the given block
+                     const int verbose                                      // binary variable to specify whether or not to print progress reports
 );
 
 // prototype for concaveCDInit
-void concaveCDInit(const double lambda,                         // value of regularization parameter
-                   const std::vector<int>& nj,
-                   const std::vector<int>& indexj,
-                   const std::vector<double>& aj,
-                   SparseBlockMatrix& betas,                    // current value of beta matrix
-                   CCDrAlgorithm& alg,                          // CCDrAlgorithm object for this run
-                   const double gammaMCP,
-                   const std::vector<double>& cors,             // array containing the correlations between predictors
-                   const int verbose                            // binary variable to specify whether or not to print progress reports
+void concaveCDInit(const double lambda,                                     // value of regularization parameter
+                   const std::vector<int>& nj,                              // vector containing the number of times each node is free of intervention (to replace nn)
+                   const std::vector<int>& indexj,                          // index vector to indicate the start position of the array for node j in 'cors'
+                   const std::vector<double>& aj,                           // weight vector for penalty term p(beta_{ij})
+                   SparseBlockMatrix& betas,                                // current value of beta matrix
+                   CCDrAlgorithm& alg,                                      // CCDrAlgorithm object for this run
+                   const double gammaMCP,                                   // for flexible penalty parameter
+                   const std::vector<double>& cors,                         // multiple arrays concatenated as a vector
+                                                                            // each array contains the correlations between predictors by removing rows where each node is under intervention
+                   const int verbose                                        // binary variable to specify whether or not to print progress reports
 );
 
 // prototype for concaveCD
-void concaveCD(const double lambda,                             // value of regularization parameter
-               const std::vector<int>& nj,
-               const std::vector<int>& indexj,
-               const std::vector<double>& aj,
-               SparseBlockMatrix& betas,                        // current value of beta matrix
-               CCDrAlgorithm& alg,                              // CCDrAlgorithm object for this run
-               const double gammaMCP,
-               const std::vector<double>& cors,                 // array containing the correlations between predictors
-               const int verbose                                // binary variable to specify whether or not to print progress reports
+void concaveCD(const double lambda,                                         // value of regularization parameter
+               const std::vector<int>& nj,                                  // vector containing the number of times each node is free of intervention (to replace nn)
+               const std::vector<int>& indexj,                              // index vector to indicate the start position of the array for node j in 'cors'
+               const std::vector<double>& aj,                               // weight vector for penalty term p(beta_{ij})
+               SparseBlockMatrix& betas,                                    // current value of beta matrix
+               CCDrAlgorithm& alg,                                          // CCDrAlgorithm object for this run
+               const double gammaMCP,                                       // for flexible penalty parameter (this replaces PenaltyFunction& 'pen')
+               const std::vector<double>& cors,                             // multiple arrays concatenated as a vector
+                                                                            // each array contains the correlations between predictors by removing rows where each node is under intervention
+               const int verbose                                            // binary variable to specify whether or not to print progress reports
                );
 
 //prototype for singleUpdate
-double singleUpdate(const unsigned int a,                       // initial node (i.e. update beta_ab)
-                    const unsigned int b,                       // terminal node (i.e. update beta_ab)
-                    const double lambda,                        // value of regularization parameter
-                    const int njb,
-                    const int b1,
-                    const double ajb,
-                    const SparseBlockMatrix& betas,             // current value of beta matrix
-                    const double gammaMCP,
-                    const std::vector<double>& cors,            // array containing the correlations between predictors
-                    const int verbose                           // binary variable to specify whether or not to print progress reports
+double singleUpdate(const unsigned int a,                                   // initial node (i.e. update beta_ab)
+                    const unsigned int b,                                   // terminal node (i.e. update beta_ab)
+                    const double lambda,                                    // value of regularization parameter
+                    const int njb,                                          // the b-th element in 'nj'; the number of times where node b is under intervention
+                    const int b1,                                           // the b-th element in 'indexj'
+                    const double ajb,                                       // the b-th element in 'aj'; the weight for penalty terms p(beta_{ab}) for a=1,...,n, a !=b
+                    const SparseBlockMatrix& betas,                         // current value of beta matrix
+                    const double gammaMCP,                                  // for flexible penalty parameter (this replaces PenaltyFunction& 'pen')
+                    const std::vector<double>& cors,                        // multiple arrays concatenated as a vector
+                                                                            // each array contains the correlations between predictors by removing rows where each node is under intervention
+                    const int verbose                                       // binary variable to specify whether or not to print progress reports
 );
 
 //prototype for singleUpdateV
-double singleUpdateV(const unsigned int a,                       // initial node (i.e. update beta_ab)
-                     const unsigned int b,                       // terminal node (i.e. update beta_ab)
-                     const double lambda,                        // value of regularization parameter
-                     const int njb,
-                     const std::vector<int>& indexj,
-                     const std::vector<double>& aj,
-                     SparseBlockMatrix& betas,                   // current value of beta matrix
-                     const double gammaMCP,
-                     const std::vector<double>& cors,            // array containing the correlations between predictors
-                     double S[],                                 // for storing the values of S1, S2
-                     const int verbose                           // binary variable to specify whether or not to print progress reports
+double singleUpdateV(const unsigned int a,                                  // initial node (i.e. update beta_ab)
+                     const unsigned int b,                                  // terminal node (i.e. update beta_ab)
+                     const double lambda,                                   // value of regularization parameter
+                     const int njb,                                         // the b-th element in 'nj'; the number of times where node b is under intervention
+                     const std::vector<int>& indexj,                        // index vector to indicate the start position of the array for node j in 'cors'
+                     const std::vector<double>& aj,                         // weight vector for penalty term p(beta_{ij})
+                     SparseBlockMatrix& betas,                              // current value of beta matrix
+                     const double gammaMCP,                                 // for flexible penalty parameter (this replaces PenaltyFunction& 'pen')
+                     const std::vector<double>& cors,                       // multiple arrays concatenated as a vector
+                                                                            // each array contains the correlations between predictors by removing rows where each node is under intervention
+                     double S[],                                            // for storing the values of S1, S2
+                     const int verbose                                      // binary variable to specify whether or not to print progress reports
 );
 
 //prototype for checkCycleSparse
-bool checkCycleSparse(const int node,                    // number of nodes in graph (i.e. node = pp)
-                      const SparseBlockMatrix& betas,    // sparse matrix structure
-                      int a,                             // initial node
-                      int b                              // terminal node
+bool checkCycleSparse(const int node,                                       // number of nodes in graph (i.e. node = pp)
+                      const SparseBlockMatrix& betas,                       // sparse matrix structure
+                      int a,                                                // initial node
+                      int b                                                 // terminal node
 );
 
 //
@@ -166,7 +175,7 @@ bool checkCycleSparse(const int node,                    // number of nodes in g
 //
 std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,
                                         SparseBlockMatrix betas,
-                                        const std::vector<int>& nj, // added nj
+                                        const std::vector<int>& nj,
                                         const std::vector<int>& indexj,
                                         const std::vector<double>& aj,
                                         const std::vector<double>& lambdas,
@@ -384,16 +393,15 @@ void concaveCDInit(const double lambda,
     unsigned int pp = betas.dim(); // # of nodes; moved from below; save for easier access
     for(unsigned int j = 0; j < pp; ++j){
 
-        unsigned int j1 = indexj[j];
         double c = 0;
         for(unsigned int l = 0; l < betas.rowsizes(j); ++l){
             unsigned int row = betas.row(j, l);
 
             if(j <= row){
-                c += betas.value(j, l) * cors[j1*pp*(pp+1)/2 + (j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
+                c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
             }
             else{
-                c += betas.value(j, l) * cors[j1*pp*(pp+1)/2 + (row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
+                c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
             }
         }
 
@@ -631,16 +639,15 @@ void concaveCD(const double lambda,
     //
     unsigned int pp = betas.dim();
     for(unsigned int j = 0; j < pp; ++j){
-        unsigned int j1 = indexj[j];
         double c = 0;
         for(unsigned int l = 0; l < betas.rowsizes(j); ++l){
             unsigned int row = betas.row(j, l);
 
             if(j <= row){
-                c += betas.value(j, l) * cors[j1*pp*(pp+1)/2 + (j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
+                c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
             }
             else{
-                c += betas.value(j, l) * cors[j1*pp*(pp+1)/2 + (row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
+                c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
             }
         }
 
