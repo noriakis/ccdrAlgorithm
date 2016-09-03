@@ -92,7 +92,8 @@ ccdr.run <- function(data,
     ### Check data format
     if(!sparsebnUtils::is.sparsebnData(data)) stop(sparsebnUtils::input_not_sparsebnData(data))
 
-    ### Extract the data (CCDr only works on observational data, so ignore the intervention part)
+    ### Extract the data and ivn
+    ### CCDr now works on both observational data and interventional data, and a mixture of both
     data_matrix <- data$data
     ivn_list <- data$ivn
 
@@ -154,10 +155,13 @@ ccdr_call <- function(data,
 
     if(is.null(ivn)) ivn <- vector("list", nn) # to pass testthat for observational data cases
     ### Check ivn
-    if(!check_if_ivn_list(ivn)) stop("'ivn' argument must be a list of NULLs or vectors!")
-    if(!check_ivn_size(ivn, nn)) stop(sprintf("Length of 'ivn' is %d, expected %d!", length(ivn), nn))
-    if(!check_ivn_label(ivn, pp)) stop("Intervention labels incorrect. Probably non-integer, out of range, or duplicates.")
+    if(!check_if_ivn_list(ivn)) stop("ivn must be a list of NULLs or vectors!")
+    if(!check_ivn_size(ivn, data)) stop(sprintf("Length of ivn is %d, expected to match the number of rows in data: %d.", length(ivn), nn))
+    check_ivn_label(ivn, data)
+    ### if(!check_ivn_label(ivn, data)) stop("Intervention labels are incorrect.")
 
+    ### use a vector nj to count how many times each node is under intervention
+    ### refer to nj as "intervention times vector"
     nj <- rep(0, pp)
     for(j in 1:pp) { ## include 0 here or not?
         nj[j] <- sum(!sapply(lapply(ivn, is.element, j), any)) ## optimize for sorted column?
@@ -345,18 +349,20 @@ ccdr_singleR <- function(cors,
 
     if(is.null(indexj)) indexj <- rep(0L, pp + 1)
     ### Check indexj
-    if(!is.vector(indexj)) stop("index for cors vector is not a vector")
-    if(length(indexj) > pp + 1) stop("index for cors vector is too long")
-    if(!is.integer(indexj)) stop("index for cors vector has non-integer")
-    if(any(indexj < 0 | indexj > pp + 1)) stop("index for cors vector is out of bound")
+    if(!is.vector(indexj)) stop("Index vector for cors is not a vector.")
+    if(length(indexj) > pp + 1) stop(sprintf("Index vector for cors is too long, expected to be no greater than %d, the number of columns of data.", pp))
+    if(!is.integer(indexj)) stop("Index vector for cors has non-integer component(s).")
+    if(any(indexj < 0 | indexj > pp + 1)) stop(sprintf("Index vector for cors has out-of-range component(s), expected to be between 0 and %d.", pp))
 
     if(is.null(nj)) nj <- as.integer(rep(nn, pp))
     ### Check nj
-    if(!is.vector(nj)) stop("number of interventions at each node is not a vector")
-    if(length(nj) != pp) stop("number of interventions at some nodes is missing")
-    if(!is.integer(nj)) stop("number of interventions at each node is non-integer")
-    if(any(nj < 0 | nj > nn)) stop("number of interventions at some node is out of range")
+    if(!is.vector(nj)) stop("Intervention times vector is not a vector.")
+    if(length(nj) != pp) stop(sprintf("Length of intervention times vector is %d, expected %d% to match the number of columns of data", length(nj), pp))
+    if(!is.integer(nj)) stop("Intervention times vector has non-integer component(s).")
+    if(any(nj < 0 | nj > nn)) stop(sprintf("Intervention times vector has out-of-range component(s), expected to be between 0 and %d.", nn))
 
+    ### add a weight a_j to penalty on beta_{ij}
+    ### since now with intervention data, beta_{ij} only appears n_j times out of total nn samples
     aj <- nj / nn
 
     ### Check cors
