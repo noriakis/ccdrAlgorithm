@@ -3,7 +3,7 @@ context("ccdr_gridR")
 pp <- 10
 nn <- 5
 X.test <- matrix(runif(pp*pp), ncol = pp)
-cors.test <- sparsebnUtils::cor_vector(X.test)
+cors.test <- sparsebnUtils::cor_vector_ivn(X.test, NULL)
 betas.test <- matrix(runif(pp*pp), ncol = pp)
 
 # test_that("ccdr_gridR runs as expected", {
