@@ -225,7 +225,7 @@ ccdr_call <- function(data,
     t1.cor <- proc.time()[3]
     #     cors <- cor(data)
     #     cors <- cors[upper.tri(cors, diag = TRUE)]
-    corlist <- cor_vector_ivn(data, ivn)
+    corlist <- sparsebnUtils::cor_vector_ivn(data, ivn)
     cors <- corlist$cors
     indexj <- corlist$indexj
     t2.cor <- proc.time()[3]
