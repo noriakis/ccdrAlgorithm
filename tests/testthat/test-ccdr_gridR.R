@@ -3,6 +3,7 @@ context("ccdr_gridR")
 pp <- 10
 nn <- 5
 X.test <- matrix(runif(pp*pp), ncol = pp)
+X.test <- data.frame(X.test)
 cors.test <- sparsebnUtils::cor_vector_ivn(X.test, NULL)
 betas.test <- matrix(runif(pp*pp), ncol = pp)
 
