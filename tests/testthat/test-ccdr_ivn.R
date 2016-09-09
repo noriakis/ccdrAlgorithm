@@ -25,7 +25,9 @@ suppressMessages({
 test_that("ccdr.run runs as expected", {
     ### No error / Also tests default values for other parameters
     expect_error(ccdr.run(data = dat.test, lambdas.length = lambdas.length.test), NA)
+})
 
+test_that("Check special case ivn = list(NULL, NULL, ...)", {
     ### No error if ivn = list(NULL, NULL, ...)
     data.null <- sparsebnUtils::sparsebnData(X.test, type = "c", ivn = vector("list", nn))
     expect_error(ccdr.run(data = data.null, lambdas.length = lambdas.length.test), NA)
