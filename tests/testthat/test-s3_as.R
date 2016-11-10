@@ -77,12 +77,12 @@ test_that("as.sparse -> as.SparseBlockMatrixR -> as.sparse makes no changes", {
     m <- matrix(rep(0, 1), ncol = 1)
     sp <- sparsebnUtils::as.sparse(m)
     sbm <- suppressWarnings(sparsebnUtils::as.sparse(as.SparseBlockMatrixR(sp)))
-    expect_that(sbm, equals(sp))
+    expect_equivalent(sbm, sp)
 
     m <- matrix(rep(0, 4), ncol = 2)
     sp <- sparsebnUtils::as.sparse(m)
     sbm <- suppressWarnings(sparsebnUtils::as.sparse(as.SparseBlockMatrixR(sp)))
-    expect_that(sbm, equals(sp))
+    expect_equivalent(sbm, sp)
 
     ### NOTE: Cannot test on random sparse matrix since SBM class ASSUMES a block structure,
     ###        i.e. induced by a DAG
@@ -91,7 +91,7 @@ test_that("as.sparse -> as.SparseBlockMatrixR -> as.sparse makes no changes", {
     m <- random.dag.matrix(10, 10)
     sp <- sparsebnUtils::as.sparse(m)
     sbm <- suppressWarnings(sparsebnUtils::as.sparse(as.SparseBlockMatrixR(sp)))
-    expect_that(sbm, equals(sp))
+    expect_equivalent(sbm, sp)
 })
 
 ### SparseBlockMatrixR -> edgeList -> matrix

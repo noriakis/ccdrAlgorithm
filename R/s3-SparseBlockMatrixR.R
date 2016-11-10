@@ -265,6 +265,7 @@ edgeList.SparseBlockMatrixR <- function(x){
 # sparse.SparseBlockMatrixR
 # 2016-01-22: Migrated to this file from s3-sparse.R
 #
+#' @export
 sparse.SparseBlockMatrixR <- function(x, index = "R", ...){
 
     if(index != "R" && index != "C") stop("Invalid entry for index parameter: Must be either 'R' or 'C'!")
@@ -302,16 +303,16 @@ sparse.SparseBlockMatrixR <- function(x, index = "R", ...){
     }
 } # END SPARSE.SPARSEBLOCKMATRIXR
 
-#------------------------------------------------------------------------------#
-# as.sparse.SparseBlockMatrixR
-#  Convert FROM SparseBlockMatrixR TO sparse
-#  By default, return the object using R indexing. If desired, the method can return C-style indexing by setting
-#    index = "C".
-# 2016-01-22: Migrated to this file from s3-sparse.R
-#
-as.sparse.SparseBlockMatrixR <- function(x, index = "R", ...){
-    sparse.SparseBlockMatrixR(x, index)
-} # END AS.SPARSE.SPARSEBLOCKMATRIXR
+# #------------------------------------------------------------------------------#
+# # as.sparse.SparseBlockMatrixR
+# #  Convert FROM SparseBlockMatrixR TO sparse
+# #  By default, return the object using R indexing. If desired, the method can return C-style indexing by setting
+# #    index = "C".
+# # 2016-01-22: Migrated to this file from s3-sparse.R
+# #
+# as.sparse.SparseBlockMatrixR <- function(x, index = "R", ...){
+#     sparse.SparseBlockMatrixR(x, index)
+# } # END AS.SPARSE.SPARSEBLOCKMATRIXR
 
 # to_graphNEL.SparseBlockMatrixR
 #  Convert SBM object to graphNEL object
