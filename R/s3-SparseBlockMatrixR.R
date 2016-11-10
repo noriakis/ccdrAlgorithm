@@ -244,6 +244,7 @@ as.matrix.SparseBlockMatrixR <- function(x){
 # edgeList.SparseBlockMatrixR
 # Coerce SBM to edge list
 #
+#' @export
 edgeList.SparseBlockMatrixR <- function(x){
     #
     # We have to be careful in obtaining the edge list of a SparseBlockMatrixR object:
