@@ -56,6 +56,10 @@ is.SparseBlockMatrixR <- function(x){
     inherits(x, "SparseBlockMatrixR")
 } # END IS.SPARSEBLOCKMATRIXR
 
+as.SparseBlockMatrixR <- function(x){
+    SparseBlockMatrixR(x) # NOTE: S3 delegation is implicitly handled by the constructor here
+}
+
 #------------------------------------------------------------------------------#
 # reIndexC.SparseBlockMatrixR
 #  Re-indexing TO C for SparseBlockMatrixR objects
@@ -200,30 +204,6 @@ SparseBlockMatrixR.matrix <- function(x, sigmas, ...){
 
     SparseBlockMatrixR(sparsebnUtils::as.sparse(x), sigmas, ...)
 } # END SPARSEBLOCKMATRIXR.MATRIX
-
-#------------------------------------------------------------------------------#
-# as.SparseBlockMatrixR.list
-#  Convert FROM list TO SparseBlockMatrixR
-#
-as.SparseBlockMatrixR.list <- function(x){
-    SparseBlockMatrixR(x)
-} # END AS.SPARSEBLOCKMATRIXR.LIST
-
-#------------------------------------------------------------------------------#
-# as.SparseBlockMatrixR.sparse
-#  Convert FROM sparse TO SparseBlockMatrixR
-#
-as.SparseBlockMatrixR.sparse <- function(x){
-    SparseBlockMatrixR(x)
-} # END AS.SPARSEBLOCKMATRIXR.SPARSE
-
-#------------------------------------------------------------------------------#
-# as.SparseBlockMatrixR.matrix
-#  Convert FROM matrix TO SparseBlockMatrixR
-#
-as.SparseBlockMatrixR.matrix <- function(x){
-    SparseBlockMatrixR(x)
-} # END AS.SPARSEBLOCKMATRIXR.MATRIX
 
 #------------------------------------------------------------------------------#
 # as.list.SparseBlockMatrixR
