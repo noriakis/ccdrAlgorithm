@@ -261,10 +261,10 @@ as.matrix.SparseBlockMatrixR <- function(x){
 } # END AS.MATRIX.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
-# as.edgeList.SparseBlockMatrixR
+# edgeList.SparseBlockMatrixR
 # Coerce SBM to edge list
 #
-as.edgeList.SparseBlockMatrixR <- function(x){
+edgeList.SparseBlockMatrixR <- function(x){
     #
     # We have to be careful in obtaining the edge list of a SparseBlockMatrixR object:
     #  It is NOT the same as the rows slot since some of these components may have
@@ -278,7 +278,7 @@ as.edgeList.SparseBlockMatrixR <- function(x){
     el <- mapply(function(x, y){ y[which(abs(x) > sparsebnUtils::zero_threshold())]}, x$vals, x$rows)
 
     sparsebnUtils::edgeList(el)
-} # AS.EDGELIST.SPARSEBLOCKMATRIXR
+} # EDGELIST.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
 # sparse.SparseBlockMatrixR
@@ -347,7 +347,7 @@ to_graphNEL.SparseBlockMatrixR <- function(x){
 } # END TO_GRAPHNEL.SPARSEBLOCKMATRIXR
 
 get.adjacency.matrix.SparseBlockMatrixR <- function(x){
-    sparsebnUtils::get.adjacency.matrix(as.edgeList.SparseBlockMatrixR(x))
+    sparsebnUtils::get.adjacency.matrix(as.edgeList(x))
 } # END GET.ADJACENCY.MATRIX.SPARSEBLOCKMATRIXR
 
 num.nodes.SparseBlockMatrixR <- function(x){
@@ -357,7 +357,7 @@ num.nodes.SparseBlockMatrixR <- function(x){
 
 num.edges.SparseBlockMatrixR <- function(x){
     ### The number of nodes should be exactly the same as the length of the rows list
-    sparsebnUtils::num.edges(as.edgeList.SparseBlockMatrixR(x))
+    sparsebnUtils::num.edges(as.edgeList(x))
 } # END NUM.EDGES.SPARSEBLOCKMATRIXR
 
 # This function is (so far) only used in unit tests
