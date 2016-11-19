@@ -1,17 +1,17 @@
 context("ccdr_singleR")
 
-    pp <- 10L
-    nn <- 5L
-    indexj <- rep(0L, pp + 1)
-    nj <- as.integer(rep(nn, pp))
-    cors.length <- pp*(pp+1)/2
-    cors.test <- runif(cors.length)
-    betas.test <- matrix(runif(pp*pp), ncol = pp)
-    lambda.test <- pi
-    gamma.test <- 2.0
-    eps.test <- 0.1
-    maxIters.test <- 1000L
-    alpha.test <- 10
+pp <- 10L
+nn <- 5L
+indexj <- rep(0L, pp + 1)
+nj <- as.integer(rep(nn, pp))
+cors.length <- pp*(pp+1)/2
+cors.test <- runif(cors.length)
+betas.test <- matrix(runif(pp*pp), ncol = pp)
+lambda.test <- pi
+gamma.test <- 2.0
+eps.test <- 0.1
+maxIters.test <- 1000L
+alpha.test <- 10
 
 ### The call for ccdr_singleR
 # ccdr_singleR <- function(cors,
