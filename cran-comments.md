@@ -1,43 +1,15 @@
 ## Test environments
-* local OS X install, R 3.3.1
-* ubuntu 12.04 (travis-ci), R 3.2.4
+* local OS X install, R 3.3.2
+* ubuntu 12.04.5 (travis-ci), R 3.3.2 (oldrel, devel, and release)
 * win-builder (devel and release)
 
 ## R CMD check results
-There were no ERRORs or WARNINGs.
-
-There was 1 NOTE:
-
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: ‘Bryon Aragam <sparsebn@gmail.com>’
-
-New submission
-
-This is the first version of this package that has been submitted to CRAN.
+There were no ERRORs, WARNINGs, or NOTEs.
 
 ## Dependencies
 
 CHECK has been run on all dependencies and passed.
 
-## Re-submission note
+## Reverse dependencies
 
-- Pls explain CCDr, and provide a DOI for the reference.
-
-Pls write these as
-
-   Authors (year) <DOI:.....>
-
-(with no space after 'DOI:').
-
-The description has been updated with a more detailed description of the CCDr algorithm, and the citation has been removed entirely.
-
-- Again, we would prefer if you explained the acronym, and ideally
-provided a reference with a DOI.  I see that this is
-
-  Concave penalized Coordinate Descent with reparametrization (CCDr)
-
-and the reference has URL
-<http://www.jmlr.org/papers/v16/aragam15a.html>: if you cannot find a
-DOI, then pls use the URL.
-
-URL has been added (no DOI available) and acronym is now explained.
+* sparsebn: You will receive updates to this package that fixes these issues very soon from myself. This package depends on the current submission for basic functionality.
