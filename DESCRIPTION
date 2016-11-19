@@ -17,7 +17,6 @@ LinkingTo: Rcpp
 Suggests:
     testthat,
     graph
-Remotes: itsrainingdata/sparsebnUtils@dev
 URL: https://github.com/itsrainingdata/ccdrAlgorithm
 BugReports: https://github.com/itsrainingdata/ccdrAlgorithm/issues
 License: GPL (>= 2)
