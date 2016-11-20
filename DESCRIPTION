@@ -1,7 +1,7 @@
 Package: ccdrAlgorithm
 Title: CCDr Algorithm for Learning Sparse Gaussian Bayesian Networks
-Version: 0.0.1
-Date: 2016-08-08
+Version: 0.0.2
+Date: 2016-11-19
 Authors@R: c(
     person("Bryon", "Aragam", email = "sparsebn@gmail.com", role = c("aut", "cre")),
     person("Dacheng", "Zhang", role = c("aut"))
@@ -17,7 +17,6 @@ LinkingTo: Rcpp
 Suggests:
     testthat,
     graph
-Remotes: itsrainingdata/sparsebnUtils@dev
 URL: https://github.com/itsrainingdata/ccdrAlgorithm
 BugReports: https://github.com/itsrainingdata/ccdrAlgorithm/issues
 License: GPL (>= 2)

@@ -329,7 +329,7 @@ to_graphNEL.SparseBlockMatrixR <- function(x){
 } # END TO_GRAPHNEL.SPARSEBLOCKMATRIXR
 
 get.adjacency.matrix.SparseBlockMatrixR <- function(x){
-    sparsebnUtils::get.adjacency.matrix(as.edgeList(x))
+    sparsebnUtils::get.adjacency.matrix(sparsebnUtils::as.edgeList(x))
 } # END GET.ADJACENCY.MATRIX.SPARSEBLOCKMATRIXR
 
 num.nodes.SparseBlockMatrixR <- function(x){
@@ -339,7 +339,7 @@ num.nodes.SparseBlockMatrixR <- function(x){
 
 num.edges.SparseBlockMatrixR <- function(x){
     ### The number of nodes should be exactly the same as the length of the rows list
-    sparsebnUtils::num.edges(as.edgeList(x))
+    sparsebnUtils::num.edges(sparsebnUtils::as.edgeList(x))
 } # END NUM.EDGES.SPARSEBLOCKMATRIXR
 
 # This function is (so far) only used in unit tests
