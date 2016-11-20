@@ -111,6 +111,9 @@ ccdr.run <- function(data,
               verbose = verbose)
 } # END CCDR.RUN
 
+### Maximum number of nodes allowed
+MAX_CCS_ARRAY_SIZE <- function() 10000
+
 # ccdr_call
 #
 #   Handles most of the bookkeeping for CCDr. Sets default values and prepares arguments for
@@ -152,6 +155,10 @@ ccdr_call <- function(data,
     ### Get the dimensions of the data matrix
     nn <- as.integer(nrow(data))
     pp <- as.integer(ncol(data))
+
+    if(pp > MAX_CCS_ARRAY_SIZE()){
+        stop(max_nodes_warning(pp))
+    }
 
     if(is.null(ivn)) ivn <- vector("list", nn) # to pass testthat for observational data cases
     ### Check ivn
