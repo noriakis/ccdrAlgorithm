@@ -56,6 +56,10 @@ is.SparseBlockMatrixR <- function(x){
     inherits(x, "SparseBlockMatrixR")
 } # END IS.SPARSEBLOCKMATRIXR
 
+as.SparseBlockMatrixR <- function(x){
+    SparseBlockMatrixR(x) # NOTE: S3 delegation is implicitly handled by the constructor here
+}
+
 #------------------------------------------------------------------------------#
 # reIndexC.SparseBlockMatrixR
 #  Re-indexing TO C for SparseBlockMatrixR objects
@@ -202,30 +206,6 @@ SparseBlockMatrixR.matrix <- function(x, sigmas, ...){
 } # END SPARSEBLOCKMATRIXR.MATRIX
 
 #------------------------------------------------------------------------------#
-# as.SparseBlockMatrixR.list
-#  Convert FROM list TO SparseBlockMatrixR
-#
-as.SparseBlockMatrixR.list <- function(x){
-    SparseBlockMatrixR(x)
-} # END AS.SPARSEBLOCKMATRIXR.LIST
-
-#------------------------------------------------------------------------------#
-# as.SparseBlockMatrixR.sparse
-#  Convert FROM sparse TO SparseBlockMatrixR
-#
-as.SparseBlockMatrixR.sparse <- function(x){
-    SparseBlockMatrixR(x)
-} # END AS.SPARSEBLOCKMATRIXR.SPARSE
-
-#------------------------------------------------------------------------------#
-# as.SparseBlockMatrixR.matrix
-#  Convert FROM matrix TO SparseBlockMatrixR
-#
-as.SparseBlockMatrixR.matrix <- function(x){
-    SparseBlockMatrixR(x)
-} # END AS.SPARSEBLOCKMATRIXR.MATRIX
-
-#------------------------------------------------------------------------------#
 # as.list.SparseBlockMatrixR
 #  Convert FROM SparseBlockMatrixR TO list
 #  Even though internally the SBM object is a list, we must still manually define this function
@@ -261,10 +241,11 @@ as.matrix.SparseBlockMatrixR <- function(x){
 } # END AS.MATRIX.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
-# as.edgeList.SparseBlockMatrixR
+# edgeList.SparseBlockMatrixR
 # Coerce SBM to edge list
 #
-as.edgeList.SparseBlockMatrixR <- function(x){
+#' @export
+edgeList.SparseBlockMatrixR <- function(x){
     #
     # We have to be careful in obtaining the edge list of a SparseBlockMatrixR object:
     #  It is NOT the same as the rows slot since some of these components may have
@@ -278,12 +259,13 @@ as.edgeList.SparseBlockMatrixR <- function(x){
     el <- mapply(function(x, y){ y[which(abs(x) > sparsebnUtils::zero_threshold())]}, x$vals, x$rows)
 
     sparsebnUtils::edgeList(el)
-} # AS.EDGELIST.SPARSEBLOCKMATRIXR
+} # EDGELIST.SPARSEBLOCKMATRIXR
 
 #------------------------------------------------------------------------------#
 # sparse.SparseBlockMatrixR
 # 2016-01-22: Migrated to this file from s3-sparse.R
 #
+#' @export
 sparse.SparseBlockMatrixR <- function(x, index = "R", ...){
 
     if(index != "R" && index != "C") stop("Invalid entry for index parameter: Must be either 'R' or 'C'!")
@@ -321,16 +303,16 @@ sparse.SparseBlockMatrixR <- function(x, index = "R", ...){
     }
 } # END SPARSE.SPARSEBLOCKMATRIXR
 
-#------------------------------------------------------------------------------#
-# as.sparse.SparseBlockMatrixR
-#  Convert FROM SparseBlockMatrixR TO sparse
-#  By default, return the object using R indexing. If desired, the method can return C-style indexing by setting
-#    index = "C".
-# 2016-01-22: Migrated to this file from s3-sparse.R
-#
-as.sparse.SparseBlockMatrixR <- function(x, index = "R", ...){
-    sparse.SparseBlockMatrixR(x, index)
-} # END AS.SPARSE.SPARSEBLOCKMATRIXR
+# #------------------------------------------------------------------------------#
+# # as.sparse.SparseBlockMatrixR
+# #  Convert FROM SparseBlockMatrixR TO sparse
+# #  By default, return the object using R indexing. If desired, the method can return C-style indexing by setting
+# #    index = "C".
+# # 2016-01-22: Migrated to this file from s3-sparse.R
+# #
+# as.sparse.SparseBlockMatrixR <- function(x, index = "R", ...){
+#     sparse.SparseBlockMatrixR(x, index)
+# } # END AS.SPARSE.SPARSEBLOCKMATRIXR
 
 # to_graphNEL.SparseBlockMatrixR
 #  Convert SBM object to graphNEL object
@@ -347,7 +329,7 @@ to_graphNEL.SparseBlockMatrixR <- function(x){
 } # END TO_GRAPHNEL.SPARSEBLOCKMATRIXR
 
 get.adjacency.matrix.SparseBlockMatrixR <- function(x){
-    sparsebnUtils::get.adjacency.matrix(as.edgeList.SparseBlockMatrixR(x))
+    sparsebnUtils::get.adjacency.matrix(sparsebnUtils::as.edgeList(x))
 } # END GET.ADJACENCY.MATRIX.SPARSEBLOCKMATRIXR
 
 num.nodes.SparseBlockMatrixR <- function(x){
@@ -357,7 +339,7 @@ num.nodes.SparseBlockMatrixR <- function(x){
 
 num.edges.SparseBlockMatrixR <- function(x){
     ### The number of nodes should be exactly the same as the length of the rows list
-    sparsebnUtils::num.edges(as.edgeList.SparseBlockMatrixR(x))
+    sparsebnUtils::num.edges(sparsebnUtils::as.edgeList(x))
 } # END NUM.EDGES.SPARSEBLOCKMATRIXR
 
 # This function is (so far) only used in unit tests

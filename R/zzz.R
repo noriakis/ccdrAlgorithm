@@ -14,6 +14,8 @@
 #' @importFrom sparsebnUtils num.nodes
 #' @importFrom sparsebnUtils num.edges
 #' @importFrom sparsebnUtils is.zero
+#' @importFrom sparsebnUtils edgeList
+#' @importFrom sparsebnUtils sparse
 
 .onAttach <- function(libname, pkgname){
     ### Only sparsebn needs a package startup message

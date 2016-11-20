@@ -54,13 +54,24 @@ double MCPPenalty(double b, double lambda, double gamma){
 //
 //   See Section 5.2.1 and Mazumder et al (2011) for details of this function and its derivation.
 //
+//   Update: we included the case where gamma <= 1.
+//   This case is not discussed in Mazumder et al (2011), but we added it in case it happens.
+//   In Zhang (2010), see the paragraph following formula (7.1) for a discussion on the minimizer by cases gamma > 1, and gamma <= 1.
 double MCPThreshold(double z, double lambda, double gamma){
-    if(fabs(z) <= lambda){
-        return 0;
-    } else if(lambda < fabs(z) && fabs(z) <= lambda * gamma){
-        return sign(z) * gamma * (fabs(z) - lambda) / (gamma - 1.0);
-    } else if(fabs(z) > lambda * gamma){
-        return z;
+    if(gamma > 1) {
+        if(fabs(z) <= lambda){
+            return 0;
+        } else if(lambda < fabs(z) && fabs(z) <= lambda * gamma){
+            return sign(z) * gamma * (fabs(z) - lambda) / (gamma - 1.0);
+        } else if(fabs(z) > lambda * gamma){
+            return z;
+        }
+    } else {
+        // this may happen when absorbing penalty weight alpha_j into penalty term
+        // so gamma becomes alpha_j*gamma
+        if(fabs(z) <= lambda * gamma) {
+            return 0;
+        } else return z;
     }
 
     #ifdef _DEBUG_ON_

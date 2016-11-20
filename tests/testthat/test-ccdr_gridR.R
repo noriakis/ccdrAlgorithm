@@ -1,23 +1,32 @@
 context("ccdr_gridR")
 
-pp <- 10
-nn <- 5
-X.test <- matrix(runif(pp*pp), ncol = pp)
+pp <- 10L
+nn <- 5L
+X.test <- data.frame(matrix(runif(pp*pp), ncol = pp))
 cors.test <- sparsebnUtils::cor_vector(X.test)
 betas.test <- matrix(runif(pp*pp), ncol = pp)
+indexj.test <- rep(0L, pp + 1)
+nj.test <- as.integer(rep(nn, pp))
+cors.length <- pp*(pp+1)/2
+lambda.test <- pi
+gamma.test <- 2.0
+eps.test <- 0.1
+maxIters.test <- 1000L
+alpha.test <- 10
 
-# test_that("ccdr_gridR runs as expected", {
-#     ### No error / Also tests default values for betas, nlam, gamma, eps, maxIters, alpha
-#     expect_error(ccdr_gridR(cors = cors.test), NA)
-# })
+### The call for ccdr_gridR
+# ccdr_gridR <- function(cors,
+#                        pp, nn,
+#                        nj = NULL,
+#                        indexj = NULL,
+#                        betas,
+#                        lambdas,
+#                        gamma,
+#                        eps,
+#                        maxIters,
+#                        alpha,
+#                        verbose)
 
-# test_that("Check input: rlam", {
-#     ### eps is non-numeric
-#     expect_error(ccdr.run(data = dat.test, lambdas.length = lambdas.length.test, rlam = "not a number"))
-#
-#     ### rlam is negative (note that rlam = 0 is OK)
-#     expect_error(ccdr.run(data = dat.test, lambdas.length = lambdas.length.test, rlam = -1e-5))
-#
-#     ### Need to add a test for zero case
-#
-# })
+test_that("ccdr_gridR runs as expected", {
+    expect_error(ccdr_gridR(cors = as.numeric(cors.test), pp = pp, nn = nn, betas = betas.test, lambdas = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test, verbose = FALSE), NA)
+})

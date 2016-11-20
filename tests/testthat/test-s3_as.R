@@ -77,12 +77,12 @@ test_that("as.sparse -> as.SparseBlockMatrixR -> as.sparse makes no changes", {
     m <- matrix(rep(0, 1), ncol = 1)
     sp <- sparsebnUtils::as.sparse(m)
     sbm <- suppressWarnings(sparsebnUtils::as.sparse(as.SparseBlockMatrixR(sp)))
-    expect_that(sbm, equals(sp))
+    expect_equivalent(sbm, sp)
 
     m <- matrix(rep(0, 4), ncol = 2)
     sp <- sparsebnUtils::as.sparse(m)
     sbm <- suppressWarnings(sparsebnUtils::as.sparse(as.SparseBlockMatrixR(sp)))
-    expect_that(sbm, equals(sp))
+    expect_equivalent(sbm, sp)
 
     ### NOTE: Cannot test on random sparse matrix since SBM class ASSUMES a block structure,
     ###        i.e. induced by a DAG
@@ -91,7 +91,7 @@ test_that("as.sparse -> as.SparseBlockMatrixR -> as.sparse makes no changes", {
     m <- random.dag.matrix(10, 10)
     sp <- sparsebnUtils::as.sparse(m)
     sbm <- suppressWarnings(sparsebnUtils::as.sparse(as.SparseBlockMatrixR(sp)))
-    expect_that(sbm, equals(sp))
+    expect_equivalent(sbm, sp)
 })
 
 ### SparseBlockMatrixR -> edgeList -> matrix
@@ -101,13 +101,13 @@ test_that("as.SparseBlockMatrixR -> as.edgeList -> as.matrix makes no changes", 
     m <- matrix(rep(0, 1), ncol = 1)
     sbm <- suppressWarnings(as.SparseBlockMatrixR(m))
     m.sbm <- as.matrix(sbm)
-    m.edgeL <- as.matrix(as.edgeList(sbm))
+    m.edgeL <- as.matrix(sparsebnUtils::as.edgeList(sbm))
     expect_that(m.edgeL, is_equivalent_to(m.sbm))
 
     m <- matrix(rep(0, 4), ncol = 2)
     sbm <- suppressWarnings(as.SparseBlockMatrixR(m))
     m.sbm <- as.matrix(sbm)
-    m.edgeL <- as.matrix(as.edgeList(sbm))
+    m.edgeL <- as.matrix(sparsebnUtils::as.edgeList(sbm))
     expect_that(m.edgeL, is_equivalent_to(m.sbm))
 
     ### NOTE: Cannot test on random sparse matrix since SBM class ASSUMES a block structure,
@@ -117,7 +117,7 @@ test_that("as.SparseBlockMatrixR -> as.edgeList -> as.matrix makes no changes", 
     m <- random.dag.matrix(10, 10)
     sbm <- suppressWarnings(as.SparseBlockMatrixR(m))
     m.sbm <- as.matrix(sbm)
-    m.edgeL <- as.matrix(as.edgeList(sbm))
+    m.edgeL <- as.matrix(sparsebnUtils::as.edgeList(sbm))
 
     m.sbm[m.sbm != 0] <- 1 # coerce to unweighted adjacencies
     expect_that(m.edgeL, is_equivalent_to(m.sbm))
