@@ -3,6 +3,8 @@
 S3method(edgeList,SparseBlockMatrixR)
 S3method(sparse,SparseBlockMatrixR)
 export(ccdr.run)
+export(generate_mvn_data)
+export(generate_mvn_vector)
 importFrom(Rcpp,sourceCpp)
 importFrom(sparsebnUtils,edgeList)
 importFrom(sparsebnUtils,get.adjacency.matrix)
