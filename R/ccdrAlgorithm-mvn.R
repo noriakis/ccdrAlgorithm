@@ -1,3 +1,19 @@
+#' Generate data from a DAG
+#'
+#' Given a Gaussian DAG, generate data from the underlying distribution.
+#' Equivalently, generate data from a multivariate normal distribution given
+#' one of its SEM. Can generate both observational and intervention data.
+#'
+#' If \code{ivn = NULL}, then \code{n} observational samples are drawn. For each
+#' component of \code{ivn} that is not \code{NULL}, interventional samples will
+#' be drawn with the values of each node specified in the component.
+#'
+#' @param coefs Weighted adjacency matrix of DAG.
+#' @param vars Diagonal matrix.
+#' @param n Number of samples to draw.
+#' @param ivn List of interventions (see \code{\link[sparsebnUtils]{sparsebnData}}). Must be a \code{list} with exactly \code{n} components.
+#' @param ivn.rand If \code{TRUE}, random N(0,1) values will be drawn for each intervention. Otherwise, these values need to supplied manually in \code{ivn}.
+#'
 #' @export
 generate_mvn_data <- function(coefs, vars, n = 1, ivn = NULL, ivn.rand = TRUE){
     stopifnot(nrow(coefs) == ncol(coefs))
