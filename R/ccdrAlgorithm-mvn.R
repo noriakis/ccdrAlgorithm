@@ -1,5 +1,5 @@
 #' @export
-generate_mvn_data <- function(coefs, vars, n = 1){
+generate_mvn_data <- function(coefs, vars, n = 1, ivn = NULL, ivn.rand = TRUE){
     stopifnot(nrow(coefs) == ncol(coefs))
 
     if(is.null(colnames(coefs))){
@@ -25,6 +25,17 @@ generate_mvn_data <- function(coefs, vars, n = 1){
         stop("Input 'vars' requires node names!")
     }
 
+    if(!is.null(ivn)){
+        stopifnot(is.list(ivn))
+        stopifnot(length(ivn) == n)
+
+        ### Generate random intervention values
+        if(ivn.rand){
+            ivn <- lapply(ivn, function(x) sapply(x, function(x) rnorm(n = 1, mean = 0, sd = 1))) # assume standard normal
+            # ivn <- lapply(ivn, function(x) sapply(x, function(x) 1)) # debugging
+        }
+    }
+
     ### Need this to ensure the output has the same order as the input
     ###  after things get shuffled around
     original_node_order <- colnames(coefs)
@@ -33,26 +44,48 @@ generate_mvn_data <- function(coefs, vars, n = 1){
     edgelist <- matrix_to_edgeWeightList(coefs)
     nodes <- names(edgelist) # this will be sorted according to the topological order
 
-    x <- replicate(n, generate_mvn_vector(edgelist, nodes, topsort, vars))
+    ### The old way, efficient for obs data only
+    # x <- replicate(n, generate_mvn_vector(edgelist, nodes, topsort, vars))
+    # x <- t(x)[, original_node_order]
+
+    x <- vector("list", length = n)
+    for(i in 1:n){
+        x[[i]] <- generate_mvn_vector(edgelist, nodes, topsort, vars, ivn = ivn[[i]])
+    }
+    x <- do.call("rbind", x)
 
     ### Permute columns back to original ordering
-    x <- t(x)[, original_node_order]
+    x <- x[, original_node_order]
     x
 }
 
 #' @export
-generate_mvn_vector <- function(edgelist, nodes, topsort, vars = NULL){
+generate_mvn_vector <- function(edgelist, nodes, topsort, vars = NULL, ivn = NULL){
     normal_seed <- sapply(vars, function(x) rnorm(n = 1, mean = 0, sd = sqrt(x)))
-    gen_dag_vector_R(edgelist, nodes, topsort, seed = normal_seed)
+    gen_dag_vector_R(edgelist, nodes, topsort, seed = normal_seed, ivn = ivn)
 }
 
-gen_dag_vector_R <- function(edgelist, nodes, topsort, seed){
+#
+# edgelist = graph information
+# nodes = names of nodes in graph
+# topsort = topological sort (indexed by node names)
+# seed = random noise (Gaussian); bias term (binary)
+# ivn = named vector of intervention values (do(child = x))
+#
+gen_dag_vector_R <- function(edgelist, nodes, topsort, seed, ivn = NULL){
     nnode <- length(edgelist)
     x <- numeric(nnode)
     names(x) <- nodes
+    ivnnames <- names(ivn)
 
     for(j in seq_along(topsort)){
-            child <- topsort[j]
+        child <- topsort[j]
+
+        if(child %in% ivnnames){
+            ### If node is intervened on, fix value according to input in 'ivn'
+            x[child] <- ivn[child]
+        } else{
+            ### If no intervention, use DAG to determine value from parents
             parents <- edgelist[[child]]$parents
             weights <- edgelist[[child]]$weights
             nparents <- length(parents)
@@ -72,6 +105,8 @@ gen_dag_vector_R <- function(edgelist, nodes, topsort, seed){
             ### Gaussian model: This is random error ~ N(0, vars[j])
             ### Logistic model: This a (deterministic) bias term
             x[child] <- x[child] + seed[child]
+        }
+
     }
 
     x
