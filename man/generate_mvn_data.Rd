@@ -4,12 +4,12 @@
 \alias{generate_mvn_data}
 \title{Generate data from a DAG}
 \usage{
-generate_mvn_data(coefs, vars, n = 1, ivn = NULL, ivn.rand = TRUE)
+generate_mvn_data(graph, params, n = 1, ivn = NULL, ivn.rand = TRUE)
 }
 \arguments{
-\item{coefs}{Weighted adjacency matrix of DAG.}
+\item{graph}{DAG in \code{\link{edgeList}} format.}
 
-\item{vars}{Diagonal matrix.}
+\item{params}{Vector of parameters. Last p elements correspond to variances (p = number of nodes in \code{graph}), initial elements correspond to edge weights.}
 
 \item{n}{Number of samples to draw.}
 

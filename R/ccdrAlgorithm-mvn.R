@@ -8,37 +8,21 @@
 #' component of \code{ivn} that is not \code{NULL}, interventional samples will
 #' be drawn with the values of each node specified in the component.
 #'
-#' @param coefs Weighted adjacency matrix of DAG.
-#' @param vars Diagonal matrix.
+#' @param graph DAG in \code{\link{edgeList}} format.
+#' @param params Vector of parameters. Last p elements correspond to variances (p = number of nodes in \code{graph}), initial elements correspond to edge weights.
 #' @param n Number of samples to draw.
 #' @param ivn List of interventions (see \code{\link[sparsebnUtils]{sparsebnData}}). Must be a \code{list} with exactly \code{n} components.
 #' @param ivn.rand If \code{TRUE}, random N(0,1) values will be drawn for each intervention. Otherwise, these values need to supplied manually in \code{ivn}.
 #'
 #' @export
-generate_mvn_data <- function(coefs, vars, n = 1, ivn = NULL, ivn.rand = TRUE){
-    stopifnot(nrow(coefs) == ncol(coefs))
+generate_mvn_data <- function(graph, params, n = 1, ivn = NULL, ivn.rand = TRUE){
 
-    if(is.null(colnames(coefs))){
-        stop("Input 'coefs' requires node names!")
-    } else{
-        stopifnot(rownames(coefs) == colnames(coefs))
-    }
+    stopifnot(is.edgeList(graph))
+    stopifnot(is.numeric(params))
+    stopifnot(length(params) == num.edges(graph) + num.nodes(graph))
 
-    # if(is_matrix_type(vars)){
-        if(is.null(colnames(vars))){
-            stop("Input 'vars' requires node names!")
-        } else{
-            stopifnot(colnames(coefs) == colnames(vars))
-            stopifnot(rownames(coefs) == rownames(vars))
-        }
-
-        vars <- Matrix::diag(vars)
-        names(vars) <- colnames(coefs)
-    # }
-    stopifnot(length(vars) == ncol(coefs))
-
-    if(is.null(names(vars))){ # vars is now a vector
-        stop("Input 'vars' requires node names!")
+    if(is.null(names(graph))){
+        stop("Input 'graph' requires node names!")
     }
 
     if(!is.null(ivn)){
@@ -54,10 +38,18 @@ generate_mvn_data <- function(coefs, vars, n = 1, ivn = NULL, ivn.rand = TRUE){
 
     ### Need this to ensure the output has the same order as the input
     ###  after things get shuffled around
-    original_node_order <- colnames(coefs)
+    original_node_order <- names(graph)
 
-    topsort <- names(igraph::topo_sort(igraph::graph.adjacency(coefs)))
-    edgelist <- matrix_to_edgeWeightList(coefs)
+    ### Get topological sort
+    topsort <- names(igraph::topo_sort(to_igraph(graph)))
+
+    nnode <- length(original_node_order)
+    vars <- tail(params, nnode) # parameters associated with variances
+    names(vars) <- original_node_order
+    coefs <- params[1:(length(params) - nnode)] # parameters associated with edge weights
+    sp <- as.sparse(graph)
+    sp$vals <- coefs # previous line leaves NAs for values in sparse object; need to fill these in
+    edgelist <- sparse_to_edgeWeightList(sp, original_node_order)
     nodes <- names(edgelist) # this will be sorted according to the topological order
 
     ### The old way, efficient for obs data only
@@ -128,18 +120,19 @@ gen_dag_vector_R <- function(edgelist, nodes, topsort, seed, ivn = NULL){
     x
 }
 
-matrix_to_edgeWeightList <- function(x){
-    sp <- sparsebnUtils::as.sparse(x) # NOTE: no longer a bottleneck under sparsebnUtils v0.0.4
+sparse_to_edgeWeightList <- function(x, nodes){
+    stopifnot(is.sparse((x)))
+    # sp <- sparsebnUtils::as.sparse(x) # NOTE: no longer a bottleneck under sparsebnUtils v0.0.4
 
-    nodes <- colnames(x)
-    stopifnot(sp$dim[1] == sp$dim[2])
+    # nodes <- colnames(x)
+    stopifnot(x$dim[1] == x$dim[2])
 
-    out <- lapply(vector("list", length = sp$dim[1]), function(z) list(parents = character(0), index = integer(0), weights = numeric(0)))
+    out <- lapply(vector("list", length = x$dim[1]), function(z) list(parents = character(0), index = integer(0), weights = numeric(0)))
     names(out) <- nodes
-    for(j in seq_along(sp$cols)){
-        child <- sp$cols[[j]]
-        parent <- sp$rows[[j]]
-        weight <- sp$vals[[j]]
+    for(j in seq_along(x$cols)){
+        child <- x$cols[[j]]
+        parent <- x$rows[[j]]
+        weight <- x$vals[[j]]
         parents <- c(out[[child]]$parents, nodes[parent]) # !!! THIS IS SLOW
         index <- c(out[[child]]$index, parent) # !!! THIS IS SLOW
         weights <- c(out[[child]]$weights, weight) # !!! THIS IS SLOW
