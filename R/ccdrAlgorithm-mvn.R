@@ -17,9 +17,9 @@
 #' @export
 generate_mvn_data <- function(graph, params, n = 1, ivn = NULL, ivn.rand = TRUE){
 
-    stopifnot(is.edgeList(graph))
+    stopifnot(sparsebnUtils::is.edgeList(graph))
     stopifnot(is.numeric(params))
-    stopifnot(length(params) == num.edges(graph) + num.nodes(graph))
+    stopifnot(length(params) == sparsebnUtils::num.edges(graph) + sparsebnUtils::num.nodes(graph))
 
     if(is.null(names(graph))){
         stop("Input 'graph' requires node names!")
@@ -41,13 +41,14 @@ generate_mvn_data <- function(graph, params, n = 1, ivn = NULL, ivn.rand = TRUE)
     original_node_order <- names(graph)
 
     ### Get topological sort
-    topsort <- names(igraph::topo_sort(to_igraph(graph)))
+    ### Note that the check for the igraph pkg occurs in sparsebnUtils::to_igraph
+    topsort <- names(igraph::topo_sort(sparsebnUtils::to_igraph(graph)))
 
     nnode <- length(original_node_order)
-    vars <- tail(params, nnode) # parameters associated with variances
+    vars <- utils::tail(params, nnode) # parameters associated with variances
     names(vars) <- original_node_order
     coefs <- params[1:(length(params) - nnode)] # parameters associated with edge weights
-    sp <- as.sparse(graph)
+    sp <- sparsebnUtils::as.sparse(graph)
     sp$vals <- coefs # previous line leaves NAs for values in sparse object; need to fill these in
     edgelist <- sparse_to_edgeWeightList(sp, original_node_order)
     nodes <- names(edgelist) # this will be sorted according to the topological order
@@ -67,7 +68,6 @@ generate_mvn_data <- function(graph, params, n = 1, ivn = NULL, ivn.rand = TRUE)
     x
 }
 
-#' @export
 generate_mvn_vector <- function(edgelist, nodes, topsort, vars = NULL, ivn = NULL){
     normal_seed <- sapply(vars, function(x) rnorm(n = 1, mean = 0, sd = sqrt(x)))
     gen_dag_vector_R(edgelist, nodes, topsort, seed = normal_seed, ivn = ivn)
@@ -121,7 +121,7 @@ gen_dag_vector_R <- function(edgelist, nodes, topsort, seed, ivn = NULL){
 }
 
 sparse_to_edgeWeightList <- function(x, nodes){
-    stopifnot(is.sparse((x)))
+    stopifnot(sparsebnUtils::is.sparse((x)))
     # sp <- sparsebnUtils::as.sparse(x) # NOTE: no longer a bottleneck under sparsebnUtils v0.0.4
 
     # nodes <- colnames(x)

@@ -16,6 +16,12 @@
 #' @importFrom sparsebnUtils is.zero
 #' @importFrom sparsebnUtils edgeList
 #' @importFrom sparsebnUtils sparse
+#' @importFrom sparsebnUtils is.edgeList
+#' @importFrom sparsebnUtils to_igraph
+#' @importFrom sparsebnUtils as.sparse
+#' @importFrom sparsebnUtils is.sparse
+#' @importFrom stats rnorm
+#' @importFrom utils tail
 
 .onAttach <- function(libname, pkgname){
     ### Only sparsebn needs a package startup message

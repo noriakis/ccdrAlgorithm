@@ -11,12 +11,15 @@ Description: Implementation of the CCDr (Concave penalized Coordinate Descent wi
 Depends:
     R (>= 3.2.3)
 Imports:
-    sparsebnUtils (>= 0.0.3),
-    Rcpp (>= 0.11.0)
+    sparsebnUtils (>= 0.0.4),
+    Rcpp (>= 0.11.0),
+    stats,
+    utils
 LinkingTo: Rcpp
 Suggests:
     testthat,
-    graph
+    graph,
+    igraph
 Remotes: itsrainingdata/sparsebnUtils@dev
 URL: https://github.com/itsrainingdata/ccdrAlgorithm
 BugReports: https://github.com/itsrainingdata/ccdrAlgorithm/issues
