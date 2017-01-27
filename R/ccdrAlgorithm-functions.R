@@ -24,7 +24,7 @@ check_vector_label <- function(vec, pp) {
     ## e.g.: c(NA, 1L, NA, 3L, NA, 5L)
     ## However, c(1L, NA, 3L, 4, NA) returns all FALSE
     ## check if labels are integers
-    if(any(is.na(vec)) || !is.integer(vec)) {
+    if(any(is.na(vec)) || !is.numeric(vec)) {
         stop("Non-integer label(s) found in one or more components in ivn.")
         return(FALSE)
     }
