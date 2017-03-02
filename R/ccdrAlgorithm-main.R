@@ -259,6 +259,7 @@ ccdr_call <- function(data,
         ### Coerce sbm output to edgeList
         names(fit[[k]])[1] <- "edges" # rename 'sbm' slot to 'edges': After the next line, this slot will no longer be an SBM object
         fit[[k]]$edges <- sparsebnUtils::as.edgeList(fit[[k]]$edges) # Before coercion, li$edges is actually an SBM object
+        names(fit[[k]]$edges) <- names(data)
 
         ### Add node names to output
         fit[[k]] <- append(fit[[k]], list(names(data)), after = 1) # insert node names into second slot
