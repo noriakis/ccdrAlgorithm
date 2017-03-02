@@ -3,7 +3,7 @@ context("ccdr_call")
 pp <- 10L
 nn <- 5L
 X.test <- data.frame(matrix(runif(nn*pp), ncol = pp))
-cors.test <- sparsebnUtils::cor_vector(X.test)
+cors.test <- sparsebnUtils::cor_vector_ivn(X.test)$cors
 betas.test <- matrix(runif(pp*pp), ncol = pp)
 indexj.test <- rep(0L, pp + 1)
 nj.test <- as.integer(rep(nn, pp))

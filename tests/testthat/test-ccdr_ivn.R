@@ -57,8 +57,9 @@ test_that("Check input: ivn", {
     dat.test.notint$ivn[[1]] <- c(1L, "2")
     expect_error(ccdr.run(data = dat.test.notint, lambdas.length = lambdas.length.test), "Non-integer label(s) found in one or more components in ivn.", fixed = TRUE)
 
-    dat.test.notint$ivn[[1]] <- c(1L, 1.5)
-    expect_error(ccdr.run(data = dat.test.notint, lambdas.length = lambdas.length.test), "Non-integer label(s) found in one or more components in ivn.", fixed = TRUE)
+    ### This is OK -- for now (in order to allow 1,2,... instead of 1L,2L,...)
+    # dat.test.notint$ivn[[1]] <- c(1L, 1.5)
+    # expect_error(ccdr.run(data = dat.test.notint, lambdas.length = lambdas.length.test), "Non-integer label(s) found in one or more components in ivn.", fixed = TRUE)
 
     dat.test.notint$ivn[[1]] <- c(3L, 1L)
     expect_error(ccdr.run(data = dat.test.notint, lambdas.length = lambdas.length.test), NA)
