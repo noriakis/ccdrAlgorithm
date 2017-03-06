@@ -75,4 +75,3 @@ ccdr.run(data = dat, betas = init.betas, lambdas.length = 10, alpha = 10, verbos
 }
 
 }
-

@@ -27,4 +27,3 @@ If \code{ivn = NULL}, then \code{n} observational samples are drawn. For each
 component of \code{ivn} that is not \code{NULL}, interventional samples will
 be drawn with the values of each node specified in the component.
 }
-

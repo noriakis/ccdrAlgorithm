@@ -16,4 +16,3 @@ This package implements a single function, \code{\link{ccdr.run}} that
 runs the main algorithm, and uses \code{\link[sparsebnUtils]{sparsebnUtils}}
 for the underlying data structures and methods.
 }
-
