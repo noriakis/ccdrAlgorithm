@@ -1,3 +1,11 @@
+#
+#  ccdrAlgorithm-functions.R
+#  ccdrAlgorithm
+#
+#  Created by Dacheng Zhang on 9/3/16.
+#  Copyright (c) 2014-2017 Bryon Aragam. All rights reserved.
+#
+
 ## returns TRUE if ivn_list is a list of vectors or NULL elements,
 check_if_ivn_list <- function(ivn) {
     ## check if it is a list

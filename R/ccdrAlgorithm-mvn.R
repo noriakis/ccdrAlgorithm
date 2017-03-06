@@ -1,3 +1,11 @@
+#
+#  ccdrAlgorithm-mvn.R
+#  ccdrAlgorithm
+#
+#  Created by Bryon Aragam (local) on 1/15/17.
+#  Copyright (c) 2014-2017 Bryon Aragam. All rights reserved.
+#
+
 #' Generate data from a DAG
 #'
 #' Given a Gaussian DAG, generate data from the underlying distribution.
