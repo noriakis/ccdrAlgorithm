@@ -40,6 +40,10 @@
 #'
 #' @export
 generate_mvn_data <- function(graph, params, n = 1, ivn = NULL, ivn.rand = TRUE){
+    ### This function requires the 'igraph' package to be installed
+    if (!requireNamespace("igraph", quietly = TRUE)) {
+        stop("The igraph package is required for the method 'generate_mvn_data'. Please install it using install.packages(\"igraph\").", call. = FALSE)
+    }
 
     stopifnot(sparsebnUtils::is.edgeList(graph))
     stopifnot(is.numeric(params))
