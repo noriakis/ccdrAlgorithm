@@ -58,25 +58,22 @@ NULL
 #'
 #' @examples
 #'
-#' \dontrun{
-#'
 #' ### Generate some random data
 #' dat <- matrix(rnorm(1000), nrow = 20)
-#' dat <- sparsebnData(dat, type = "continuous")
+#' dat <- sparsebnUtils::sparsebnData(dat, type = "continuous")
 #'
 #' # Run with default settings
-#' ccdr.run(data = dat)
+#' ccdr.run(data = dat, lambdas.length = 20)
 #'
 #' ### Optional: Adjust settings
-#' pp <- ncol(dat)
+#' pp <- ncol(dat$data)
 #'
 #' # Initialize algorithm with a random initial value
 #' init.betas <- matrix(0, nrow = pp, ncol = pp)
 #' init.betas[1,2] <- init.betas[1,3] <- init.betas[4,2] <- 1
 #'
 #' # Run with adjusted settings
-#' ccdr.run(data = dat, betas = init.betas, lambdas.length = 10, alpha = 10, verbose = TRUE)
-#' }
+#' ccdr.run(data = dat, betas = init.betas, lambdas.length = 20, alpha = 10, verbose = TRUE)
 #'
 #' @export
 ccdr.run <- function(data,
@@ -223,6 +220,7 @@ ccdr_call <- function(data,
         #   Still need to set start = 0, though.
         betas$start <- 0
     } # Type-checking for betas happens in ccdr_singleR
+
     # This parameter can be set by the user, but in order to prevent the algorithm from taking too long to run
     #  it is a good idea to keep the threshold used by default which is O(sqrt(pp))
     if(is.null(max.iters)){

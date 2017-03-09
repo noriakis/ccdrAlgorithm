@@ -27,3 +27,20 @@ If \code{ivn = NULL}, then \code{n} observational samples are drawn. For each
 component of \code{ivn} that is not \code{NULL}, interventional samples will
 be drawn with the values of each node specified in the component.
 }
+\examples{
+
+### Generate observational data
+gr <- sparsebnUtils::random.graph(5, 5) # use sparsebnUtils package to generate a random graph
+gr.params <- runif(10) # there are 5 coefficients + 5 variances
+data.obs <- ccdrAlgorithm::generate_mvn_data(graph = gr,
+                                             n = 100,
+                                             params = gr.params)
+
+### Generate experimental data
+ivn <- as.list(c(rep("V1", 50), rep("V2", 50))) # 50 interventions on V1, 50 interventions on V2
+data.ivn <- ccdrAlgorithm::generate_mvn_data(graph = gr,
+                                             n = 100,
+                                             params = gr.params,
+                                             ivn = ivn)
+
+}
