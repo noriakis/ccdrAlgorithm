@@ -22,6 +22,22 @@
 #' @param ivn List of interventions (see \code{\link[sparsebnUtils]{sparsebnData}}). Must be a \code{list} with exactly \code{n} components.
 #' @param ivn.rand If \code{TRUE}, random N(0,1) values will be drawn for each intervention. Otherwise, these values need to supplied manually in \code{ivn}.
 #'
+#' @examples
+#'
+#' ### Generate observational data
+#' gr <- sparsebnUtils::random.graph(5, 5) # use sparsebnUtils package to generate a random graph
+#' gr.params <- runif(10) # there are 5 coefficients + 5 variances
+#' data.obs <- ccdrAlgorithm::generate_mvn_data(graph = gr,
+#'                                              n = 100,
+#'                                              params = gr.params)
+#'
+#' ### Generate experimental data
+#' ivn <- as.list(c(rep("V1", 50), rep("V2", 50))) # 50 interventions on V1, 50 interventions on V2
+#' data.ivn <- ccdrAlgorithm::generate_mvn_data(graph = gr,
+#'                                              n = 100,
+#'                                              params = gr.params,
+#'                                              ivn = ivn)
+#'
 #' @export
 generate_mvn_data <- function(graph, params, n = 1, ivn = NULL, ivn.rand = TRUE){
 
