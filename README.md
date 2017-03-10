@@ -10,9 +10,7 @@ Presently, this package consists of a methods that implement the main algorithm 
 Overview
 --------
 
-The main method is `ccdr.run`, which runs the CCDr structure learning algorithm as described in
-$$\[1-2\](\#references)$$
-. For simulating data from a Gaussian Bayesian network, the package provides the method `generate_mvn_data`. This method can simulate observational data or experimental data with interventions (or combinations of both).
+The main method is `ccdr.run`, which runs the CCDr structure learning algorithm as described in \[[1-2](#references)\]. For simulating data from a Gaussian Bayesian network, the package provides the method `generate_mvn_data`. This method can simulate observational data or experimental data with interventions (or combinations of both).
 
 Installation
 ------------
