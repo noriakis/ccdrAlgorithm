@@ -5,7 +5,7 @@ ccdrAlgorithm
 
 `ccdrAlgorithm` implements the CCDr structure learning algorithm described in \[[1-2](#references)\]. This algorithm estimates the structure of a Bayesian network from mixed observational and experimental data using penalized maximum likelihood based on L1 or concave (MCP) regularization.
 
-Presently, this package consists of a methods that implement the main algorithm and generate data (with interventions if necessary) from a Gaussian Bayesian network. To simulate random networks, it is recommended to use the [`sparsebnUtils`](https://cran.r-project.org/package=sparsebnUtils) package. Other packages for simulating DAGs and observational data include [bnlearn](https://cran.r-project.org/package=bnlearn), [pcalg](https://cran.r-project.org/package=pcalg), and [igraph](https://cran.r-project.org/package=igraph).
+Presently, this package implements the main algorithm and provides a method to simulate data from a Gaussian Bayesian network. To simulate random networks, it is recommended to use the [`sparsebnUtils`](https://cran.r-project.org/package=sparsebnUtils) package. Other packages for simulating DAGs and observational data include [`bnlearn`](https://cran.r-project.org/package=bnlearn), [`pcalg`](https://cran.r-project.org/package=pcalg), and [`igraph`](https://cran.r-project.org/package=igraph).
 
 Overview
 --------
