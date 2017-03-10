@@ -34,11 +34,8 @@ You can install:
 References
 ----------
 
-1
- Aragam, B. and Zhou, Q. (2015). [Concave penalized estimation of sparse Gaussian Bayesian networks.](http://jmlr.org/papers/v16/aragam15a.html) *The Journal of Machine Learning Research*. 16(Nov):2273−2328.
+\[1\] Aragam, B. and Zhou, Q. (2015). [Concave penalized estimation of sparse Gaussian Bayesian networks.](http://jmlr.org/papers/v16/aragam15a.html) *The Journal of Machine Learning Research*. 16(Nov):2273−2328.
 
-2
- Zhang, D. (2016). Concave Penalized Estimation of Causal Gaussian Networks with Intervention. Master’s thesis, UCLA.
+\[2\] Zhang, D. (2016). Concave Penalized Estimation of Causal Gaussian Networks with Intervention. Master’s thesis, UCLA.
 
-3
- Fu, F. and Zhou, Q. (2013). [Learning sparse causal Gaussian networks with experimental intervention: Regularization and coordinate descent.](http://amstat.tandfonline.com/doi/abs/10.1080/01621459.2012.754359) Journal of the American Statistical Association, 108: 288-300.
+\[3\] Fu, F. and Zhou, Q. (2013). [Learning sparse causal Gaussian networks with experimental intervention: Regularization and coordinate descent.](http://amstat.tandfonline.com/doi/abs/10.1080/01621459.2012.754359) Journal of the American Statistical Association, 108: 288-300.
