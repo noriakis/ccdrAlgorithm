@@ -1,3 +1,11 @@
+#
+#  ccdrAlgorithm-functions.R
+#  ccdrAlgorithm
+#
+#  Created by Dacheng Zhang on 9/3/16.
+#  Copyright (c) 2014-2017 Bryon Aragam. All rights reserved.
+#
+
 ## returns TRUE if ivn_list is a list of vectors or NULL elements,
 check_if_ivn_list <- function(ivn) {
     ## check if it is a list
@@ -24,7 +32,7 @@ check_vector_label <- function(vec, pp) {
     ## e.g.: c(NA, 1L, NA, 3L, NA, 5L)
     ## However, c(1L, NA, 3L, 4, NA) returns all FALSE
     ## check if labels are integers
-    if(any(is.na(vec)) || !is.integer(vec)) {
+    if(any(is.na(vec)) || !is.numeric(vec)) {
         stop("Non-integer label(s) found in one or more components in ivn.")
         return(FALSE)
     }

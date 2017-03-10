@@ -2,8 +2,8 @@ context("ccdr_call")
 
 pp <- 10L
 nn <- 5L
-X.test <- data.frame(matrix(runif(pp*pp), ncol = pp))
-cors.test <- sparsebnUtils::cor_vector(X.test)
+X.test <- data.frame(matrix(runif(nn*pp), ncol = pp))
+cors.test <- sparsebnUtils::cor_vector_ivn(X.test)$cors
 betas.test <- matrix(runif(pp*pp), ncol = pp)
 indexj.test <- rep(0L, pp + 1)
 nj.test <- as.integer(rep(nn, pp))
@@ -55,6 +55,14 @@ test_that("Check input: rlam", {
     expect_error(ccdr_call(data = X.test, lambdas = NULL, lambdas.length = 20, gamma = gamma.test, error.tol = eps.test, max.iters = maxIters.test, alpha = alpha.test), "rlam must be specified if lambdas is not explicitly specified.")
     expect_error(ccdr_call(data = X.test, lambdas = NULL, lambdas.length = 20, rlam = "test", gamma = gamma.test, error.tol = eps.test, max.iters = maxIters.test, alpha = alpha.test), "rlam must be numeric!")
     expect_error(ccdr_call(data = X.test, lambdas = NULL, lambdas.length = 20, rlam = -1, gamma = gamma.test, error.tol = eps.test, max.iters = maxIters.test, alpha = alpha.test), "rlam must be >= 0!")
+})
+
+test_that("Maximum number of nodes allowed", {
+    # maxnodes.X <- data.frame(matrix(runif(10000*10), ncol = 10000))
+    # expect_error(ccdr_call(data = maxnodes.X, lambdas = NULL, lambdas.length = 20, rlam = 0.01, gamma = gamma.test, error.tol = eps.test, max.iters = maxIters.test, alpha = alpha.test), NA)
+
+    maxnodes.X <- data.frame(matrix(runif(10001*10), ncol = 10001))
+    expect_error(ccdr_call(data = maxnodes.X, lambdas = NULL, lambdas.length = 20, rlam = 0.01, gamma = gamma.test, error.tol = eps.test, max.iters = maxIters.test, alpha = alpha.test), "This dataset contains more")
 })
 
 

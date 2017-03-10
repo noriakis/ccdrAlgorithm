@@ -36,7 +36,7 @@
 //                            is loaded.
 //
 
-#define _MAX_CCS_ARRAY_SIZE_ 5000
+#define _MAX_CCS_ARRAY_SIZE_ 10000
 
 #define _DEBUG_ON_
 #undef _DEBUG_ON_
