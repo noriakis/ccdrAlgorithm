@@ -20,10 +20,10 @@ using namespace Rcpp;
 
 // temporary solution to "Found no calls to: R_registerRoutines, R_useDynamicSymbols"
 // https://github.com/RcppCore/Rcpp/issues/636#issuecomment-280985661
-void R_init_ccdrAlgorithm(DllInfo* info) {
-	R_registerRoutines(info, NULL, NULL, NULL, NULL);
-	R_useDynamicSymbols(info, TRUE);
-}
+// void R_init_ccdrAlgorithm(DllInfo* info) {
+// 	R_registerRoutines(info, NULL, NULL, NULL, NULL);
+// 	R_useDynamicSymbols(info, TRUE);
+// }
 
 //------------------------------------------------------------------------------/
 //   WRAPPER FUNCTIONS FOR R / RCPP INTEGRATION
