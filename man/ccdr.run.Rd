@@ -4,8 +4,9 @@
 \alias{ccdr.run}
 \title{Main CCDr Algorithm}
 \usage{
-ccdr.run(data, betas, lambdas = NULL, lambdas.length = NULL, gamma = 2,
-  error.tol = 1e-04, max.iters = NULL, alpha = 10, verbose = FALSE)
+ccdr.run(data, betas, lambdas = NULL, lambdas.length = NULL,
+  whitelist = NULL, blacklist = NULL, gamma = 2, error.tol = 1e-04,
+  max.iters = NULL, alpha = 10, verbose = FALSE)
 }
 \arguments{
 \item{data}{Data as \code{\link[sparsebnUtils]{sparsebnData}}. Must be numeric and contain no missing values.}

@@ -58,6 +58,7 @@ List gridCCDr(NumericVector cors,
               IntegerVector indexj,
               NumericVector aj,
               NumericVector lambdas,
+              IntegerVector weights,
               NumericVector params,
               int verbose
               ){
@@ -81,6 +82,7 @@ List gridCCDr(NumericVector cors,
                           as< std::vector<int> >(indexj),
                           as< std::vector<double> >(aj),
                           as< std::vector<double> >(lambdas),
+                          as< std::vector<int> >(weights),
                           as< std::vector<double> >(params),
                           verbose);
 
@@ -99,6 +101,7 @@ List singleCCDr(NumericVector cors,
                 IntegerVector indexj,
                 NumericVector aj,
                 double lambda,
+                IntegerVector weights,
                 NumericVector params,
                 int verbose
                 ){
@@ -111,6 +114,7 @@ List singleCCDr(NumericVector cors,
                        as< std::vector<int> >(indexj),
                        as< std::vector<double> >(aj),
                        lambda,
+                       as< std::vector<int> >(weights),
                        as< std::vector<double> >(params),
                        verbose);
     //

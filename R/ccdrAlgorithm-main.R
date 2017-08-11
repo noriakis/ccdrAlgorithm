@@ -80,6 +80,8 @@ ccdr.run <- function(data,
                      betas,
                      lambdas = NULL,
                      lambdas.length = NULL,
+                     whitelist = NULL,
+                     blacklist = NULL,
                      gamma = 2.0,
                      error.tol = 1e-4,
                      max.iters = NULL,
@@ -100,6 +102,8 @@ ccdr.run <- function(data,
               betas = betas,
               lambdas = lambdas,
               lambdas.length = lambdas.length,
+              whitelist = whitelist,
+              blacklist = blacklist,
               gamma = gamma,
               error.tol = error.tol,
               rlam = NULL,
@@ -122,6 +126,8 @@ ccdr_call <- function(data,
                       betas,
                       lambdas,
                       lambdas.length,
+                      whitelist,
+                      blacklist,
                       gamma,
                       error.tol,
                       rlam,
@@ -227,6 +233,23 @@ ccdr_call <- function(data,
         max.iters <- sparsebnUtils::default_max_iters(pp)
     }
 
+    ### White/black lists
+    # Be careful about handling various NULL cases
+    if(!is.null(whitelist)) whitelist <- bwlist_check(whitelist, nodes)
+    if(!is.null(blacklist)) blacklist <- bwlist_check(blacklist, nodes)
+
+    if(!is.null(whitelist) && !is.null(blacklist)){
+        if(length(intersect(whitelist, blacklist)) > 0){
+            badinput <- vapply(intersect(whitelist, blacklist), function(x) sprintf("\t[%s]\n", paste(x, collapse = ",")), FUN.VALUE = "vector")
+            badinput <- paste(badinput, collapse = "")
+            msg <- sprintf("Duplicate entries found in blacklist and whitelist: \n%s", badinput)
+            stop(msg)
+        }
+    }
+
+    weights <- bwlist_to_weights(blacklist, whitelist, nnode = pp)
+
+    ### Pre-process correlation data
     t1.cor <- proc.time()[3]
     #     cors <- cor(data)
     #     cors <- cors[upper.tri(cors, diag = TRUE)]
@@ -242,6 +265,7 @@ ccdr_call <- function(data,
                       as.integer(indexj),
                       betas,
                       as.numeric(lambdas),
+                      as.integer(weights),
                       as.numeric(gamma),
                       as.numeric(error.tol),
                       as.integer(max.iters),
@@ -277,6 +301,7 @@ ccdr_gridR <- function(cors,
                        indexj = NULL,
                        betas,
                        lambdas,
+                       weights,
                        gamma,
                        eps,
                        maxIters,
@@ -308,6 +333,7 @@ ccdr_gridR <- function(cors,
                                       indexj,
                                       betas,
                                       lambdas[i],
+                                      weights,
                                       gamma = gamma,
                                       eps = eps,
                                       maxIters = maxIters,
@@ -346,6 +372,7 @@ ccdr_singleR <- function(cors,
                          indexj = NULL,
                          betas,
                          lambda,
+                         weights,
                          gamma,
                          eps,
                          maxIters,
@@ -391,6 +418,11 @@ ccdr_singleR <- function(cors,
     if(!is.numeric(lambda)) stop("lambda must be numeric!")
     if(lambda < 0) stop("lambda must be >= 0!")
 
+    ### Check weights
+    if(length(weights) != pp*pp) stop("weights must have length p^2!")
+    if(!is.numeric(weights)) stop("weights must be numeric!")
+    if(weights < -1 || weights > 1) stop("weights out of bounds!")
+
     ### Check gamma
     if(!is.numeric(gamma)) stop("gamma must be numeric!")
     if(gamma < 0 && gamma != -1) stop("gamma must be >= 0 (MCP) or = -1 (Lasso)!")
@@ -416,6 +448,7 @@ ccdr_singleR <- function(cors,
                            indexj,
                            aj,
                            lambda,
+                           weights,
                            c(gamma, eps, maxIters, alpha),
                            verbose = verbose)
     t2.ccdr <- proc.time()[3]
