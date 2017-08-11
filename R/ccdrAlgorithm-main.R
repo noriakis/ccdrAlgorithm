@@ -135,6 +135,7 @@ ccdr_call <- function(data,
                       alpha,
                       verbose = FALSE
 ){
+    node_names <- names(data)
 #     ### Allow users to input a data.frame, but kindly warn them about doing this
 #     if(is.data.frame(data)){
 #         warning(sparsebnUtils::alg_input_data_frame())
@@ -235,8 +236,8 @@ ccdr_call <- function(data,
 
     ### White/black lists
     # Be careful about handling various NULL cases
-    if(!is.null(whitelist)) whitelist <- bwlist_check(whitelist, nodes)
-    if(!is.null(blacklist)) blacklist <- bwlist_check(blacklist, nodes)
+    if(!is.null(whitelist)) whitelist <- bwlist_check(whitelist, node_names)
+    if(!is.null(blacklist)) blacklist <- bwlist_check(blacklist, node_names)
 
     if(!is.null(whitelist) && !is.null(blacklist)){
         if(length(intersect(whitelist, blacklist)) > 0){
@@ -284,7 +285,7 @@ ccdr_call <- function(data,
         names(fit[[k]]$edges) <- names(data)
 
         ### Add node names to output
-        fit[[k]] <- append(fit[[k]], list(names(data)), after = 1) # insert node names into second slot
+        fit[[k]] <- append(fit[[k]], list(node_names), after = 1) # insert node names into second slot
         names(fit[[k]])[2] <- "nodes"
     }
 
