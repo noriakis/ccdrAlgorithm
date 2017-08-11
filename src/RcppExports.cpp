@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // gridCCDr
 List gridCCDr(NumericVector cors, List init_betas, IntegerVector nj, IntegerVector indexj, NumericVector aj, NumericVector lambdas, NumericVector params, int verbose);
-RcppExport SEXP ccdrAlgorithm_gridCCDr(SEXP corsSEXP, SEXP init_betasSEXP, SEXP njSEXP, SEXP indexjSEXP, SEXP ajSEXP, SEXP lambdasSEXP, SEXP paramsSEXP, SEXP verboseSEXP) {
+RcppExport SEXP _ccdrAlgorithm_gridCCDr(SEXP corsSEXP, SEXP init_betasSEXP, SEXP njSEXP, SEXP indexjSEXP, SEXP ajSEXP, SEXP lambdasSEXP, SEXP paramsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,7 +25,7 @@ END_RCPP
 }
 // singleCCDr
 List singleCCDr(NumericVector cors, List init_betas, IntegerVector nj, IntegerVector indexj, NumericVector aj, double lambda, NumericVector params, int verbose);
-RcppExport SEXP ccdrAlgorithm_singleCCDr(SEXP corsSEXP, SEXP init_betasSEXP, SEXP njSEXP, SEXP indexjSEXP, SEXP ajSEXP, SEXP lambdaSEXP, SEXP paramsSEXP, SEXP verboseSEXP) {
+RcppExport SEXP _ccdrAlgorithm_singleCCDr(SEXP corsSEXP, SEXP init_betasSEXP, SEXP njSEXP, SEXP indexjSEXP, SEXP ajSEXP, SEXP lambdaSEXP, SEXP paramsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -40,4 +40,15 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(singleCCDr(cors, init_betas, nj, indexj, aj, lambda, params, verbose));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_ccdrAlgorithm_gridCCDr", (DL_FUNC) &_ccdrAlgorithm_gridCCDr, 8},
+    {"_ccdrAlgorithm_singleCCDr", (DL_FUNC) &_ccdrAlgorithm_singleCCDr, 8},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_ccdrAlgorithm(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

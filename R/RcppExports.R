@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 gridCCDr <- function(cors, init_betas, nj, indexj, aj, lambdas, params, verbose) {
-    .Call('ccdrAlgorithm_gridCCDr', PACKAGE = 'ccdrAlgorithm', cors, init_betas, nj, indexj, aj, lambdas, params, verbose)
+    .Call(`_ccdrAlgorithm_gridCCDr`, cors, init_betas, nj, indexj, aj, lambdas, params, verbose)
 }
 
 singleCCDr <- function(cors, init_betas, nj, indexj, aj, lambda, params, verbose) {
-    .Call('ccdrAlgorithm_singleCCDr', PACKAGE = 'ccdrAlgorithm', cors, init_betas, nj, indexj, aj, lambda, params, verbose)
+    .Call(`_ccdrAlgorithm_singleCCDr`, cors, init_betas, nj, indexj, aj, lambda, params, verbose)
 }
 
