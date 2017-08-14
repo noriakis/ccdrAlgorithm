@@ -94,6 +94,7 @@ ccdr.run <- function(data,
                      max.iters = NULL,
                      alpha = 10,
                      betas,
+                     sigmas = NULL,
                      verbose = FALSE
 ){
     ### Check data format
@@ -108,6 +109,7 @@ ccdr.run <- function(data,
     ccdr_call(data = data_matrix,
               ivn = ivn_list,
               betas = betas,
+              sigmas = sigmas,
               lambdas = lambdas,
               lambdas.length = lambdas.length,
               whitelist = whitelist,
@@ -132,6 +134,7 @@ MAX_CCS_ARRAY_SIZE <- function() 10000
 ccdr_call <- function(data,
                       ivn = NULL,
                       betas,
+                      sigmas,
                       lambdas,
                       lambdas.length,
                       whitelist = NULL,
@@ -184,6 +187,11 @@ ccdr_call <- function(data,
     nj <- rep(0, pp)
     for(j in 1:pp) { ## include 0 here or not?
         nj[j] <- sum(!sapply(lapply(ivn, is.element, j), any)) ## optimize for sorted column?
+    }
+
+    ### Set default for sigmas (negative values => ignore initial value and update as usual)
+    if(is.null(sigmas)){
+        sigmas <- rep(-1., pp)
     }
 
     ### Use default values for lambda if not specified
@@ -273,6 +281,7 @@ ccdr_call <- function(data,
                       as.integer(nj),
                       as.integer(indexj),
                       betas,
+                      as.numeric(sigmas),
                       as.numeric(lambdas),
                       as.integer(weights),
                       as.numeric(gamma),
@@ -309,6 +318,7 @@ ccdr_gridR <- function(cors,
                        nj = NULL,
                        indexj = NULL,
                        betas,
+                       sigmas,
                        lambdas,
                        weights,
                        gamma,
@@ -341,6 +351,7 @@ ccdr_gridR <- function(cors,
                                       nj,
                                       indexj,
                                       betas,
+                                      sigmas,
                                       lambdas[i],
                                       weights,
                                       gamma = gamma,
@@ -380,6 +391,7 @@ ccdr_singleR <- function(cors,
                          nj = NULL,
                          indexj = NULL,
                          betas,
+                         sigmas,
                          lambda,
                          weights,
                          gamma,
@@ -423,6 +435,15 @@ ccdr_singleR <- function(cors,
         stop("Incompatible data passed for betas parameter: Should be either matrix or list in SparseBlockMatrixR format.")
     }
 
+    ### Check sigmas
+    if(!is.numeric(sigmas)) stop("sigmas must be numeric!")
+    if(any(sigmas < 0)){
+        # -1 is a sentinel value for updating sigmas via the CD updates
+        if(any(sigmas != -1.)){
+            stop("sigmas must be > 0!")
+        }
+    }
+
     ### Check lambda
     if(!is.numeric(lambda)) stop("lambda must be numeric!")
     if(lambda < 0) stop("lambda must be >= 0!")
@@ -453,6 +474,7 @@ ccdr_singleR <- function(cors,
     t1.ccdr <- proc.time()[3]
     ccdr.out <- singleCCDr(cors,
                            betas,
+                           sigmas,
                            nj,
                            indexj,
                            aj,

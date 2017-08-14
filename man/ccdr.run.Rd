@@ -6,7 +6,7 @@
 \usage{
 ccdr.run(data, lambdas = NULL, lambdas.length = NULL, whitelist = NULL,
   blacklist = NULL, gamma = 2, error.tol = 1e-04, max.iters = NULL,
-  alpha = 10, betas, verbose = FALSE)
+  alpha = 10, betas, sigmas = NULL, verbose = FALSE)
 }
 \arguments{
 \item{data}{Data as \code{\link[sparsebnUtils]{sparsebnData}} object. Must be numeric and contain no missing values.}

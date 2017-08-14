@@ -12,7 +12,8 @@
 #include <vector>
 #include <math.h>
 
-#include "defines.h"
+// to keep track of the norm used to compute the error
+enum errtype {L1, LINF};
 
 //------------------------------------------------------------------------------/
 //   CCDR ALGORITHM CLASS
@@ -25,17 +26,17 @@
 //   or not the algorithm should terminate based on these criteria (among others).
 //
 // The most important parameters are supplied by the user:
-//   
-//   maxIters = the maximum number of iterations 
+//
+//   maxIters = the maximum number of iterations
 //   eps = the error threshold used to determine convergence
-//   alpha = the multiplier used to terminate the algorithm once the active set gets too large 
+//   alpha = the multiplier used to terminate the algorithm once the active set gets too large
 //           (i.e. activeSetLength > alpha * pp)
 //   pp = the number of nodes in the model being estimated by the algorithm
 //
 // Other important parameters are tracked automatically:
 //
 //   numSweeps = the total number of sweeps run so far
-//   maxAbsError = the total accumulated error from each single parameter update run so far
+//   error = the total accumulated error from each single parameter update run so far
 //
 // There is also a vector called 'stopFlags' which is used to keep track of the various reasons for terminating the
 //   algorithm. We made this a vector so that if new stopping conditions are added (or we want to just keep track
@@ -50,26 +51,26 @@
 //   2) Based on the active set computed in (1), we iterate over this active set performing SPUs
 //       for each active edge until:
 //          a) The updates have converged (i.e. the maximum absolute error after updating all the active edges is < eps)
-//          b) The maximum number of iterations (maxIters) has been reached 
+//          b) The maximum number of iterations (maxIters) has been reached
 //   3) Go back to (1), until (1a) or the total number of complete sweeps (over all parameters) is > maxIters
 //
 // There are thus two functions for checking a stopping condition:
-// 
+//
 //   keepGoing() checks (3) => model for this lambda is completely finished
 //   moar() checks (2a) and (2b) => model for this active set is finished, but another complete sweep will follow
 //
 class CCDrAlgorithm{
-    
+
 public:
     // user-defined input
     unsigned int maxIters;  // maximum number of iterations for the algorithm
     double eps;             // convergence threshold
-    
+
     //
     // Constructors
     //
-    CCDrAlgorithm(unsigned int m, double e, double a, unsigned int p);
-    
+    CCDrAlgorithm(unsigned int m, double e, double a, unsigned int p, bool r, bool u, errtype t);
+
     //
     // Member functions
     //
@@ -82,36 +83,53 @@ public:
     void belowThreshold();          // set the flag that indicates the size of the active set is below the threshold level alpha*pp (and hence need to continue)
     void resetFlags();              // reset all stop flags to zero
     void updateError(double e);     // add a value to the error term
-    void resetError();              // reset the error term (maxAbsError) to zero
+    void resetError();              // reset the error term (error) to zero
     void addSweep();                // increment numSweeps
-    
+    bool updateSigmas();
+
 private:
-    // 
+    //
     // This vector keeps track of whether or not to continue iterating the coordinate descent
     //  procedure (0 = stop, 1 = continue). The various slots refer to different reasons for
     //  terminating the algorithm:
     // stopFlags[0] = active set has changed
     // stopFlags[1] = active set is smaller than threshold set by user (alpha * pp)
-    // 
+    //
     std::vector<int> stopFlags; // to keep track of whether or not to continue iterating
     double alpha;
     unsigned int maxEdges;
-    
+
     // thresholds
     unsigned int numSweeps; // to keep track of how many full sweeps we have performed, including each check of the active set
-    double maxAbsError;     // to store the error from each iteration of the CCDr algorithm
-    
+    double L1Error;         // to store the L1 error from each iteration of the CCDr algorithm
+    double LinfError;       // to store the Linf (maxmimum absolute) error from each iteration of the CCDr algorithm
+
+    // algorithm options
+    bool randomizeOrder;
+    bool updateSigmas_;
+    errtype errorNorm_;
 };
 
 // Explicit constructor
-CCDrAlgorithm::CCDrAlgorithm(unsigned int m, double e, double a, unsigned int p){
+CCDrAlgorithm::CCDrAlgorithm(unsigned int m,
+                             double e,
+                             double a,
+                             unsigned int p,
+                             bool r,
+                             bool u,
+                             errtype t){
+    // TODO: update to use initializer list
     maxIters = m;
     eps = e;
     alpha = a;
     maxEdges = round(a * p);
+    randomizeOrder = r;
     numSweeps = 0;
-    maxAbsError = 0;
+    L1Error = 0;
+    LinfError = 0;
     stopFlags = std::vector<int>(2, 0);
+    updateSigmas_ = u;
+    errorNorm_ = t;
 }
 
 //
@@ -128,37 +146,57 @@ bool CCDrAlgorithm::keepGoing() const{
         FILE_LOG(logDEBUG1) << "After running concaveCDInit, active set has exceeded edge threshold: numSweeps = " << numSweeps;
     }
     if(numSweeps > maxIters){
-        FILE_LOG(logDEBUG1) << "Maximum number of iterations of concaveCDInit reached with maxAbsError = " << maxAbsError << ": numSweeps = " << numSweeps << " > " << maxIters;
+        FILE_LOG(logDEBUG1) << "Maximum number of iterations of concaveCDInit reached with L1Error = " << L1Error << ": numSweeps = " << numSweeps << " > " << maxIters;
     }
 #endif
-    
+
     int prod = 1;
-    
+
     // check the stop flags: if any element is zero, we terminate
     for(int i = 0; i < stopFlags.size(); ++i){
         prod *= stopFlags[i];
     }
-    
+
     // check if maxIters has been exceeded
     if(numSweeps > maxIters) prod = 0;
-    
+
     // if prod = 1, keep going, if prod = 0, stop
     return (prod > 0);
 }
 
-// 
+//
 // Checks to see if the iterations over a fixed active set should stop
 //
 bool CCDrAlgorithm::moar(int iters) const{
-    #ifdef _DEBUG_ON_
-    if(maxAbsError <= eps){
-        FILE_LOG(logDEBUG1) << "Parameter values converged in concaveCD after " << iters << " iterations: maxAbsError = " << maxAbsError << " <= " << eps;
-    } else if(iters > maxIters){
-        FILE_LOG(logDEBUG1) << "Maximum number of iterations of concaveCD reached with maxAbsError = " << maxAbsError << ": iters = " << iters << " > " << maxIters;
+    // Get the desired error type (L1 or Linf)
+    double error;
+    if(errorNorm_ == L1)
+        error = L1Error;
+    else if(errorNorm_ == LINF)
+        error = LinfError;
+    else{
+        #ifdef _DEBUG_ON_
+            FILE_LOG(logERROR) << "Invalid input for errorNorm_!";
+        #endif
+
+        error = -1;
     }
+
+    #ifdef _DEBUG_ON_
+        std::string label;
+        if(errorNorm_ == L1)
+            label = "L1Error";
+        else if(errorNorm_ == LINF)
+            label = "LinfError";
+
+        if(error <= eps){
+            FILE_LOG(logDEBUG1) << "Parameter values converged after " << iters << " iterations: " << label << " = " << error << " <= " << eps;
+        } else if(iters > maxIters){
+            FILE_LOG(logDEBUG1) << "Maximum number of iterations reached with " << label << " = " << error << ": iters = " << iters << " > " << maxIters;
+        }
     #endif
-    
-    return (maxAbsError > eps && iters <= maxIters);
+
+    return (error > eps && iters <= maxIters);
 }
 
 int CCDrAlgorithm::edgeThreshold() const{
@@ -166,7 +204,12 @@ int CCDrAlgorithm::edgeThreshold() const{
 }
 
 double CCDrAlgorithm::getError() const{
-    return maxAbsError;
+    if(errorNorm_ == L1)
+        return L1Error;
+    else if (errorNorm_ == LINF)
+        return LinfError;
+    else
+        return -1.;
 }
 
 int CCDrAlgorithm::getStopFlag(int f) const{
@@ -193,20 +236,33 @@ void CCDrAlgorithm::resetFlags(){
 //
 // NOTE: The argument passed to this function is "raw", i.e. it can be nonzero and represents the raw difference
 //       between the old and new values. This function enforces the implementation of the particular error function
-//       used in the algorithm. By default, we use the L1 error, i.e. the sum of absolute differences of all the 
-//       updates. 
+//       used in the algorithm. By default, we use the L1 error, i.e. the sum of absolute differences of all the
+//       updates.
 //
 //       Other candidates include maximum absolute error and the L2 error.
 void CCDrAlgorithm::updateError(double e){
-    maxAbsError += fabs(e); // L1 error
+    double abse = fabs(e);
+
+    // L1 error
+    L1Error += abse;
+
+    // Linf error
+    if(abse > LinfError){
+        LinfError = abse;
+    }
 }
 
 void CCDrAlgorithm::resetError(){
-    maxAbsError = 0;
+    L1Error = 0.;
+    LinfError = 0.;
 }
 
 void CCDrAlgorithm::addSweep(){
     numSweeps++;
+}
+
+bool CCDrAlgorithm::updateSigmas(){
+    return updateSigmas_;
 }
 
 #endif
