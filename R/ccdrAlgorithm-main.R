@@ -442,6 +442,7 @@ ccdr_singleR <- function(cors,
 
     ### Check sigmas
     if(!is.numeric(sigmas)) stop("sigmas must be numeric!")
+    if(length(sigmas) != pp) stop(sprintf("sigmas must have length = %d!", pp))
     if(any(sigmas < 0)){
         # -1 is a sentinel value for updating sigmas via the CD updates
         if(any(sigmas != -1.)){
@@ -454,7 +455,7 @@ ccdr_singleR <- function(cors,
     if(lambda < 0) stop("lambda must be >= 0!")
 
     ### Check weights
-    if(length(weights) != pp*pp) stop("weights must have length p^2!")
+    if(length(weights) != pp*pp) stop(sprintf("weights must have length p^2 = %d!", pp*pp))
     if(!is.numeric(weights)) stop("weights must be numeric!")
     if(weights < -1 || weights > 1) stop("weights out of bounds!")
 
