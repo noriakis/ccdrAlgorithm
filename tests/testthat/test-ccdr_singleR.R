@@ -150,6 +150,28 @@ test_that("Check input: betas", {
     expect_true(is.zero(final$sbm))
 })
 
+test_that("Check input: sigmas", {
+    ### sigmas is numeric
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = rep("a", pp), lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
+                 "sigmas must be numeric")
+
+    ### sigmas has correct length
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = rep(1, pp+1), lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
+                 "sigmas must have length")
+
+    ### Negative values other than 1 fail
+    sigmas1 <- sigmas.test
+    sigmas1[1] <- -2
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas1, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
+                 "sigmas must be > 0!")
+
+    ### Combination of +/- values fails
+    sigmas1 <- runif(pp)
+    sigmas1[1] <- -1
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas1, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
+                 "sigmas must be > 0!")
+})
+
 test_that("Check input: lambda", {
 
     ### lambda is numeric
