@@ -35,10 +35,8 @@ NULL
 #' This implementation includes two options for the penalty: (1) MCP, and (2) L1 (or Lasso). This option
 #' is controlled by the \code{gamma} argument.
 #'
-#' @param data Data as \code{\link[sparsebnUtils]{sparsebnData}}. Must be numeric and contain no missing values.
-#' @param betas Initial guess for the algorithm. Represents the weighted adjacency matrix
-#'              of a DAG where the algorithm will begin searching for an optimal structure.
-#' @param lambdas (optional) Numeric vector containing a grid of lambda values (i.e. regularization
+#' @param data Data as \code{\link[sparsebnUtils]{sparsebnData}} object. Must be numeric and contain no missing values.
+#' @param lambdas Numeric vector containing a grid of lambda values (i.e. regularization
 #'                parameters) to use in the solution path. If missing, a default grid of values will be
 #'                used based on a decreasing log-scale  (see also \link{generate.lambdas}).
 #' @param lambdas.length Integer number of values to include in the solution path. If \code{lambdas}
@@ -48,10 +46,20 @@ NULL
 #' @param gamma Value of concavity parameter. If \code{gamma > 0}, then the MCP will be used
 #'              with \code{gamma} as the concavity parameter. If \code{gamma < 0}, then the L1 penalty
 #'              will be used and this value is otherwise ignored.
+#' @param whitelist A two-column matrix of edges that are guaranteed to be in each
+#'                  estimate (a "white list"). Each row in this matrix corresponds
+#'                  to an edge that is to be whitelisted. These edges can be
+#'                  specified by node name (as a \code{character} matrix), or by
+#'                  index (as a \code{numeric} matrix).
+#' @param blacklist A two-column matrix of edges that are guaranteed to be absent
+#'                  from each estimate (a "black list"). See argument
+#'                  "\code{whitelist}" above for more details.
 #' @param error.tol Error tolerance for the algorithm, used to test for convergence.
 #' @param max.iters Maximum number of iterations for each internal sweep.
 #' @param alpha Threshold parameter used to terminate the algorithm whenever the number of edges in the
 #'              current DAG estimate is \code{> alpha * ncol(data)}.
+#' @param betas Initial guess for the algorithm. Represents the weighted adjacency matrix
+#'              of a DAG where the algorithm will begin searching for an optimal structure.
 #' @param verbose \code{TRUE / FALSE} whether or not to print out progress and summary reports.
 #'
 #' @return A \code{\link[sparsebnUtils]{sparsebnPath}} object.
@@ -77,7 +85,6 @@ NULL
 #'
 #' @export
 ccdr.run <- function(data,
-                     betas,
                      lambdas = NULL,
                      lambdas.length = NULL,
                      whitelist = NULL,
@@ -86,6 +93,7 @@ ccdr.run <- function(data,
                      error.tol = 1e-4,
                      max.iters = NULL,
                      alpha = 10,
+                     betas,
                      verbose = FALSE
 ){
     ### Check data format
