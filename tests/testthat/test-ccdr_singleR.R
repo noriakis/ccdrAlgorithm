@@ -119,20 +119,21 @@ test_that("Check input: nj", {
 
     ### nj has non-integer
     nj1 <- nj.test
-
     nj1[1] <- pi
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = nj1, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
                  "Intervention times vector has non-integer")
-
+    nj1 <- nj.test
     nj1[1] <- NA
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = nj1, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
-                 "Intervention times vector has non-integer")
+                 "Intervention times vector cannot have missing or NULL")
 
     ### nj out of bound
+    nj1 <- nj.test
     nj1 <- rep(-1L, pp)
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = nj1, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
                  "Intervention times vector has out-of-range")
 
+    nj1 <- nj.test
     nj1 <- as.integer(rep(nn + 1, pp))
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, nj = nj1, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
                  "Intervention times vector has out-of-range")
