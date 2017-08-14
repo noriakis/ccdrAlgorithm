@@ -57,6 +57,7 @@ double ZERO_THRESH = 1e-12;
 std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,    // multiple arrays concatenated as a vector
                                                                             // each array contains the correlations between predictors by removing rows where each node is under intervention
                                         SparseBlockMatrix betas,            // initial guess of beta matrix
+                                        std::vector<double> sigmas,
                                         const std::vector<int>& nj,         // vector containing the number of times each node is free of intervention (to replace nn)
                                         const std::vector<int>& indexj,     // index vector to indicate the start position of the array for node j in 'cors'
                                         const std::vector<double>& aj,      // weight vector for penalty term p(beta_{ij})
@@ -70,6 +71,7 @@ std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,    // m
 SparseBlockMatrix singleCCDr(const std::vector<double>& cors,               // multiple arrays concatenated as a vector
                                                                             // each array contains the correlations between predictors by removing rows where each node is under intervention
                              SparseBlockMatrix betas,                       // initial guess of beta matrix
+                             std::vector<double> sigmas,
                              const std::vector<int>& nj,                    // vector containing the number of times each node is free of intervention (to replace nn)
                              const std::vector<int>& indexj,                // index vector to indicate the start position of the array for node j in 'cors'
                              const std::vector<double>& aj,                 // weight vector for penalty term p(beta_{ij})
@@ -179,6 +181,7 @@ bool checkCycleSparse(const int node,                                       // n
 //
 std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,
                                         SparseBlockMatrix betas,
+                                        std::vector<double> sigmas,
                                         const std::vector<int>& nj,
                                         const std::vector<int>& indexj,
                                         const std::vector<double>& aj,
@@ -213,7 +216,7 @@ std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,
 
         // To save memory, simply overwrite the same object (betas)
         // After each call to singleCCDr, we push_back the estimated object to grid_betas so there is no loss of data
-        betas = singleCCDr(cors, betas, nj, indexj, aj, lambda, weights, params, verbose);
+        betas = singleCCDr(cors, betas, sigmas, nj, indexj, aj, lambda, weights, params, verbose);
         grid_betas.push_back(betas);
 
         //--- VERBOSE ONLY ---//
@@ -259,6 +262,7 @@ std::vector<SparseBlockMatrix> gridCCDr(const std::vector<double>& cors,
 //
 SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
                              SparseBlockMatrix betas,
+                             std::vector<double> sigmas,
                              const std::vector<int>& nj,
                              const std::vector<int>& indexj,
                              const std::vector<double>& aj,
@@ -272,6 +276,17 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
         FILE_LOG(logDEBUG1) << "Number of nonzero entries: " << betas.activeSetSize();
     #endif
 
+    // check if sigmas will be updated
+    bool updateSigmasFlag = false;
+    if(sigmas[0] < 0){ // < 0 => flag for updating
+        updateSigmasFlag = true;
+    } else{
+        // set sigmas according to user input
+        for(unsigned int j = 0; j < betas.dim(); ++j){
+            betas.setSigma(j, sigmas[j]);
+        }
+    }
+
     //
     // Set parameters for algorithm
     //
@@ -284,10 +299,21 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
     unsigned int maxIters = params[2];
     double alpha = params[3];
 
+    // TODO: Implement randomization
+    // For now we just ignore this argument by setting it = false
+    bool randomize = false;
+
     //
     // Create some critical objects for the algorithm
     //
-    CCDrAlgorithm CCDR = CCDrAlgorithm(maxIters, eps, alpha, betas.dim());  // to keep track of the algorithm's progress
+    CCDrAlgorithm CCDR = CCDrAlgorithm(maxIters,
+                                       eps,
+                                       alpha,
+                                       betas.dim(),
+                                       randomize,
+                                       updateSigmasFlag,
+                                       LINF // use Linf norm by default (could also use L1)
+    );  // to keep track of the algorithm's progress
     // PenaltyFunction MCP = PenaltyFunction(gammaMCP);                        // to compute MCP function
 
     //
@@ -393,28 +419,32 @@ void concaveCDInit(const double lambda,
         FILE_LOG(logDEBUG4) << "Computing sigmas...";
     #endif
 
-    //
-    // Compute sigmas
-    //   See Section 4.2.2. of the computational paper for the details of this calculation
-    //
-    unsigned int pp = betas.dim(); // # of nodes; moved from below; save for easier access
-    for(unsigned int j = 0; j < pp; ++j){
+    // number of nodes
+    unsigned int pp = betas.dim();
 
-        double c = 0;
-        for(unsigned int l = 0; l < betas.rowsizes(j); ++l){
-            unsigned int row = betas.row(j, l);
+    if(alg.updateSigmas()){
+        //
+        // Compute sigmas
+        //   See Section 4.2.2. of the computational paper for the details of this calculation
+        //
+        for(unsigned int j = 0; j < pp; ++j){
 
-            if(j <= row){
-                c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
+            double c = 0;
+            for(unsigned int l = 0; l < betas.rowsizes(j); ++l){
+                unsigned int row = betas.row(j, l);
+
+                if(j <= row){
+                    c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
+                }
+                else{
+                    c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
+                }
             }
-            else{
-                c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
-            }
-        }
 
-        double s = 0.5 * (1.0 * c + sqrt(c * c + 4 * nj[j]));
-        betas.setSigma(j, s);
-    } // end for loop for sigmas
+            double s = 0.5 * (1.0 * c + sqrt(c * c + 4 * nj[j]));
+            betas.setSigma(j, s);
+        } // end for loop for sigmas
+    }
 
     #ifdef _DEBUG_ON_
         std::ostringstream sigma_out;
@@ -646,27 +676,31 @@ void concaveCD(const double lambda,
         FILE_LOG(logDEBUG4) << "Computing sigmas...";
     #endif
 
-    //
-    // Compute sigmas
-    //   See Section 4.2.2. for the details of this calculation
-    //
+    // number of nodes
     unsigned int pp = betas.dim();
-    for(unsigned int j = 0; j < pp; ++j){
-        double c = 0;
-        for(unsigned int l = 0; l < betas.rowsizes(j); ++l){
-            unsigned int row = betas.row(j, l);
 
-            if(j <= row){
-                c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
-            }
-            else{
-                c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
-            }
-        }
+    if(alg.updateSigmas()){
+        //
+        // Compute sigmas
+        //   See Section 4.2.2. for the details of this calculation
+        //
+        for(unsigned int j = 0; j < pp; ++j){
+            double c = 0;
+            for(unsigned int l = 0; l < betas.rowsizes(j); ++l){
+                unsigned int row = betas.row(j, l);
 
-        double s = 0.5 * (1.0 * c + sqrt(c * c + 4 * nj[j]));
-        betas.setSigma(j, s);
-    } // end for loop for sigmas
+                if(j <= row){
+                    c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
+                }
+                else{
+                    c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
+                }
+            }
+
+            double s = 0.5 * (1.0 * c + sqrt(c * c + 4 * nj[j]));
+            betas.setSigma(j, s);
+        } // end for loop for sigmas
+    }
 
     #ifdef _DEBUG_ON_
         std::ostringstream sigma_out;

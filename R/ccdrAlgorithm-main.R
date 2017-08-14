@@ -94,6 +94,7 @@ ccdr.run <- function(data,
                      max.iters = NULL,
                      alpha = 10,
                      betas,
+                     sigmas = NULL,
                      verbose = FALSE
 ){
     ### Check data format
@@ -108,6 +109,7 @@ ccdr.run <- function(data,
     ccdr_call(data = data_matrix,
               ivn = ivn_list,
               betas = betas,
+              sigmas = sigmas,
               lambdas = lambdas,
               lambdas.length = lambdas.length,
               whitelist = whitelist,
@@ -132,6 +134,7 @@ MAX_CCS_ARRAY_SIZE <- function() 10000
 ccdr_call <- function(data,
                       ivn = NULL,
                       betas,
+                      sigmas,
                       lambdas,
                       lambdas.length,
                       whitelist = NULL,
@@ -184,6 +187,11 @@ ccdr_call <- function(data,
     nj <- rep(0, pp)
     for(j in 1:pp) { ## include 0 here or not?
         nj[j] <- sum(!sapply(lapply(ivn, is.element, j), any)) ## optimize for sorted column?
+    }
+
+    ### Set default for sigmas (negative values => ignore initial value and update as usual)
+    if(is.null(sigmas)){
+        sigmas <- rep(-1., pp)
     }
 
     ### Use default values for lambda if not specified
@@ -273,6 +281,7 @@ ccdr_call <- function(data,
                       as.integer(nj),
                       as.integer(indexj),
                       betas,
+                      as.numeric(sigmas),
                       as.numeric(lambdas),
                       as.integer(weights),
                       as.numeric(gamma),
@@ -309,6 +318,7 @@ ccdr_gridR <- function(cors,
                        nj = NULL,
                        indexj = NULL,
                        betas,
+                       sigmas,
                        lambdas,
                        weights,
                        gamma,
@@ -341,6 +351,7 @@ ccdr_gridR <- function(cors,
                                       nj,
                                       indexj,
                                       betas,
+                                      sigmas,
                                       lambdas[i],
                                       weights,
                                       gamma = gamma,
@@ -380,6 +391,7 @@ ccdr_singleR <- function(cors,
                          nj = NULL,
                          indexj = NULL,
                          betas,
+                         sigmas,
                          lambda,
                          weights,
                          gamma,
@@ -389,31 +401,36 @@ ccdr_singleR <- function(cors,
                          verbose = FALSE
 ){
 
-    if(is.null(indexj)) indexj <- rep(0L, pp + 1)
+    ### Check dimension parameters
+    if(!is.integer(pp) || !is.integer(nn)) stop("Both pp and nn must be integers!")
+    if(pp <= 0 || nn <= 0) stop("Both pp and nn must be positive!")
+
+    ### These variables, if NULL, need to be initialized before checking anything
+    if(is.null(indexj)) indexj <- rep(0L, pp + 1) # initialize indexj
+    if(is.null(nj)) nj <- as.integer(rep(nn, pp)) # initialize nj
+
     ### Check indexj
     if(!is.vector(indexj)) stop("Index vector for cors is not a vector.")
     if(length(indexj) > pp + 1) stop(sprintf("Index vector for cors is too long, expected to be no greater than %d, the number of columns of data.", pp))
     if(!is.integer(indexj)) stop("Index vector for cors has non-integer component(s).")
+    if(any(is.na(indexj) | is.null(indexj))) stop("Index vector cannot have missing or NULL values.")
     if(any(indexj < 0 | indexj > pp + 1)) stop(sprintf("Index vector for cors has out-of-range component(s), expected to be between 0 and %d.", pp))
 
-    if(is.null(nj)) nj <- as.integer(rep(nn, pp))
     ### Check nj
     if(!is.vector(nj)) stop("Intervention times vector is not a vector.")
-    if(length(nj) != pp) stop(sprintf("Length of intervention times vector is %d, expected %d% to match the number of columns of data", length(nj), pp))
+    if(length(nj) != pp) stop(sprintf("Length of intervention times vector is %d, expected to match the number of columns of data = %d", length(nj), pp))
     if(!is.integer(nj)) stop("Intervention times vector has non-integer component(s).")
+    if(any(is.na(nj) | is.null(nj))) stop("Intervention times vector cannot have missing or NULL values.")
     if(any(nj < 0 | nj > nn)) stop(sprintf("Intervention times vector has out-of-range component(s), expected to be between 0 and %d.", nn))
+
+    ### Check cors
+    ### This check must come after the checks for indexj, nj since these values are used to check cors
+    if(!is.numeric(cors)) stop("cors must be a numeric vector!")
+    if(length(cors) != length(unique(indexj))*pp*(pp+1)/2) stop(paste0("cors has incorrect length: Expected length = ", length(unique(indexj))*pp*(pp+1)/2, " input length = ", length(cors)))
 
     ### add a weight a_j to penalty on beta_{ij}
     ### since now with intervention data, beta_{ij} only appears n_j times out of total nn samples
     aj <- nj / nn
-
-    ### Check cors
-    if(!is.numeric(cors)) stop("cors must be a numeric vector!")
-    if(length(cors) != length(unique(indexj))*pp*(pp+1)/2) stop(paste0("cors has incorrect length: Expected length = ", length(unique(indexj))*pp*(pp+1)/2, " input length = ", length(cors)))
-
-    ### Check dimension parameters
-    if(!is.integer(pp) || !is.integer(nn)) stop("Both pp and nn must be integers!")
-    if(pp <= 0 || nn <= 0) stop("Both pp and nn must be positive!")
 
     ### Check betas
     if(sparsebnUtils::check_if_matrix(betas)){ # if the input is a matrix, convert to SBM object
@@ -423,12 +440,22 @@ ccdr_singleR <- function(cors,
         stop("Incompatible data passed for betas parameter: Should be either matrix or list in SparseBlockMatrixR format.")
     }
 
+    ### Check sigmas
+    if(!is.numeric(sigmas)) stop("sigmas must be numeric!")
+    if(length(sigmas) != pp) stop(sprintf("sigmas must have length = %d!", pp))
+    if(any(sigmas < 0)){
+        # -1 is a sentinel value for updating sigmas via the CD updates
+        if(any(sigmas != -1.)){
+            stop("sigmas must be > 0!")
+        }
+    }
+
     ### Check lambda
     if(!is.numeric(lambda)) stop("lambda must be numeric!")
     if(lambda < 0) stop("lambda must be >= 0!")
 
     ### Check weights
-    if(length(weights) != pp*pp) stop("weights must have length p^2!")
+    if(length(weights) != pp*pp) stop(sprintf("weights must have length p^2 = %d!", pp*pp))
     if(!is.numeric(weights)) stop("weights must be numeric!")
     if(weights < -1 || weights > 1) stop("weights out of bounds!")
 
@@ -453,6 +480,7 @@ ccdr_singleR <- function(cors,
     t1.ccdr <- proc.time()[3]
     ccdr.out <- singleCCDr(cors,
                            betas,
+                           sigmas,
                            nj,
                            indexj,
                            aj,
