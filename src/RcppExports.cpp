@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // gridCCDr
-List gridCCDr(NumericVector cors, List init_betas, IntegerVector nj, IntegerVector indexj, NumericVector aj, NumericVector lambdas, NumericVector params, int verbose);
-RcppExport SEXP _ccdrAlgorithm_gridCCDr(SEXP corsSEXP, SEXP init_betasSEXP, SEXP njSEXP, SEXP indexjSEXP, SEXP ajSEXP, SEXP lambdasSEXP, SEXP paramsSEXP, SEXP verboseSEXP) {
+List gridCCDr(NumericVector cors, List init_betas, IntegerVector nj, IntegerVector indexj, NumericVector aj, NumericVector lambdas, IntegerVector weights, NumericVector params, int verbose);
+RcppExport SEXP _ccdrAlgorithm_gridCCDr(SEXP corsSEXP, SEXP init_betasSEXP, SEXP njSEXP, SEXP indexjSEXP, SEXP ajSEXP, SEXP lambdasSEXP, SEXP weightsSEXP, SEXP paramsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -17,15 +17,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerVector >::type indexj(indexjSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type aj(ajSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type lambdas(lambdasSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type params(paramsSEXP);
     Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(gridCCDr(cors, init_betas, nj, indexj, aj, lambdas, params, verbose));
+    rcpp_result_gen = Rcpp::wrap(gridCCDr(cors, init_betas, nj, indexj, aj, lambdas, weights, params, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 // singleCCDr
-List singleCCDr(NumericVector cors, List init_betas, IntegerVector nj, IntegerVector indexj, NumericVector aj, double lambda, NumericVector params, int verbose);
-RcppExport SEXP _ccdrAlgorithm_singleCCDr(SEXP corsSEXP, SEXP init_betasSEXP, SEXP njSEXP, SEXP indexjSEXP, SEXP ajSEXP, SEXP lambdaSEXP, SEXP paramsSEXP, SEXP verboseSEXP) {
+List singleCCDr(NumericVector cors, List init_betas, IntegerVector nj, IntegerVector indexj, NumericVector aj, double lambda, IntegerVector weights, NumericVector params, int verbose);
+RcppExport SEXP _ccdrAlgorithm_singleCCDr(SEXP corsSEXP, SEXP init_betasSEXP, SEXP njSEXP, SEXP indexjSEXP, SEXP ajSEXP, SEXP lambdaSEXP, SEXP weightsSEXP, SEXP paramsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -35,16 +36,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerVector >::type indexj(indexjSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type aj(ajSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type params(paramsSEXP);
     Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(singleCCDr(cors, init_betas, nj, indexj, aj, lambda, params, verbose));
+    rcpp_result_gen = Rcpp::wrap(singleCCDr(cors, init_betas, nj, indexj, aj, lambda, weights, params, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_ccdrAlgorithm_gridCCDr", (DL_FUNC) &_ccdrAlgorithm_gridCCDr, 8},
-    {"_ccdrAlgorithm_singleCCDr", (DL_FUNC) &_ccdrAlgorithm_singleCCDr, 8},
+    {"_ccdrAlgorithm_gridCCDr", (DL_FUNC) &_ccdrAlgorithm_gridCCDr, 9},
+    {"_ccdrAlgorithm_singleCCDr", (DL_FUNC) &_ccdrAlgorithm_singleCCDr, 9},
     {NULL, NULL, 0}
 };
 

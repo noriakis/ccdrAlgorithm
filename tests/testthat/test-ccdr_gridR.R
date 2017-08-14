@@ -9,6 +9,7 @@ indexj.test <- rep(0L, pp + 1)
 nj.test <- as.integer(rep(nn, pp))
 cors.length <- pp*(pp+1)/2
 lambda.test <- pi
+weights.test <- rep(1, pp*pp)
 gamma.test <- 2.0
 eps.test <- 0.1
 maxIters.test <- 1000L
@@ -28,5 +29,5 @@ alpha.test <- 10
 #                        verbose)
 
 test_that("ccdr_gridR runs as expected", {
-    expect_error(ccdr_gridR(cors = as.numeric(cors.test), pp = pp, nn = nn, betas = betas.test, lambdas = lambda.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test, verbose = FALSE), NA)
+    expect_error(ccdr_gridR(cors = as.numeric(cors.test), pp = pp, nn = nn, betas = betas.test, lambdas = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test, verbose = FALSE), NA)
 })

@@ -4,16 +4,14 @@
 \alias{ccdr.run}
 \title{Main CCDr Algorithm}
 \usage{
-ccdr.run(data, betas, lambdas = NULL, lambdas.length = NULL, gamma = 2,
-  error.tol = 1e-04, max.iters = NULL, alpha = 10, verbose = FALSE)
+ccdr.run(data, lambdas = NULL, lambdas.length = NULL, whitelist = NULL,
+  blacklist = NULL, gamma = 2, error.tol = 1e-04, max.iters = NULL,
+  alpha = 10, betas, verbose = FALSE)
 }
 \arguments{
-\item{data}{Data as \code{\link[sparsebnUtils]{sparsebnData}}. Must be numeric and contain no missing values.}
+\item{data}{Data as \code{\link[sparsebnUtils]{sparsebnData}} object. Must be numeric and contain no missing values.}
 
-\item{betas}{Initial guess for the algorithm. Represents the weighted adjacency matrix
-of a DAG where the algorithm will begin searching for an optimal structure.}
-
-\item{lambdas}{(optional) Numeric vector containing a grid of lambda values (i.e. regularization
+\item{lambdas}{Numeric vector containing a grid of lambda values (i.e. regularization
 parameters) to use in the solution path. If missing, a default grid of values will be
 used based on a decreasing log-scale  (see also \link{generate.lambdas}).}
 
@@ -21,6 +19,16 @@ used based on a decreasing log-scale  (see also \link{generate.lambdas}).}
 has also been specified, this value will be ignored. Note also that the final
 solution path may contain fewer estimates (see
 \code{alpha}).}
+
+\item{whitelist}{A two-column matrix of edges that are guaranteed to be in each
+estimate (a "white list"). Each row in this matrix corresponds
+to an edge that is to be whitelisted. These edges can be
+specified by node name (as a \code{character} matrix), or by
+index (as a \code{numeric} matrix).}
+
+\item{blacklist}{A two-column matrix of edges that are guaranteed to be absent
+from each estimate (a "black list"). See argument
+"\code{whitelist}" above for more details.}
 
 \item{gamma}{Value of concavity parameter. If \code{gamma > 0}, then the MCP will be used
 with \code{gamma} as the concavity parameter. If \code{gamma < 0}, then the L1 penalty
@@ -32,6 +40,9 @@ will be used and this value is otherwise ignored.}
 
 \item{alpha}{Threshold parameter used to terminate the algorithm whenever the number of edges in the
 current DAG estimate is \code{> alpha * ncol(data)}.}
+
+\item{betas}{Initial guess for the algorithm. Represents the weighted adjacency matrix
+of a DAG where the algorithm will begin searching for an optimal structure.}
 
 \item{verbose}{\code{TRUE / FALSE} whether or not to print out progress and summary reports.}
 }
