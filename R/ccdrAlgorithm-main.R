@@ -60,6 +60,11 @@ NULL
 #'              current DAG estimate is \code{> alpha * ncol(data)}.
 #' @param betas Initial guess for the algorithm. Represents the weighted adjacency matrix
 #'              of a DAG where the algorithm will begin searching for an optimal structure.
+#' @param sigmas Numeric vector of known values of conditional variances for each node in the network. If this is
+#'               set by the user, these parameters will not be computed and the input will
+#'               be used as the "true" values of the variances in the algorithm. Note that setting
+#'               this to be all ones (i.e. \code{sigmas[j] = 1} for all \code{j}) is
+#'               equivalent to using the least-squares loss.
 #' @param verbose \code{TRUE / FALSE} whether or not to print out progress and summary reports.
 #'
 #' @return A \code{\link[sparsebnUtils]{sparsebnPath}} object.
