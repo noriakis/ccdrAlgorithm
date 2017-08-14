@@ -153,7 +153,8 @@ test_that("Check input: betas", {
 test_that("Check input: lambda", {
 
     ### lambda is numeric
-    ### TODO
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = "a", weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
+                 "lambda must be numeric")
 
     ### lambda is negative
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = -lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
@@ -163,27 +164,32 @@ test_that("Check input: lambda", {
 test_that("Check input: weights", {
 
     ### weights is length pp*pp
-    ### TODO
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = c(1, weights.test), gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
+                 "weights must have length p")
 
     ### weights is numeric
-    ### TODO
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = rep("a", pp*pp), gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
+                 "weights must be numeric")
 
     ### weight > 1
     weights.test <- rep(1, pp*pp)
     weights.test[1] <- 2
-    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = -5, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test), "weights out of bounds")
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
+                 "weights out of bounds")
 
     ### weight < 1
     weights.test <- rep(1, pp*pp)
     weights.test[1] <- -2
-    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = -1, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),  "weights out of bounds")
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
+                 "weights out of bounds")
 
 })
 
 test_that("Check input: gamma", {
 
     ### gamma is numeric
-    ### TODO
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = "a", eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
+                 "gamma must be numeric")
 
     ### gamma is negative
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = -5, eps = eps.test, maxIters = maxIters.test, alpha = alpha.test),
@@ -198,7 +204,8 @@ test_that("Check input: gamma", {
 test_that("Check input: eps", {
 
     ### eos is numeric
-    ### TODO
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = "a", maxIters = maxIters.test, alpha = alpha.test),
+                 "eps must be numeric")
 
     ### eps is negative
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = -5, maxIters = maxIters.test, alpha = alpha.test),
@@ -212,7 +219,8 @@ test_that("Check input: eps", {
 test_that("Check input: maxIters", {
 
     ### maxIters is integer
-    ### TODO
+    expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = 5, alpha = alpha.test),
+                 "maxIters must be an integer")
 
     ### maxIters is negative
     expect_error(ccdr_singleR(cors = cors.test, pp = pp, nn = nn, betas = betas.test, sigmas = sigmas.test, lambda = lambda.test, weights = weights.test, gamma = gamma.test, eps = eps.test, maxIters = -5L, alpha = alpha.test),
