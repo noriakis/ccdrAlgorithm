@@ -38,6 +38,27 @@
 #'                                              params = gr.params,
 #'                                              ivn = ivn)
 #'
+#' ### Use pre-specified values for interventions
+#' ###  In this toy example, we assume that all intervened nodes were fixed to
+#' ###  to the value 1, although this can be any number of course.
+#' ivn.vals <- lapply(ivn, function(x) sapply(x, function(x) 1)) # replace all entries with a 1
+#' data.ivn <- ccdrAlgorithm::generate_mvn_data(graph = gr,
+#'                                              n = 100,
+#'                                              params = gr.params,
+#'                                              ivn = ivn.vals,
+#'                                              ivn.rand = FALSE)
+#'
+#' ### If ivn.rand = FALSE, you must specify values
+#' ###  The code below will fail because ivn does not contain any values
+#' ### (compare to ivn.vals above).
+#' \dontrun{
+#' data.ivn <- ccdrAlgorithm::generate_mvn_data(graph = gr,
+#'                                              n = 100,
+#'                                              params = gr.params,
+#'                                              ivn = ivn,
+#'                                              ivn.rand = FALSE)
+#' }
+#'
 #' @export
 generate_mvn_data <- function(graph, params, n = 1, ivn = NULL, ivn.rand = TRUE){
     ### This function requires the 'igraph' package to be installed
@@ -61,6 +82,20 @@ generate_mvn_data <- function(graph, params, n = 1, ivn = NULL, ivn.rand = TRUE)
         if(ivn.rand){
             ivn <- lapply(ivn, function(x) sapply(x, function(x) rnorm(n = 1, mean = 0, sd = 1))) # assume standard normal
             # ivn <- lapply(ivn, function(x) sapply(x, function(x) 1)) # debugging
+        } else{
+            check_vals <- sparsebnUtils::check_list_class(ivn, c("NULL", "numeric")) # check to make sure list components are either numeric (ivn vals) or NULL (obs sample)
+            check_names <- sapply(ivn, function(x) is.null(names(x))) # return TRUE if component has no names attribute (i.e. it is NULL)
+
+            if(!check_vals || all(check_names)){
+                err_msg <- paste0("ivn.rand set to FALSE with invalid input for ivn: ",
+                                  "If ivn.rand = FALSE, you must pass explicit values ",
+                                  "for each intervention used in your experiments. ",
+                                  "Please check that the ivn argument is a list whose ",
+                                  "arguments are named numeric vectors whose names ",
+                                  "correspond to the node under intervention or NULL ",
+                                  "if the corresponding row is observational.")
+                stop(err_msg)
+            }
         }
     }
 
