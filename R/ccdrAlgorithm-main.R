@@ -110,6 +110,15 @@ ccdr.run <- function(data,
     data_matrix <- data$data
     ivn_list <- data$ivn
 
+    ### If ivn_list contains character names, convert to indices
+    if("character" %in% sparsebnUtils::list_classes(ivn_list)){
+        ivn_list <- lapply(ivn_list, function(x){
+            idx <- match(x, names(data_matrix))
+            if(length(idx) == 0) NULL # return NULL if no match (=> observational)
+            else idx
+        })
+    }
+
     ### Call the CCDr algorithm
     ccdr_call(data = data_matrix,
               ivn = ivn_list,
