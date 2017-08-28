@@ -43,9 +43,6 @@ NULL
 #'                       has also been specified, this value will be ignored. Note also that the final
 #'                       solution path may contain fewer estimates (see
 #'                       \code{alpha}).
-#' @param gamma Value of concavity parameter. If \code{gamma > 0}, then the MCP will be used
-#'              with \code{gamma} as the concavity parameter. If \code{gamma < 0}, then the L1 penalty
-#'              will be used and this value is otherwise ignored.
 #' @param whitelist A two-column matrix of edges that are guaranteed to be in each
 #'                  estimate (a "white list"). Each row in this matrix corresponds
 #'                  to an edge that is to be whitelisted. These edges can be
@@ -54,6 +51,9 @@ NULL
 #' @param blacklist A two-column matrix of edges that are guaranteed to be absent
 #'                  from each estimate (a "black list"). See argument
 #'                  "\code{whitelist}" above for more details.
+#' @param gamma Value of concavity parameter. If \code{gamma > 0}, then the MCP will be used
+#'              with \code{gamma} as the concavity parameter. If \code{gamma < 0}, then the L1 penalty
+#'              will be used and this value is otherwise ignored.
 #' @param error.tol Error tolerance for the algorithm, used to test for convergence.
 #' @param max.iters Maximum number of iterations for each internal sweep.
 #' @param alpha Threshold parameter used to terminate the algorithm whenever the number of edges in the
