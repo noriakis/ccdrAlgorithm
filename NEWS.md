@@ -1,3 +1,10 @@
+# ccdrAlgorithm 0.0.4
+
+## Features
+
+* `ccdr.run` now supports black lists and white lists
+* Users can now use prior knowledge of variances via the new `sigmas` argument to `ccdr.run`
+
 # ccdrAlgorithm 0.0.3
 
 ## Features
