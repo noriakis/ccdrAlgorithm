@@ -2,8 +2,12 @@
 
 ## Features
 
-* `ccdr.run` now supports black lists and white lists
-* Users can now use prior knowledge of variances via the new `sigmas` argument to `ccdr.run`
+* `ccdr.run` now supports black lists and white lists (sparsebn #6)
+* Users can now use prior knowledge of variances via the new `sigmas` argument to `ccdr.run` (sparsebn #12)
+
+## Bug fixes
+
+* `ivn.rand = FALSE` not handled correctly (#4)
 
 # ccdrAlgorithm 0.0.3
 
