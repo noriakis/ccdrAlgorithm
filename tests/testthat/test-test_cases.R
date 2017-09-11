@@ -19,6 +19,8 @@ test_that("If cors = 0 and betas = 0, ouput should be all zeroes (low-dim)", {
     final <- ccdr_gridR(cors = cors,
                         pp = as.integer(pp), nn = as.integer(nn),
                         betas = matrix(0, nrow = pp, ncol = pp),
+                        sigmas = rep(-1, pp),
+                        weights = rep(1, pp*pp),
                         alpha = 10, gamma = 2, eps = 1e-4, maxIters = 10L, lambdas = 10:1, verbose = FALSE)
 
     check_zeroes <- check_vars <- TRUE
@@ -43,6 +45,8 @@ test_that("If cors = 0 and betas = 0, ouput should be all zeroes (high-dim)", {
     final <- ccdr_gridR(cors = cors,
                         pp = as.integer(pp), nn = as.integer(nn),
                         betas = matrix(0, nrow = pp, ncol = pp),
+                        sigmas = rep(-1, pp),
+                        weights = rep(1, pp*pp),
                         alpha = 10, gamma = 2, eps = 1e-4, maxIters = 10L, lambdas = 10:1, verbose = FALSE)
 
     check_zeroes <- check_vars <- TRUE

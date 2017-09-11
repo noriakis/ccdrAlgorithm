@@ -35,16 +35,22 @@ NULL
 #' This implementation includes two options for the penalty: (1) MCP, and (2) L1 (or Lasso). This option
 #' is controlled by the \code{gamma} argument.
 #'
-#' @param data Data as \code{\link[sparsebnUtils]{sparsebnData}}. Must be numeric and contain no missing values.
-#' @param betas Initial guess for the algorithm. Represents the weighted adjacency matrix
-#'              of a DAG where the algorithm will begin searching for an optimal structure.
-#' @param lambdas (optional) Numeric vector containing a grid of lambda values (i.e. regularization
+#' @param data Data as \code{\link[sparsebnUtils]{sparsebnData}} object. Must be numeric and contain no missing values.
+#' @param lambdas Numeric vector containing a grid of lambda values (i.e. regularization
 #'                parameters) to use in the solution path. If missing, a default grid of values will be
 #'                used based on a decreasing log-scale  (see also \link{generate.lambdas}).
 #' @param lambdas.length Integer number of values to include in the solution path. If \code{lambdas}
 #'                       has also been specified, this value will be ignored. Note also that the final
 #'                       solution path may contain fewer estimates (see
 #'                       \code{alpha}).
+#' @param whitelist A two-column matrix of edges that are guaranteed to be in each
+#'                  estimate (a "white list"). Each row in this matrix corresponds
+#'                  to an edge that is to be whitelisted. These edges can be
+#'                  specified by node name (as a \code{character} matrix), or by
+#'                  index (as a \code{numeric} matrix).
+#' @param blacklist A two-column matrix of edges that are guaranteed to be absent
+#'                  from each estimate (a "black list"). See argument
+#'                  "\code{whitelist}" above for more details.
 #' @param gamma Value of concavity parameter. If \code{gamma > 0}, then the MCP will be used
 #'              with \code{gamma} as the concavity parameter. If \code{gamma < 0}, then the L1 penalty
 #'              will be used and this value is otherwise ignored.
@@ -52,6 +58,13 @@ NULL
 #' @param max.iters Maximum number of iterations for each internal sweep.
 #' @param alpha Threshold parameter used to terminate the algorithm whenever the number of edges in the
 #'              current DAG estimate is \code{> alpha * ncol(data)}.
+#' @param betas Initial guess for the algorithm. Represents the weighted adjacency matrix
+#'              of a DAG where the algorithm will begin searching for an optimal structure.
+#' @param sigmas Numeric vector of known values of conditional variances for each node in the network. If this is
+#'               set by the user, these parameters will not be computed and the input will
+#'               be used as the "true" values of the variances in the algorithm. Note that setting
+#'               this to be all ones (i.e. \code{sigmas[j] = 1} for all \code{j}) is
+#'               equivalent to using the least-squares loss.
 #' @param verbose \code{TRUE / FALSE} whether or not to print out progress and summary reports.
 #'
 #' @return A \code{\link[sparsebnUtils]{sparsebnPath}} object.
@@ -77,13 +90,16 @@ NULL
 #'
 #' @export
 ccdr.run <- function(data,
-                     betas,
                      lambdas = NULL,
                      lambdas.length = NULL,
+                     whitelist = NULL,
+                     blacklist = NULL,
                      gamma = 2.0,
                      error.tol = 1e-4,
                      max.iters = NULL,
                      alpha = 10,
+                     betas,
+                     sigmas = NULL,
                      verbose = FALSE
 ){
     ### Check data format
@@ -94,12 +110,24 @@ ccdr.run <- function(data,
     data_matrix <- data$data
     ivn_list <- data$ivn
 
+    ### If ivn_list contains character names, convert to indices
+    if("character" %in% sparsebnUtils::list_classes(ivn_list)){
+        ivn_list <- lapply(ivn_list, function(x){
+            idx <- match(x, names(data_matrix))
+            if(length(idx) == 0) NULL # return NULL if no match (=> observational)
+            else idx
+        })
+    }
+
     ### Call the CCDr algorithm
     ccdr_call(data = data_matrix,
               ivn = ivn_list,
               betas = betas,
+              sigmas = sigmas,
               lambdas = lambdas,
               lambdas.length = lambdas.length,
+              whitelist = whitelist,
+              blacklist = blacklist,
               gamma = gamma,
               error.tol = error.tol,
               rlam = NULL,
@@ -120,8 +148,11 @@ MAX_CCS_ARRAY_SIZE <- function() 10000
 ccdr_call <- function(data,
                       ivn = NULL,
                       betas,
+                      sigmas,
                       lambdas,
                       lambdas.length,
+                      whitelist = NULL,
+                      blacklist = NULL,
                       gamma,
                       error.tol,
                       rlam,
@@ -129,6 +160,7 @@ ccdr_call <- function(data,
                       alpha,
                       verbose = FALSE
 ){
+    node_names <- names(data)
 #     ### Allow users to input a data.frame, but kindly warn them about doing this
 #     if(is.data.frame(data)){
 #         warning(sparsebnUtils::alg_input_data_frame())
@@ -169,6 +201,11 @@ ccdr_call <- function(data,
     nj <- rep(0, pp)
     for(j in 1:pp) { ## include 0 here or not?
         nj[j] <- sum(!sapply(lapply(ivn, is.element, j), any)) ## optimize for sorted column?
+    }
+
+    ### Set default for sigmas (negative values => ignore initial value and update as usual)
+    if(is.null(sigmas)){
+        sigmas <- rep(-1., pp)
     }
 
     ### Use default values for lambda if not specified
@@ -227,6 +264,23 @@ ccdr_call <- function(data,
         max.iters <- sparsebnUtils::default_max_iters(pp)
     }
 
+    ### White/black lists
+    # Be careful about handling various NULL cases
+    if(!is.null(whitelist)) whitelist <- bwlist_check(whitelist, node_names)
+    if(!is.null(blacklist)) blacklist <- bwlist_check(blacklist, node_names)
+
+    if(!is.null(whitelist) && !is.null(blacklist)){
+        if(length(intersect(whitelist, blacklist)) > 0){
+            badinput <- vapply(intersect(whitelist, blacklist), function(x) sprintf("\t[%s]\n", paste(x, collapse = ",")), FUN.VALUE = "vector")
+            badinput <- paste(badinput, collapse = "")
+            msg <- sprintf("Duplicate entries found in blacklist and whitelist: \n%s", badinput)
+            stop(msg)
+        }
+    }
+
+    weights <- bwlist_to_weights(blacklist, whitelist, nnode = pp)
+
+    ### Pre-process correlation data
     t1.cor <- proc.time()[3]
     #     cors <- cor(data)
     #     cors <- cors[upper.tri(cors, diag = TRUE)]
@@ -241,7 +295,9 @@ ccdr_call <- function(data,
                       as.integer(nj),
                       as.integer(indexj),
                       betas,
+                      as.numeric(sigmas),
                       as.numeric(lambdas),
+                      as.integer(weights),
                       as.numeric(gamma),
                       as.numeric(error.tol),
                       as.integer(max.iters),
@@ -260,7 +316,7 @@ ccdr_call <- function(data,
         names(fit[[k]]$edges) <- names(data)
 
         ### Add node names to output
-        fit[[k]] <- append(fit[[k]], list(names(data)), after = 1) # insert node names into second slot
+        fit[[k]] <- append(fit[[k]], list(node_names), after = 1) # insert node names into second slot
         names(fit[[k]])[2] <- "nodes"
     }
 
@@ -276,7 +332,9 @@ ccdr_gridR <- function(cors,
                        nj = NULL,
                        indexj = NULL,
                        betas,
+                       sigmas,
                        lambdas,
+                       weights,
                        gamma,
                        eps,
                        maxIters,
@@ -307,7 +365,9 @@ ccdr_gridR <- function(cors,
                                       nj,
                                       indexj,
                                       betas,
+                                      sigmas,
                                       lambdas[i],
+                                      weights,
                                       gamma = gamma,
                                       eps = eps,
                                       maxIters = maxIters,
@@ -345,7 +405,9 @@ ccdr_singleR <- function(cors,
                          nj = NULL,
                          indexj = NULL,
                          betas,
+                         sigmas,
                          lambda,
+                         weights,
                          gamma,
                          eps,
                          maxIters,
@@ -353,31 +415,36 @@ ccdr_singleR <- function(cors,
                          verbose = FALSE
 ){
 
-    if(is.null(indexj)) indexj <- rep(0L, pp + 1)
+    ### Check dimension parameters
+    if(!is.integer(pp) || !is.integer(nn)) stop("Both pp and nn must be integers!")
+    if(pp <= 0 || nn <= 0) stop("Both pp and nn must be positive!")
+
+    ### These variables, if NULL, need to be initialized before checking anything
+    if(is.null(indexj)) indexj <- rep(0L, pp + 1) # initialize indexj
+    if(is.null(nj)) nj <- as.integer(rep(nn, pp)) # initialize nj
+
     ### Check indexj
     if(!is.vector(indexj)) stop("Index vector for cors is not a vector.")
     if(length(indexj) > pp + 1) stop(sprintf("Index vector for cors is too long, expected to be no greater than %d, the number of columns of data.", pp))
     if(!is.integer(indexj)) stop("Index vector for cors has non-integer component(s).")
+    if(any(is.na(indexj) | is.null(indexj))) stop("Index vector cannot have missing or NULL values.")
     if(any(indexj < 0 | indexj > pp + 1)) stop(sprintf("Index vector for cors has out-of-range component(s), expected to be between 0 and %d.", pp))
 
-    if(is.null(nj)) nj <- as.integer(rep(nn, pp))
     ### Check nj
     if(!is.vector(nj)) stop("Intervention times vector is not a vector.")
-    if(length(nj) != pp) stop(sprintf("Length of intervention times vector is %d, expected %d% to match the number of columns of data", length(nj), pp))
+    if(length(nj) != pp) stop(sprintf("Length of intervention times vector is %d, expected to match the number of columns of data = %d", length(nj), pp))
     if(!is.integer(nj)) stop("Intervention times vector has non-integer component(s).")
+    if(any(is.na(nj) | is.null(nj))) stop("Intervention times vector cannot have missing or NULL values.")
     if(any(nj < 0 | nj > nn)) stop(sprintf("Intervention times vector has out-of-range component(s), expected to be between 0 and %d.", nn))
+
+    ### Check cors
+    ### This check must come after the checks for indexj, nj since these values are used to check cors
+    if(!is.numeric(cors)) stop("cors must be a numeric vector!")
+    if(length(cors) != length(unique(indexj))*pp*(pp+1)/2) stop(paste0("cors has incorrect length: Expected length = ", length(unique(indexj))*pp*(pp+1)/2, " input length = ", length(cors)))
 
     ### add a weight a_j to penalty on beta_{ij}
     ### since now with intervention data, beta_{ij} only appears n_j times out of total nn samples
     aj <- nj / nn
-
-    ### Check cors
-    if(!is.numeric(cors)) stop("cors must be a numeric vector!")
-    if(length(cors) != length(unique(indexj))*pp*(pp+1)/2) stop(paste0("cors has incorrect length: Expected length = ", length(unique(indexj))*pp*(pp+1)/2, " input length = ", length(cors)))
-
-    ### Check dimension parameters
-    if(!is.integer(pp) || !is.integer(nn)) stop("Both pp and nn must be integers!")
-    if(pp <= 0 || nn <= 0) stop("Both pp and nn must be positive!")
 
     ### Check betas
     if(sparsebnUtils::check_if_matrix(betas)){ # if the input is a matrix, convert to SBM object
@@ -387,9 +454,24 @@ ccdr_singleR <- function(cors,
         stop("Incompatible data passed for betas parameter: Should be either matrix or list in SparseBlockMatrixR format.")
     }
 
+    ### Check sigmas
+    if(!is.numeric(sigmas)) stop("sigmas must be numeric!")
+    if(length(sigmas) != pp) stop(sprintf("sigmas must have length = %d!", pp))
+    if(any(sigmas < 0)){
+        # -1 is a sentinel value for updating sigmas via the CD updates
+        if(any(sigmas != -1.)){
+            stop("sigmas must be > 0!")
+        }
+    }
+
     ### Check lambda
     if(!is.numeric(lambda)) stop("lambda must be numeric!")
     if(lambda < 0) stop("lambda must be >= 0!")
+
+    ### Check weights
+    if(length(weights) != pp*pp) stop(sprintf("weights must have length p^2 = %d!", pp*pp))
+    if(!is.numeric(weights)) stop("weights must be numeric!")
+    if(weights < -1 || weights > 1) stop("weights out of bounds!")
 
     ### Check gamma
     if(!is.numeric(gamma)) stop("gamma must be numeric!")
@@ -412,10 +494,12 @@ ccdr_singleR <- function(cors,
     t1.ccdr <- proc.time()[3]
     ccdr.out <- singleCCDr(cors,
                            betas,
+                           sigmas,
                            nj,
                            indexj,
                            aj,
                            lambda,
+                           weights,
                            c(gamma, eps, maxIters, alpha),
                            verbose = verbose)
     t2.ccdr <- proc.time()[3]

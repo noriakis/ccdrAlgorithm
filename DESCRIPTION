@@ -1,7 +1,7 @@
 Package: ccdrAlgorithm
 Title: CCDr Algorithm for Learning Sparse Gaussian Bayesian Networks
-Version: 0.0.3
-Date: 2017-03-09
+Version: 0.0.4
+Date: 2017-09-09
 Authors@R: c(
     person("Bryon", "Aragam", email = "sparsebn@gmail.com", role = c("aut", "cre")),
     person("Dacheng", "Zhang", role = c("aut"))
@@ -11,7 +11,7 @@ Description: Implementation of the CCDr (Concave penalized Coordinate Descent wi
 Depends:
     R (>= 3.2.3)
 Imports:
-    sparsebnUtils (>= 0.0.4),
+    sparsebnUtils (>= 0.0.5),
     Rcpp (>= 0.11.0),
     stats,
     utils

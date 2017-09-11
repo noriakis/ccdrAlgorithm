@@ -43,4 +43,25 @@ data.ivn <- ccdrAlgorithm::generate_mvn_data(graph = gr,
                                              params = gr.params,
                                              ivn = ivn)
 
+### Use pre-specified values for interventions
+###  In this toy example, we assume that all intervened nodes were fixed to
+###  to the value 1, although this can be any number of course.
+ivn.vals <- lapply(ivn, function(x) sapply(x, function(x) 1)) # replace all entries with a 1
+data.ivn <- ccdrAlgorithm::generate_mvn_data(graph = gr,
+                                             n = 100,
+                                             params = gr.params,
+                                             ivn = ivn.vals,
+                                             ivn.rand = FALSE)
+
+### If ivn.rand = FALSE, you must specify values
+###  The code below will fail because ivn does not contain any values
+### (compare to ivn.vals above).
+\dontrun{
+data.ivn <- ccdrAlgorithm::generate_mvn_data(graph = gr,
+                                             n = 100,
+                                             params = gr.params,
+                                             ivn = ivn,
+                                             ivn.rand = FALSE)
+}
+
 }

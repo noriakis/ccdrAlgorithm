@@ -20,10 +20,10 @@ using namespace Rcpp;
 
 // temporary solution to "Found no calls to: R_registerRoutines, R_useDynamicSymbols"
 // https://github.com/RcppCore/Rcpp/issues/636#issuecomment-280985661
-void R_init_ccdrAlgorithm(DllInfo* info) {
-	R_registerRoutines(info, NULL, NULL, NULL, NULL);
-	R_useDynamicSymbols(info, TRUE);
-}
+// void R_init_ccdrAlgorithm(DllInfo* info) {
+// 	R_registerRoutines(info, NULL, NULL, NULL, NULL);
+// 	R_useDynamicSymbols(info, TRUE);
+// }
 
 //------------------------------------------------------------------------------/
 //   WRAPPER FUNCTIONS FOR R / RCPP INTEGRATION
@@ -54,10 +54,12 @@ void R_init_ccdrAlgorithm(DllInfo* info) {
 // [[Rcpp::export]]
 List gridCCDr(NumericVector cors,
               List init_betas,
+              NumericVector init_sigmas,
               IntegerVector nj,
               IntegerVector indexj,
               NumericVector aj,
               NumericVector lambdas,
+              IntegerVector weights,
               NumericVector params,
               int verbose
               ){
@@ -77,10 +79,12 @@ List gridCCDr(NumericVector cors,
     std::vector<SparseBlockMatrix> grid_betas;
     grid_betas = gridCCDr(as< std::vector<double> >(cors),
                           betas,
+                          as< std::vector<double> >(init_sigmas),
                           as< std::vector<int> >(nj),
                           as< std::vector<int> >(indexj),
                           as< std::vector<double> >(aj),
                           as< std::vector<double> >(lambdas),
+                          as< std::vector<int> >(weights),
                           as< std::vector<double> >(params),
                           verbose);
 
@@ -95,10 +99,12 @@ List gridCCDr(NumericVector cors,
 // [[Rcpp::export]]
 List singleCCDr(NumericVector cors,
                 List init_betas,
+                NumericVector init_sigmas,
                 IntegerVector nj,
                 IntegerVector indexj,
                 NumericVector aj,
                 double lambda,
+                IntegerVector weights,
                 NumericVector params,
                 int verbose
                 ){
@@ -107,10 +113,12 @@ List singleCCDr(NumericVector cors,
 
     betas = singleCCDr(as< std::vector<double> >(cors),
                        betas,
+                       as< std::vector<double> >(init_sigmas),
                        as< std::vector<int> >(nj),
                        as< std::vector<int> >(indexj),
                        as< std::vector<double> >(aj),
                        lambda,
+                       as< std::vector<int> >(weights),
                        as< std::vector<double> >(params),
                        verbose);
     //
