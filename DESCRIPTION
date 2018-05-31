@@ -19,7 +19,8 @@ LinkingTo: Rcpp
 Suggests:
     testthat,
     graph,
-    igraph
+    igraph,
+    Matrix
 Remotes: itsrainingdata/sparsebnUtils@dev
 URL: https://github.com/itsrainingdata/ccdrAlgorithm
 BugReports: https://github.com/itsrainingdata/ccdrAlgorithm/issues
