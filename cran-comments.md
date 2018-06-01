@@ -1,5 +1,5 @@
 ## Test environments
-* local OS X install, R 3.4.1
+* local OS X install, R 3.5.0
 * ubuntu 12.04.5 (travis-ci: oldrel, devel, and release)
 * win-builder (devel and release)
 * r-hub (devel)
@@ -11,12 +11,12 @@ There were no ERRORs, WARNINGs, or NOTEs.
 
 From https://cran.rstudio.com/web/checks/check_results_ccdrAlgorithm.html
 
-Version: 0.0.3
-Check: package dependencies
-Result: NOTE
-    Package suggested but not available for checking: ‘graph’
-Flavor: r-release-osx-x86_64
-    
+Version: 0.0.4
+Check: for unstated dependencies in ‘tests’
+Result: WARN
+    '::' or ':::' import not declared from: ‘Matrix’
+Flavors: r-devel-linux-x86_64-debian-clang, r-devel-linux-x86_64-debian-gcc, r-devel-linux-x86_64-fedora-clang, r-devel-linux-x86_64-fedora-gcc
+
 This has been fixed.
 
 ## Dependencies
@@ -25,4 +25,4 @@ CHECK has been run on all dependencies and passed.
 
 ## Reverse dependencies
 
-* sparsebn: You will receive updates to this package that fixes these issues very soon from myself. This package depends on the current submission for basic functionality.
+No reverse dependencies are affected by this update.
