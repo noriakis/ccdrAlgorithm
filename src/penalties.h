@@ -12,7 +12,6 @@
 #include <math.h>
 
 #include "defines.h"
-
 //------------------------------------------------------------------------------/
 //   PENALTY FUNCTION DEFINITIONS
 //------------------------------------------------------------------------------/
@@ -94,6 +93,7 @@ double MCPThreshold(double z, double lambda, double gamma){
 //   NOTE: The Lasso penalty is a convex function and hence has no concavity parameter
 //
 double LassoPenalty(double b, double lambda, double gamma = 0){
+	// Rcout << "Lasso penalty [lambda * coef]\n";
     return lambda * b;
 }
 

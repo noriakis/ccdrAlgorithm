@@ -31,7 +31,7 @@
 #include "CCDrAlgorithm.h"
 //#include "log.h" // moved to defines.h
 #include "debug.h"
-
+using namespace Rcpp;
 //------------------------------------------------------------------------------/
 //   MAIN CCDR ALGORITHM CODE
 //------------------------------------------------------------------------------/
@@ -271,10 +271,10 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
                              const std::vector<double>& params,
                              const int verbose
                              ){
-    #ifdef _DEBUG_ON_
-        FILE_LOG(logDEBUG2) << "Function call: singleCCDr";
-        FILE_LOG(logDEBUG1) << "Number of nonzero entries: " << betas.activeSetSize();
-    #endif
+    // #ifdef _DEBUG_ON_
+    Rcout << "Function call: singleCCDr\n";
+    Rcout << "Number of nonzero entries: " << betas.activeSetSize() << "\n";
+    // #endif
 
     // check if sigmas will be updated
     bool updateSigmasFlag = false;
@@ -355,23 +355,23 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
 
     } while( CCDR.keepGoing());
 
-#ifdef _DEBUG_ON_
-    std::ostringstream final_out;
-    final_out << "\n\n";
-    final_out << "#####################################################\n";
-    final_out << "#    Summary                                         \n";
-    final_out << "# lambda = " << lambda << std::endl;
-    final_out << "# Total number of calls to concaveCDInit: " << ccdinit_calls << std::endl;
-    final_out << "# Total number of calls to concaveCD: " << ccd_calls << std::endl;
-    final_out << "# Total number of calls to checkCycleSparse: " << ccs_calls << std::endl;
-    final_out << "# Total number of calls to singleUpdate: " << spu_calls << std::endl;
-    final_out << "# Total number of calls to singleUpdateV: " << spuV_calls << std::endl;
-    final_out << "#####################################################\n";
-    final_out << "\n\n";
+// #ifdef _DEBUG_ON_
+//     std::ostringstream final_out;
+    // Rcout << "\n\n";
+    // Rcout << "#####################################################\n";
+    // Rcout << "#    Summary                                         \n";
+    // Rcout << "# lambda = " << lambda << std::endl;
+    // Rcout << "# Total number of calls to concaveCDInit: " << ccdinit_calls << std::endl;
+    // Rcout << "# Total number of calls to concaveCD: " << ccd_calls << std::endl;
+    // Rcout << "# Total number of calls to checkCycleSparse: " << ccs_calls << std::endl;
+    // Rcout << "# Total number of calls to singleUpdate: " << spu_calls << std::endl;
+    // Rcout << "# Total number of calls to singleUpdateV: " << spuV_calls << std::endl;
+    // Rcout << "#####################################################\n";
+    // Rcout << "\n\n";
 
-    OUTPUT << final_out.str();
-    FILE_LOG(logINFO) << final_out.str();
-#endif
+    // OUTPUT << final_out.str();
+    // FILE_LOG(logINFO) << final_out.str();
+//#endif
 
     return betas;
 }
@@ -406,10 +406,12 @@ void concaveCDInit(const double lambda,
                    const int verbose
                    ){
 
-    #ifdef _DEBUG_ON_
-        FILE_LOG(logDEBUG1) << "Function call: concaveCDInit";
-        ccdinit_calls++;
-    #endif
+    // #ifdef _DEBUG_ON_
+    Rcout << "Function call: concaveCDInit\n";
+    Rcout << "lambda: " << lambda << "\n";
+    // ccdinit_calls++;
+    // #endif
+
 
     alg.resetError(); // sets maxAbsError = 0
 
@@ -421,6 +423,11 @@ void concaveCDInit(const double lambda,
 
     // number of nodes
     unsigned int pp = betas.dim();
+
+    // random order
+    IntegerVector lenppR = seq_len(pp);
+    IntegerVector randpp = sample(lenppR, pp);
+    std::vector<int> randppv = as<std::vector<int> >(randpp);
 
     if(alg.updateSigmas()){
         //
@@ -465,9 +472,13 @@ void concaveCDInit(const double lambda,
     //        For example, edges in the first row (resp. first column) are much more likely to be nonzero than later edges.
     //        Consider how to fix this, e.g. by RANDOMIZING the order of the updates.
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    Rcout << "Main loop started randomized\n";
     for(unsigned int i = 0; i < pp; ++i){
     	for(unsigned int j = i + 1; j < pp; ++j){
+    // for(unsigned int ii = 0; ii < pp; ++ii){
+    // 	for(unsigned int jj = 0; jj < pp; ++jj){
+    		// unsigned int i = randppv[ii];
+    		// unsigned int j = randppv[jj];
 
     	    int weightij = weights[j * pp + i];
     	    int weightji = weights[i * pp + j];
@@ -541,11 +552,11 @@ void concaveCDInit(const double lambda,
 //
 //            if(fabs(betaUpdateij) > ZERO_THRESH || fabs(betaUpdateji) > ZERO_THRESH){
 
-            #ifdef _DEBUG_ON_
-                FILE_LOG(logDEBUG4) << "Sparse update for (" << i << ", " << j << "):";
-                FILE_LOG(logDEBUG4) << "beta(" << i << ", " << j << ") = " << betaUpdateij;
-                FILE_LOG(logDEBUG4) << "beta(" << j << ", " << i << ") = " << betaUpdateji;
-            #endif
+            // #ifdef _DEBUG_ON_
+                Rcout << "Sparse update for (" << i << ", " << j << "):" << "\n";
+                Rcout << "beta(" << i << ", " << j << ") = " << betaUpdateij<< "\n";
+                Rcout << "beta(" << j << ", " << i << ") = " << betaUpdateji<< "\n";
+            // #endif
 
             // Sparse update for i->j
             unsigned int row = i, col = j;
@@ -565,7 +576,7 @@ void concaveCDInit(const double lambda,
 //                            OUTPUT << "concaveCDInit: Removing edge " << "(" << i << ", " << j << ") in model!" << std::endl;
 //                            OUTPUT << "!!!!!!!!!!!!!!!!\n\n";
 
-                        FILE_LOG(logWARNING) << "concaveCDInit: Removing edge " << "(" << i << ", " << j << ") in model!";
+                        Rcout << "concaveCDInit: Removing edge " << "(" << i << ", " << j << ") in model!\n";
                     }
 
                     // check if we are removing the edge (j,i)
@@ -574,7 +585,7 @@ void concaveCDInit(const double lambda,
 //                            OUTPUT << "concaveCDInit: Removing edge " << "(" << j << ", " << i << ") in model!" << std::endl;
 //                            OUTPUT << "!!!!!!!!!!!!!!!!\n\n";
 
-                        FILE_LOG(logWARNING) << "concaveCDInit: Removing edge " << "(" << j << ", " << i << ") in model!";
+                        Rcout << "concaveCDInit: Removing edge " << "(" << j << ", " << i << ") in model!\n";
                     }
                 #endif
 
@@ -663,18 +674,18 @@ void concaveCD(const double lambda,
                const std::vector<double>& cors,
                const int verbose
                ){
-    #ifdef _DEBUG_ON_
-        FILE_LOG(logDEBUG1) << "Function call: concaveCD";
-        ccd_calls++;
-    #endif
+    // #ifdef _DEBUG_ON_
+    Rcout << "Function call: concaveCD\n";
+        // ccd_calls++;
+    // #endif
 
     alg.resetError(); // sets maxAbsError = 0
 
 //    double S[2] = {0, 0};   // to store the values of the loglikelihood when comparing edges in a block; use an array instead of a vector for efficiency (faster initialization)
 
-    #ifdef _DEBUG_ON_
-        FILE_LOG(logDEBUG4) << "Computing sigmas...";
-    #endif
+    // #ifdef _DEBUG_ON_
+    Rcout << "Computing sigmas...\n";
+    // #endif
 
     // number of nodes
     unsigned int pp = betas.dim();
@@ -786,10 +797,10 @@ double singleUpdate(const unsigned int a,
                     const int verbose
                     ){
 
-    #ifdef _DEBUG_ON_
-//        FILE_LOG(logDEBUG2) << "Function call: SingleUpdate(" << a << ", " << b << ") with lambda = " << lambda;
-        spu_calls++;
-    #endif
+    // #ifdef _DEBUG_ON_
+    Rcout << "Function call: SingleUpdate(" << a << ", " << b << ") with lambda = " << lambda<< "\n";
+    // spu_calls++;
+    // #endif
 
     unsigned int pp = betas.dim(); // for easier access
     double betaUpdate = 0; // initialize eventual return value
@@ -829,9 +840,9 @@ double singleUpdate(const unsigned int a,
     PenaltyFunction pen = PenaltyFunction(gammaMCP / ajb);
     betaUpdate = pen.threshold(res_ab, ajb * lambda);
 
-    #ifdef _DEBUG_ON_
-        FILE_LOG(logDEBUG2) << "Function call: singleUpdate(" << a << ", " << b << ") with lambda = " << lambda << "  /  res_ab = " << res_ab;
-    #endif
+    // #ifdef _DEBUG_ON_
+    Rcout << "Function call: singleUpdate(" << a << ", " << b << ") with lambda = " << lambda << "  /  res_ab = " << res_ab << "\n";
+    // #endif
 
     return betaUpdate;
 }
@@ -879,7 +890,7 @@ void computeEdgeLoss(const double betaUpdate,
     FILE_LOG(logDEBUG3) << oldBeta_ab << " / " << oldBeta_ba;
 #endif
 
-    // Compute the value of the loss
+    Rcout << "Compute the value of the loss\n";
     unsigned int pp = betas.dim();
     loss = betas.sigma(b) * betas.sigma(b);
     for(unsigned int m = 0; m < betas.rowsizes(b); ++m){
@@ -902,7 +913,7 @@ void computeEdgeLoss(const double betaUpdate,
         }
     }
 
-    // Compute the value of the penalty
+    Rcout << "Compute the value of the penalty\n";
     penalty = 0;
     PenaltyFunction pen = PenaltyFunction(gammaMCP / ajb);
     for(unsigned int i = 0; i < betas.rowsizes(b); ++i){

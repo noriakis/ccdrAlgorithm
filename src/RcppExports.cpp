@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // gridCCDr
 List gridCCDr(NumericVector cors, List init_betas, NumericVector init_sigmas, IntegerVector nj, IntegerVector indexj, NumericVector aj, NumericVector lambdas, IntegerVector weights, NumericVector params, int verbose);
 RcppExport SEXP _ccdrAlgorithm_gridCCDr(SEXP corsSEXP, SEXP init_betasSEXP, SEXP init_sigmasSEXP, SEXP njSEXP, SEXP indexjSEXP, SEXP ajSEXP, SEXP lambdasSEXP, SEXP weightsSEXP, SEXP paramsSEXP, SEXP verboseSEXP) {

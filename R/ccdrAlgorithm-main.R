@@ -120,6 +120,7 @@ ccdr.run <- function(data,
     }
 
     ### Call the CCDr algorithm
+    cat("Calling CCDr [ccdr_call]\n")
     ccdr_call(data = data_matrix,
               ivn = ivn_list,
               betas = betas,
@@ -232,6 +233,7 @@ ccdr_call <- function(data,
 
         # If no grid of lambdas is passed, then use the standard log-scale that starts at
         #  max.lam = sqrt(nn) and descends to min.lam = rlam * max.lam
+    	cat("Generating lambda, as not specified: max.lam [sqrt(nn)]=", sqrt(nn), "\n")
         lambdas <- sparsebnUtils::generate.lambdas(lambda.max = sqrt(nn),
                                                    lambdas.ratio = rlam,
                                                    lambdas.length = as.integer(lambdas.length),
@@ -249,6 +251,7 @@ ccdr_call <- function(data,
     ### By default, set the initial guess for betas to be all zeroes
 
     if(missing(betas)){
+    	cat("Initializing beta matrix\n")
         betas <- matrix(0, nrow = pp, ncol = pp)
         # betas <- SparseBlockMatrixR(betas) # 2015-03-26: Deprecated and replaced with .init_sbm below
         betas <- .init_sbm(betas, rep(0, pp))
@@ -288,7 +291,7 @@ ccdr_call <- function(data,
     cors <- corlist$cors
     indexj <- corlist$indexj
     t2.cor <- proc.time()[3]
-
+    cat("Calling [ccdr_gridR]\n")
     fit <- ccdr_gridR(cors,
                       as.integer(pp),
                       as.integer(nn),
@@ -490,7 +493,7 @@ ccdr_singleR <- function(cors,
 
     ### alpha check is in ccdr_gridR
 
-    # if(verbose) cat("Opening C++ connection...")
+    if(verbose) cat("Opening C++ connection...\n")
     t1.ccdr <- proc.time()[3]
     ccdr.out <- singleCCDr(cors,
                            betas,
@@ -503,7 +506,7 @@ ccdr_singleR <- function(cors,
                            c(gamma, eps, maxIters, alpha),
                            verbose = verbose)
     t2.ccdr <- proc.time()[3]
-    # if(verbose) cat("C++ connection closed. Total time in C++: ", t2.ccdr-t1.ccdr, "\n")
+    if(verbose) cat("C++ connection closed. Total time in C++: ", t2.ccdr-t1.ccdr, "\n")
 
     #
     # Convert output back to SBM format
