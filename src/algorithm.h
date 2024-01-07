@@ -504,7 +504,7 @@ void concaveCDInit(const double lambda,
                     hasCycleji = checkCycleSparse(pp, betas, j, i);
                 }
             }
-
+            Rcout << "hascycleij" << hasCycleij << "hasCycleji" << hasCycleji << "\n";
             if(hasCycleij){
                 betaUpdateij = 0.0;
             } else if(hasCycleji){
@@ -515,18 +515,18 @@ void concaveCDInit(const double lambda,
                 double S1ji = S[0]; // Qi|betaji=0
                 double S2ji = S[1]; // Qi|betaji=betaUpdate
 
-            #ifdef _DEBUG_ON_
-                FILE_LOG(logDEBUG4) << "S[0] = " << S[0] << ", S[1] = " << S[1];
-            #endif
+            // #ifdef _DEBUG_ON_
+                Rcout << "S[0] = " << S[0] << ", S[1] = " << S[1] << "\n";
+            // #endif
 
                 // single parameter update for beta_ij
                 computeEdgeLoss(betaUpdateij, i, j, weightij * lambda, nj[j], indexj[j], aj[j], betas, gammaMCP, cors, S, verbose);
                 double S1ij = S[1]; // Qj|betaij=betaUpdate
                 double S2ij = S[0]; // Qj|betaij=0
 
-            #ifdef _DEBUG_ON_
-                FILE_LOG(logDEBUG4) << "S[0] = " << S[0] << ", S[1] = " << S[1];
-            #endif
+            // #ifdef _DEBUG_ON_
+                Rcout << "S[0] = " << S[0] << ", S[1] = " << S[1] << "\n";
+            // #endif
 
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 // NOTE: What if (S1ji + S1ij) == (S2ji + S2ij)??? This case should be
@@ -852,7 +852,7 @@ double singleUpdate(const unsigned int a,
     betaUpdate = pen.threshold(res_ab, ajb * lambda);
 
     // #ifdef _DEBUG_ON_
-    Rcout << "Function call: singleUpdate(" << a << ", " << b << ") with lambda = " << lambda << "  /  res_ab = " << res_ab << "\n";
+    Rcout << "Function call: singleUpdate(" << a << ", " << b << ") with lambda = " << lambda << "  /  res_ab = " << res_ab << " betaUpdate = " << betaUpdate << "\n";
     // #endif
 
     return betaUpdate;
@@ -1004,10 +1004,10 @@ bool checkCycleSparse(const int node,
                       int b
                       ){
 
-    #ifdef _DEBUG_ON_
-        FILE_LOG(logDEBUG3) << "Function call: checkCycleSparse(" << a << ", " << b << ")";
-        ccs_calls++;
-    #endif
+    // #ifdef _DEBUG_ON_
+        Rcout << "Function call: checkCycleSparse(" << a << ", " << b << ")\n";
+        // ccs_calls++;
+    // #endif
 
     a++; b++; // modification to adjust for re-indexing from zero
 
