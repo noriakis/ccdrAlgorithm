@@ -58,7 +58,8 @@ private:
 PenaltyFunction::PenaltyFunction(double g){
     if(g >= 0){
         gamma = g;
-        pPtr = &MCPPenalty;
+        // pPtr = &MCPPenalty;
+        pPtr = &SCADPenalty;
         thresholdPtr = &MCPThreshold;
     } else{
         gamma = g;

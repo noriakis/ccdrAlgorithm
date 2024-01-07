@@ -283,6 +283,7 @@ SparseBlockMatrix singleCCDr(const std::vector<double>& cors,
     } else{
         // set sigmas according to user input
         for(unsigned int j = 0; j < betas.dim(); ++j){
+            Rcout << "sigmas[j]" << sigmas[j] << "\n";
             betas.setSigma(j, sigmas[j]);
         }
     }
@@ -423,6 +424,7 @@ void concaveCDInit(const double lambda,
 
     // number of nodes
     unsigned int pp = betas.dim();
+    Rcout << "beta dim " << pp << "\n";
 
     // random order
     IntegerVector lenppR = seq_len(pp);
@@ -434,12 +436,13 @@ void concaveCDInit(const double lambda,
         // Compute sigmas
         //   See Section 4.2.2. of the computational paper for the details of this calculation
         //
+        Rcout << "updateSigmas() TRUE" << "\n";
         for(unsigned int j = 0; j < pp; ++j){
-
+            Rcout << betas.rowsizes(j) << "\n";
             double c = 0;
             for(unsigned int l = 0; l < betas.rowsizes(j); ++l){
                 unsigned int row = betas.row(j, l);
-
+                Rcout <<"j:" <<j << " l:" << l << " row" << row << " betas.value(j,l)" << betas.value(j, l) << "\n";
                 if(j <= row){
                     c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
                 }
@@ -447,21 +450,21 @@ void concaveCDInit(const double lambda,
                     c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
                 }
             }
-
+            Rcout << "c:" << c << "\n";
             double s = 0.5 * (1.0 * c + sqrt(c * c + 4 * nj[j]));
             betas.setSigma(j, s);
         } // end for loop for sigmas
     }
 
-    #ifdef _DEBUG_ON_
-        std::ostringstream sigma_out;
-        for(int jj = 0; jj < pp; ++jj){
-            sigma_out << betas.sigma(jj) << " ";
-        }
-        FILE_LOG(logDEBUG1) << "Estimated sigmas: " << sigma_out.str();
+    // #ifdef _DEBUG_ON_
+    std::ostringstream sigma_out;
+    for(int jj = 0; jj < pp; ++jj){
+        sigma_out << betas.sigma(jj) << " ";
+    }
+    Rcout << "Estimated sigmas: " << sigma_out.str();
 
-        FILE_LOG(logDEBUG4) << "Computing betas...";
-    #endif
+    Rcout << "Computing betas...";
+    // #endif
 
     //
     // Main loop over all edges in model (i = 0...pp-1 and j > i)
@@ -472,7 +475,7 @@ void concaveCDInit(const double lambda,
     //        For example, edges in the first row (resp. first column) are much more likely to be nonzero than later edges.
     //        Consider how to fix this, e.g. by RANDOMIZING the order of the updates.
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    Rcout << "Main loop started randomized\n";
+    Rcout << "Main loop started\n";
     for(unsigned int i = 0; i < pp; ++i){
     	for(unsigned int j = i + 1; j < pp; ++j){
     // for(unsigned int ii = 0; ii < pp; ++ii){
@@ -482,6 +485,7 @@ void concaveCDInit(const double lambda,
 
     	    int weightij = weights[j * pp + i];
     	    int weightji = weights[i * pp + j];
+            Rcout << weightij << " " << weightji << " \n";
 
             double betaUpdateij = 0.0;
             if(weightij >= 0) betaUpdateij = singleUpdate(i, j, weightij * lambda, nj[j], indexj[j], aj[j], betas, gammaMCP, cors, verbose);
@@ -693,13 +697,14 @@ void concaveCD(const double lambda,
     if(alg.updateSigmas()){
         //
         // Compute sigmas
-        //   See Section 4.2.2. for the details of this calculation
+        //   See Section 5.2.2. for the details of this calculation
         //
         for(unsigned int j = 0; j < pp; ++j){
+            Rcout << betas.rowsizes(j) << "\n";
             double c = 0;
             for(unsigned int l = 0; l < betas.rowsizes(j); ++l){
                 unsigned int row = betas.row(j, l);
-
+                Rcout <<"j:" <<j << " l:" << l << " row" << row << " betas.value(j,l)" << betas.value(j, l) << "\n";
                 if(j <= row){
                     c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (j + row*(row+1)/2)]; // c += beta_ij * <xj,xi>
                 }
@@ -707,7 +712,7 @@ void concaveCD(const double lambda,
                     c += betas.value(j, l) * cors[indexj[j]*pp*(pp+1)/2 + (row + j*(j+1)/2)];   // c += beta_ij * <xj,xi> (also)
                 }
             }
-
+            // The single parameter update for ρj is straightforward to compute and is given by
             double s = 0.5 * (1.0 * c + sqrt(c * c + 4 * nj[j]));
             betas.setSigma(j, s);
         } // end for loop for sigmas
@@ -812,26 +817,32 @@ double singleUpdate(const unsigned int a,
     // Here, b = j = col, a = i = row.
     //
     double res_ab = 0;
+    Rcout << betas.sigma(b) << " betas.sigma(b) `\n";
 
     // Get the value: \rho_j*<xk,xj>
     if(a <= b){
+        Rcout << cors[b1*pp*(pp+1)/2 + (a + b*(b+1)/2)] << " cors value `\n";    
         res_ab = betas.sigma(b) * cors[b1*pp*(pp+1)/2 + (a + b*(b+1)/2)];
     }
     else{
+        Rcout << cors[b1*pp*(pp+1)/2 + (b + a*(a+1)/2)] << " cors value `\n";
         res_ab = betas.sigma(b) * cors[b1*pp*(pp+1)/2 + (b + a*(a+1)/2)];
     }
+    Rcout << res_ab << " after `get the value`\n";
 
     // Subtract the terms \phi_ij <xi,xk>
     for(unsigned int i = 0; i < betas.rowsizes(b); ++i){
         unsigned int row = betas.row(b, i);
         if(row < a){
+            Rcout << cors[b1*pp*(pp+1)/2 + (row + a*(a+1)/2)] << "cors value \n";
             res_ab -= cors[b1*pp*(pp+1)/2 + (row + a*(a+1)/2)] * betas.value(b, i);
         }
         else if(row > a){ // i=a is excluded
+            Rcout << cors[b1*pp*(pp+1)/2 + (a + row*(row+1)/2)]  << "cors value \n";
             res_ab -= cors[b1*pp*(pp+1)/2 + (a + row*(row+1)/2)] * betas.value(b, i);
         }
     }
-
+    Rcout << res_ab << " after `substracting`\n";
     //
     // The SPU is given by S_gamma(res_ab, lambda), aka evaluating the threshold function
     //   associated with the penalty function at the residual factor res_ab given the fixed

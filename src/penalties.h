@@ -27,6 +27,26 @@ double sign(double x){
 	else return 0;
 }
 
+
+//
+// SCADPenalty
+//   Input:
+//      t = value to penalize (e.g. coefficient)
+//      lambda = regularization parameter
+//      gamma = concavity paramater
+//   Output: value of p_lambda(t; gamma)
+//
+double SCADPenalty(double b, double lambda, double gamma){
+    if(b < lambda)
+        return lambda * b;
+    else if (b > lambda & gamma*lambda > b)
+        return (2 * gamma * lambda * b - b*b - lambda*lambda) / (2*(gamma-1));
+    else
+        return 0.5 * lambda *lambda * (gamma+1);
+}
+
+
+
 //
 // MCPPenalty
 //
